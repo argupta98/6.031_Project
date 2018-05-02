@@ -1,10 +1,12 @@
 package karaoke;
 
+import java.util.List;
+
 import karaoke.sound.SequencePlayer;
 
 public class Chord implements Music{
     
-    private final List<Note> notes;
+    private final List<Music> notes;
 
     @Override
     public double duration() {
