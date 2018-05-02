@@ -6,9 +6,8 @@ import java.util.function.Function;
 
 //An immutable wrapper that plays parsed music
 public class Player {
-    private final Piece music;
+    private final Composition music;
     
-    // AF
     /**
      * Creates a new player that plays the music represented in the given file
      * @param input the file containing the music
@@ -34,13 +33,5 @@ public class Player {
      */
     public void addLyricListener(String voice, LyricListener listener) {
         music.addVoiceListener(voice, listener);
-    }
-        
-    public interface LyricListener{
-        /**
-         * Displays the line given
-         * @param line the line to be displayed
-         */
-        public void diplayLine(String line);
     }
 }
