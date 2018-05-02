@@ -185,7 +185,7 @@ public class SequencePlayerTest {
         player.addNote(piano, new Pitch('D').transpose(Pitch.OCTAVE), startBeat, 1.0/2);
         startBeat+=1.0/2;
         
-        player.addNote(piano, new Pitch('B').transpose(Pitch.OCTAVE), startBeat, 3.0/4);
+        player.addNote(piano, new Pitch('B'), startBeat, 3.0/4);
         startBeat+=6.0/4;
 
         // add a listener at the end of the piece to tell main thread when it's done
