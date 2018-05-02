@@ -2,7 +2,20 @@ package karaoke;
 
 import karaoke.sound.SequencePlayer;
 
+
+
 public class Accidental implements Music {
+    
+    public enum ACCIDENTAL{
+        SHARP,
+        FLAT,
+        NATURAL,
+        DOUBLESHARP,
+        DOUBLEFLAT
+    }
+    
+    
+    
      private final ACCIDENTAL accidental;
      private final Note note;
     @Override
