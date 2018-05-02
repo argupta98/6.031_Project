@@ -6,7 +6,20 @@ import org.junit.Test;
 
 public class SequencePlayerTest {
 
-    // TODO: warmup #2
+    @Test 
+    public void testPlayPiece1() {
+        
+    }
+    
+    @Test 
+    public void testPlayPiece2() {
+        
+    }
+    
+    @Test 
+    public void testPlayPiece3() {
+        
+    }
     
     @Test
     public void test() {
