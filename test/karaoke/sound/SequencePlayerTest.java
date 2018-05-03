@@ -7,6 +7,10 @@ import javax.sound.midi.MidiUnavailableException;
 
 import org.junit.Test;
 
+/**
+ * Tests by hearing, so we do not want didit to run them
+ * @category no_didit
+ */
 public class SequencePlayerTest {
 
     @Test 
@@ -32,11 +36,18 @@ public class SequencePlayerTest {
         startBeat+=.25;
         player.addNote(piano, new Pitch('E'), startBeat, .75);
         startBeat+=.75;
+        
+        player.addNote(piano, new Pitch('E'), startBeat, .75);
+        startBeat+=.75;
         player.addNote(piano, new Pitch('D'), startBeat, .25);
         startBeat+=.25;
         
         player.addNote(piano, new Pitch('E'), startBeat, .75);
         startBeat+=.75;
+        
+        player.addNote(piano, new Pitch('F'), startBeat, .25);
+        startBeat+=.25;
+
         player.addNote(piano, new Pitch('G'), startBeat, 2);
         startBeat+=2;
         
