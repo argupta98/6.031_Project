@@ -1,5 +1,7 @@
 package karaoke;
 
+import karaoke.sound.Instrument;
+import karaoke.sound.Pitch;
 import karaoke.sound.SequencePlayer;
 
 public class Note implements Music{
