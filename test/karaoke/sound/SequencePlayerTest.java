@@ -344,11 +344,6 @@ public class SequencePlayerTest {
         System.out.println("done playing");
     }
     
-    @Test
-    public void test() {
-        fail("Not yet implemented");
-    }
-    
     @Test(expected=AssertionError.class)
     public void testAssertionsEnabled() {
         assert false; // make sure assertions are enabled with VM argument: -ea
