@@ -6,11 +6,13 @@ import karaoke.parser.MusicParser;
 
 import java.io.File;
 
+import edu.mit.eecs.parserlib.UnableToParseException;
+
 //An immutable wrapper that plays parsed music
 public class Player {
     private final Composition music;
     
-    //AF(music) = a piece of music that this player can play
+    //AF(music) = a music player that can play this piece of music 
     //RI: True
     //Safety from rep exposure:
     //  All internal variables are private and final
@@ -21,11 +23,23 @@ public class Player {
     /**
      * Creates a new player that plays the music represented in the given file
      * @param input the file containing the music
+     * @throws UnableToParseException if the file cannot be parsed
      */
-    public Player(File input) {
+    public Player(File input) throws UnableToParseException {
         //parse input into a Piece object
         this.music = MusicParser.parseFile(input);
     }
+    
+    /**
+     * Creates a new player that plays the music represented by the given string
+     * @param input the string containing the music
+     * @throws UnableToParseException if the file cannot be parsed
+     */
+    public Player(String input) throws UnableToParseException {
+        //parse input into a Piece object
+        this.music = MusicParser.parse(input);
+    }
+    
     
     /**
      * Plays the music described by this.music

@@ -92,7 +92,7 @@ public class MusicParser {
      * @return Expression parsed from the string
      * @throws UnableToParseException if the string doesn't match the Expression grammar
      */
-    public static Composition parse(final File file) throws UnableToParseException {
+    public static Composition parseFile(final File file) throws UnableToParseException {
         // parse the example into a parse tree
         throw new UnsupportedOperationException("not implemented yet");
     }
