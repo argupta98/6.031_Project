@@ -9,7 +9,9 @@ public interface Music {
     
     // Datatype Definiton:
     // - Music = Note(duration: double, pitch:Pitch, instrument: Instrument) + Accidental(accidental: Enum, note: Note) + Rest(duration: double)
-    //           + Chord(notes: List<Note>) + Tuplet(tupletNumber:int, notes: List<Notes>) + Bar( currentNote: Note, remaining: Bar)
+
+    //           + Chord(notes: List<Note>) + Tuplet(tupletNumber:int, notes: List<Notes>) + Measure(notes: List<Music>)
+
     
     /*
      * @return the length of this piece in beats
@@ -22,4 +24,9 @@ public interface Music {
      * @param beat to start song on
      */
     public void play(SequencePlayer player, double beat);
+    
+    
+    interface LyricListener{
+        public void returnLyrics(String lyric) ;
+    }
 }
