@@ -25,8 +25,7 @@ public class Accidental implements Music {
     }
    @Override
     public void play(SequencePlayer player, double beat) {
-        // TODO Auto-generated method stub
-        
+        // TODO Auto-generated method stub   
     }
 
 }

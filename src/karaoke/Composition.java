@@ -3,6 +3,8 @@ package karaoke;
 import java.util.HashMap;
 import java.util.Map;
 
+import karaoke.Voice.LyricListener;
+
 public class Composition {
     private final Map<String, Voice> voices;
     
@@ -40,11 +42,4 @@ public class Composition {
         throw new UnsupportedOperationException("not implemented yet");
     }
     
-    public interface LyricListener{
-        /**
-         * Displays the line given
-         * @param line the line to be displayed
-         */
-        public void diplayLine(String line);
-    }
 }

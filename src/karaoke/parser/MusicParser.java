@@ -66,7 +66,7 @@ public class MusicParser {
     }
 
     /**
-     * Parse a string into an expression.
+     * Parse a string into an Composition.
      * @param string string to parse
      * @return Expression parsed from the string
      * @throws UnableToParseException if the string doesn't match the Expression grammar
@@ -87,7 +87,7 @@ public class MusicParser {
     }
     
     /**
-     * Parse a File into an expression.
+     * Parse a File into an Composition.
      * @param file file to parse
      * @return Expression parsed from the string
      * @throws UnableToParseException if the string doesn't match the Expression grammar

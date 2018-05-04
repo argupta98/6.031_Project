@@ -43,7 +43,7 @@ public class ParseASTTest {
     //      Rests: Handles 'z' rest operator, note length tests apply
     //
     //      Chords: Duration: All notes have same duration, different notes have different durations 
-    //                          (chord duration is the duration of first note)
+    //                        (chord duration is the duration of first note)
     //              Can be parsed
     //
     //      Tuplets: Tuplets can be validly parsed
@@ -62,11 +62,117 @@ public class ParseASTTest {
     //                                     |: enough notes in bar (ignored), fewer notes than bar (advances to next bar)
     //                                     _: 1, 2, >2 in a row 
     //       
-    //       Comments: Comment at end of string, comment in beginning of string, comment in the midle of string
-      
+    //       Comments: Comment at end of string, comment in beginning of string, comment in the middle of string
+     
     
-    @Test public void test() {
-        fail("Not yet implemented");
+    //HEADER Test Cases
+    //Covers: parseString: Header: Handles all cases
+    @Test public void testParseStringHeaderAllPresent() {
+        
     }
-
-}
+    
+    //Covers: parseString: Header: Handles Omission of all possible omitted fields
+    @Test public void testParseStringHeaderWithDefaults() {
+        
+    }
+    
+    //NOTE test cases
+    //Covers: parseString: Note: A-G
+    @Test public void testParseStringNoteUpperCase() {
+        
+    }
+    
+    //Covers: parseString: Note: a-g
+    @Test public void testParseStringNoteLowerCaseNoOperator() {
+        
+    }
+    
+    //Covers: parseString: Note: a-g, ' operator: 1, >1
+    @Test public void testParseStringNoteLowerCaseOctaveOperator() {
+        
+    }
+    
+    //NOTE LENGTH Test cases
+    //Covers: parseString: Note Length: Handles numerator and denominator
+    @Test public void testParseStringNoteLengthDenominatorAndNumerator() {
+        
+    }
+    
+    //Covers: parseString: Note Length: Denominator
+    @Test public void testParseStringNoteLengthDenominatorOnly() {
+        
+    }
+    
+    //Covers: parseString: Note Length: Handles denominator missing
+    @Test public void testParseStringNoteLengthDenominatorMissing() {
+        
+    }
+    
+    //Covers: parseString: Note Length: Handles numerator missing
+    @Test public void testParseStringNoteLengthNumeratorMissing() {
+        
+    }
+    
+    //Covers: parseString: Note Length: Numerator
+    @Test public void testParseStringNoteLengthOnlyNumerator() {
+        
+    }
+    
+    //ACCIDENTAL Test Cases (other test cases cover 0 accidentals)
+    //Covers: parseString: Accidental: Can be parsed
+    @Test public void testParseStringAccidentalParse() {
+        
+    }
+    
+    //Covers: parseString: Accidental: applied to one note in bar, >1 Accidental
+    @Test public void testParseStringAccidentalOneNote() {
+        
+    }
+    
+    //Covers: parseString: Accidental: same note repeated in bar, not overridden, 1 accidental
+    @Test public void testParseStringAccidentalMultipleNote() {
+        
+    }
+    
+    //Covers: parseString: Accidental: same note different octaves in bar
+    @Test public void testParseStringAccidentalDifferentOctaves() {
+        
+    }
+    
+    //Covers: parseString: Accidental: Overriden, same note repeated, >1 accidental
+    @Test public void testParseStringAccidentalOverride() {
+        
+    }
+    
+    //REST Test Cases Dotun
+    //Covers: parseString: rest: Handles 'z' rest operator
+    @Test public void testParseStringRest() {
+        
+    }
+    
+    //CHORDS Test Cases Nick implements
+    //Covers: parseString: Chord: All same duration
+    @Test public void testParseStringChordSameDuration() {
+        
+    }
+    
+    //Covers: parseString: Chord: Different durations
+    @Test public void testParseStringChordDifferentDuration() {
+        
+    }
+    
+    //Covers: parseString: Chord: All same duration
+    @Test public void testParseString() {
+        
+    }
+    
+    //TUPLETS  Nick Implements
+    
+    //VOICES tests
+    
+    
+    //LYRICS Nick
+    
+    
+    
+}   

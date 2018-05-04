@@ -1,5 +1,6 @@
-package karaoke;
+package karaoke;''
 
+import karaoke.Voice.LyricListener;
 import karaoke.sound.SequencePlayer;
 
 /**
@@ -8,12 +9,11 @@ import karaoke.sound.SequencePlayer;
 public interface Music {
     
     // Datatype Definiton:
-    // - Music = Note(duration: double, pitch:Pitch, instrument: Instrument) + Accidental(accidental: Enum, note: Note) + Rest(duration: double)
-
-    //           + Chord(notes: List<Note>) + Tuplet(tupletNumber:int, notes: List<Notes>) + Measure(notes: List<Music>)
+    // Music = Note(duration: double, pitch:Pitch, instrument: Instrument) + Accidental(accidental: Enum, note: Note) + Rest(duration: double)
+    //         + Chord(notes: List<Note>) + Tuplet(tupletNumber:int, notes: List<Notes>) + Measure(notes: List<Music>)+ Repeat(measures: List<Measures>, Endings: List<Measures>)
 
     
-    /*
+    /**
      * @return the length of this piece in beats
      */
     public double duration();
@@ -23,10 +23,6 @@ public interface Music {
      * @param player to play the piece on
      * @param beat to start song on
      */
-    public void play(SequencePlayer player, double beat);
+    public void play(SequencePlayer player, double beat, LyricListener listener);
     
-    
-    interface LyricListener{
-        public void returnLyrics(String lyric) ;
-    }
 }

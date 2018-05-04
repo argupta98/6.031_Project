@@ -28,7 +28,7 @@ public class Voice {
    /** Listens for note being played and provides the necessary lyric */
     public interface LyricListener{
        /** Called when note is being played */
-       public void notePlayed();
+       public void notePlayed(String line);
    }
     
     /**
