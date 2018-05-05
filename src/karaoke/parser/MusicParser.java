@@ -3,16 +3,28 @@
  */
 package karaoke.parser;
 
+import java.util.List;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
 import edu.mit.eecs.parserlib.ParseTree;
 import edu.mit.eecs.parserlib.Parser;
 import edu.mit.eecs.parserlib.UnableToParseException;
 import edu.mit.eecs.parserlib.Visualizer;
 import karaoke.Composition;
+import karaoke.Music;
+import karaoke.Voice;
 
 public class MusicParser {
+    private static double DEFAULT_TEMPO = 100;
+    private static String DEFAULT_COMPOSER = "Unknown";
+    private static double DEFAULT_LENGTH = 1.0/4;
+    private static double DEFAULT_METER = 1.0;
+    
     /**
      * Main method. Parses and then reprints an example expression.
      * 
@@ -41,15 +53,15 @@ public class MusicParser {
     }
     
     // the nonterminals of the grammar
-    private static enum ExpressionGrammar {
+    private static enum MusicGrammar {
         COMPOSITION, HEADER, TRACKNUMBER, COMPOSER, METER, LENGTH, TEMPO,
-        VOICENAME, KEY, VOICE, MUSICLINE, MEASURE, PRIMITIVE, NOTE, OCTAVEUP, OCTAVEDOWN,
+        VOICENAME, KEY, VOICE, MUSICLINE, MEASURE, NOTE, OCTAVEUP, OCTAVEDOWN,
         NOTENUMERATOR, NOTEDENOMINATOR, ACCIDENTAL, SHARP, FLAT, LYRIC, SYLLABLENOTE, 
         SYLLABLE, LETTER, COMMENT, NUMBER, END, WHITESPACE, WHITESPACEANDCOMMENT, TITLE,
-        CHORD, TUPLE
+        CHORD, TUPLE, DENOMINATOR, NUMERATOR
     }
 
-    private static Parser<ExpressionGrammar> parser = makeParser();
+    private static Parser<MusicGrammar> parser = makeParser();
     
     /**
      * Compile the grammar into a parser.
@@ -57,11 +69,11 @@ public class MusicParser {
      * @return parser for the grammar
      * @throws RuntimeException if grammar file can't be read or has syntax errors
      */
-    private static Parser<ExpressionGrammar> makeParser() {
+    private static Parser<MusicGrammar> makeParser() {
         try {
             // read the grammar as a file, relative to the project root.
             final File grammarFile = new File("src/karaoke/parser/Abc.g");
-            return Parser.compile(grammarFile, ExpressionGrammar.COMPOSITION);
+            return Parser.compile(grammarFile, MusicGrammar.COMPOSITION);
 
             // A better way would read the grammar as a "classpath resource", which would allow this code 
             // to be packed up in a jar and still be able to find its grammar file:
@@ -89,22 +101,21 @@ public class MusicParser {
      * @return Expression parsed from the string
      * @throws UnableToParseException if the string doesn't match the Expression grammar
      */
-    public static void parse(final String string) throws UnableToParseException {
+    public static Composition parse(final String string) throws UnableToParseException {
         // parse the example into a parse tree
-        final ParseTree<ExpressionGrammar> parseTree = parser.parse(string);
+        final ParseTree<MusicGrammar> parseTree = parser.parse(string);
 
         // display the parse tree in various ways, for debugging only
-        System.out.println("parse tree " + parseTree);
-        Visualizer.showInBrowser(parseTree);
+        //System.out.println("parse tree " + parseTree);
+        //Visualizer.showInBrowser(parseTree);
         
-        //TODO
-        // make an AST from the parse tree
-        //final Composition composition = makeAbstractSyntaxTree(parseTree);
-        // System.out.println("AST " + expression);
+        final Composition composition = makeComposition(parseTree);
+       // System.out.println("AST " + expression);
         
-        //return composition;
+        return composition;
     }
     
+
     /**
      * Parse a File into an Composition.
      * @param file file to parse
@@ -116,15 +127,79 @@ public class MusicParser {
         throw new UnsupportedOperationException("not implemented yet");
     }
     
-    /**
-     * Convert a parse tree into an abstract syntax tree.
-     * 
-     * @param parseTree constructed according to the grammar in Exression.g
-     * @return abstract syntax tree corresponding to parseTree
-     */
-    private static Composition makeAbstractSyntaxTree(final ParseTree<ExpressionGrammar> parseTree) {
-        throw new UnsupportedOperationException("not implemented yet");
+
+    private static Composition makeComposition(ParseTree<MusicGrammar> compositionTree) {
+        ParseTree<MusicGrammar> headerTree = compositionTree.children().get(0);
+        double tempo = DEFAULT_TEMPO;
+        String title;
+        String composer = DEFAULT_COMPOSER;
+        double length = DEFAULT_LENGTH;
+        double meter = DEFAULT_METER;
+        int trackNumber;
+        
+        //Parse Header info
+        for(ParseTree<MusicGrammar> field: headerTree.children()) {
+            if(field.name() == MusicGrammar.COMPOSER) {
+                composer = field.text();
+            }
+            else if(field.name() == MusicGrammar.TITLE) {
+                title = field.text();
+            }
+            else if(field.name() == MusicGrammar.LENGTH) {
+                length = (double) Integer.parseInt(field.childrenByName(MusicGrammar.NUMERATOR).get(0).text())/
+                        Integer.parseInt(field.childrenByName(MusicGrammar.DENOMINATOR).get(0).text());
+            }
+            else if(field.name() == MusicGrammar.METER) {
+                meter = (double) Integer.parseInt(field.childrenByName(MusicGrammar.NUMERATOR).get(0).text())/
+                        Integer.parseInt(field.childrenByName(MusicGrammar.DENOMINATOR).get(0).text());
+            }
+            else if(field.name() == MusicGrammar.TRACKNUMBER) {
+                trackNumber = Integer.parseInt(field.childrenByName(MusicGrammar.NUMBER).get(0).text());
+            }
+            else if(field.name() == MusicGrammar.TEMPO) {
+                tempo = Integer.parseInt(field.childrenByName(MusicGrammar.NUMBER).get(0).text());
+            }
+            else {
+                throw new AssertionError("should never get here");
+            }
+        }
+        
+        //Parse info from all voices
+        for(int i = 1; i<compositionTree.children().length(); i++) {
+            
+            ParseTree<MusicGrammar> voice = compositionTree.children().get(i);
+            //Voice is composed of a Line of Music and a Line of Lyrics
+            //ParseLyrics into single note lyrics
+            List<String> lyricList = parseLyrics(compositionTree.childrenByName(MusicGrammar.LYRIC));
+            int lyricIndex = 0;
+            
+            //Now create the associated line of music
+            List<Music> lineOfMusic = new ArrayList<>();
+            
+            for(int j = 0; j < voice.children().length(); j++) {
+                ParseTree<MusicGrammar> measure = voice.children().get(j);
+                for(ParseTree<MusicGrammar> primitive: measure.children()) {
+                    if(primitive.name() == MusicGrammar.CHORD) {
+                        for(ParseTree<MusicGrammar> note: primitive.childrenByName(MusicGrammar.NOTE)) {
+                            parseNote(note, 1, 1);
+                        }
+                    }
+                    else if(primitive.name() == MusicGrammar.TUPLE) {
+                        
+                    }
+                    else { //note
+                        parseNote(primitive, 1, );
+                    }
+                    lyricIndex ++;
+                }
+                
+            }
+        }
     }
 
+    private static List<String> parseLyrics(List<ParseTree<MusicGrammar>> childrenByName) {
+        // TODO Auto-generated method stub
+        return null;
+    }
 }
 

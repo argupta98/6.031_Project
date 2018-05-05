@@ -1,16 +1,22 @@
 package karaoke;
 
-import static org.junit.Assert.assertEquals;
 
 import java.util.HashMap;
 import java.util.Map;
-
-import karaoke.Composition.Key;
 import karaoke.Voice.LyricListener;
 
+//Mutable class
 public class Composition {
     private final Map<String, Voice> voices;
     public enum Key{A, B, C, D, E, F, G}
+    //Modifiable
+    private double tempo;
+    private String title;
+    private String composer;
+    private double length;
+    private double meter;
+    private int trackNumber;
+    private int numberOfVoices;
     
     //AF(Voices) = A composition music piece which consists of all the voices in voices played
     //             together
@@ -23,10 +29,14 @@ public class Composition {
     
     /**
      * Creates a new composition with all the voices
-     * @param voices a list of the voices in the composition
      */
-    public Composition(Map<String, Voice> voices) {
-        this.voices = new HashMap<>(voices);
+    public Composition() {
+        this.voices = new HashMap<>();
+        this.numberOfVoices = 0;
+        this.tempo = DEFAULT_TEMPO;
+        this.meter = DEFAULT_METER;
+        this.length= DEFAULT_LENGTH;
+        this.composer = DEFAULT_COMPOSER;
     }
     
     /**
@@ -53,11 +63,19 @@ public class Composition {
         throw new UnsupportedOperationException("not implemented yet");
     }
     
+    
     /**
      * @return the title of the composition
      */
     public String title() {
         throw new UnsupportedOperationException("not implemented yet");
+    }
+    
+    /**
+     * set the title of the composition
+     */
+    public void setTitle(String title) {
+        this.title = title;
     }
     
     /**
@@ -68,10 +86,24 @@ public class Composition {
     }
     
     /**
+     * @return the composer of the composition
+     */
+    public void setComposer(String composer) {
+        this.composer = composer;
+    }
+    
+    /**
      * @return the tempo of the composition
      */
     public double tempo() {
         throw new UnsupportedOperationException("not implemented yet");
+    }
+    
+    /**
+     * @return the tempo of the composition
+     */
+    public void setTempo(double tempo) {
+        this.tempo = tempo;
     }
     
     /**
@@ -82,6 +114,13 @@ public class Composition {
     }
     
     /**
+     * @return the default length of a note in the composition
+     */
+    public void setLength(double length) {
+        this.length = length;
+    }
+    
+    /**
      * @return the track number of the composition in a set of compositions
      */
     public int trackNumber() {
@@ -89,9 +128,23 @@ public class Composition {
     }
     
     /**
+     * @return the track number of the composition in a set of compositions
+     */
+    public void setTrackNumber(int trackNumber) {
+        this.trackNumber = trackNumber; 
+    }
+    
+    /**
      * @return the key the composition is written in
      */
     public Key key(){
+        throw new UnsupportedOperationException("not implemented yet");
+    }
+    
+    /**
+     * @return the key the composition is written in
+     */
+    public void setKey(){
         throw new UnsupportedOperationException("not implemented yet");
     }
     

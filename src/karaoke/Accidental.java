@@ -6,26 +6,27 @@ import karaoke.sound.SequencePlayer;
 
 public class Accidental implements Music {
     
-    public enum ACCIDENTAL{
+    public enum Acc{
         SHARP,
         FLAT,
         NATURAL,
-        DOUBLESHARP,
-        DOUBLEFLAT
     }
     
+    private final Acc accidental;
+    private final Note note;
     
+    public Accidental(Note note, Acc accidental) {
+        this.note = note;
+        this.accidental = accidental;
+    }
     
-     private final ACCIDENTAL accidental;
-     private final Note note;
     @Override
     public double duration() {
-        // TODO Auto-generated method stub
-        return 0;
+        return this.note.duration();
     }
    @Override
-    public void play(SequencePlayer player, double beat) {
-        // TODO Auto-generated method stub   
+    public void play(SequencePlayer player, double beat, Voice myVoice) {
+        SequencePlayer accidentalPlayer
     }
 
 }

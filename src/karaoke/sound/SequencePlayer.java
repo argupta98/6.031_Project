@@ -24,7 +24,7 @@ public interface SequencePlayer {
     /**
      * Schedule a callback when the synthesizer reaches a time.
      * @param atBeat beat at which to call the callback
-     * @param callback function to call, with type double->void. 
+     * @param callback function to call, with type double -> void. 
      *              The double parameter is the time when actually called, in beats.
      *              This time may be slightly different from atBeat because of rounding.
      */

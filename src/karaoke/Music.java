@@ -1,4 +1,4 @@
-package karaoke;''
+package karaoke;
 
 import karaoke.Voice.LyricListener;
 import karaoke.sound.SequencePlayer;
@@ -23,6 +23,6 @@ public interface Music {
      * @param player to play the piece on
      * @param beat to start song on
      */
-    public void play(SequencePlayer player, double beat, LyricListener listener);
+    public void play(SequencePlayer player, double beat, Voice voice);
     
 }

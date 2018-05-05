@@ -17,9 +17,8 @@ Title ::= [\w]+;
 Voice ::= ('V:' VoiceName '\n')? MusicLine '\n'('w:' Lyric)?;
 MusicLine ::= (Measure)+;
 ///////////////Add repeat and other things around measure
-Measure ::= (Primitive)+ ('|')?;
+Measure ::= (Note | Chord | Tuple)+ ('|')?;
 ///////////////
-Primitive ::= Note | Chord | Tuple; 
 Chord ::= '[' (note)+ ']';
 Tuple ::= '('Number (note)+;
 Note ::= (Accidental)* Letter (OctaveUp|OctaveDown)* (NoteNumerator)? (NoteDenominator)?;
