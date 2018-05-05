@@ -14,14 +14,14 @@ VoiceName ::= [\w]+;
 Key ::= [A-G];
 Title ::= [\w]+;
 //Music grammar
-Voice ::= ('V:' VoiceName '\n')? MusicLine (Lyric)?;
+Voice ::= ('V:' VoiceName '\n')? MusicLine '\n'('w:' Lyric)?;
 MusicLine ::= (Measure)+;
 ///////////////Add repeat and other things around measure
 Measure ::= (Primitive)+ ('|')?;
 ///////////////
 Primitive ::= Note | Chord | Tuple; 
-Chord ::= 'TODO';
-Tuple ::= 'TODO';
+Chord ::= '[' (note)+ ']';
+Tuple ::= '('Number (note)+;
 Note ::= (Accidental)* Letter (OctaveUp|OctaveDown)* (NoteNumerator)? (NoteDenominator)?;
 OctaveUp ::= '\'';
 OctaveDown ::= ',';
@@ -30,12 +30,11 @@ NoteDenominator ::= '/' (Number)*;
 Accidental ::= (Sharp|Flat);
 Sharp ::= '^';
 Flat ::= '_';
-//Lyric grammar
-Lyric ::= Syllable ([-|\s] Syllable | '_')*;
-SyllableNote ::= syllable ([~\\-] syllable)+;
-Syllable ::= [\w *];
 }
-
+//Lyric grammar
+Lyric ::= SyllableNote ([-| ] SyllableNote | '_')* '\n';
+SyllableNote ::= syllable ([~] syllable)*;
+Syllable ::= [\w*!?&^()$@'"]+;
 Letter ::= [A-G]|[a-g]|'z';
 Comment ::= '%'[^end]* end;
 whitespace ::= [ \t\r]+;

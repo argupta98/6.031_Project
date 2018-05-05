@@ -25,8 +25,16 @@ public class MusicParser {
                 "M: 4/4 \r\n" + 
                 "L: 1/4 \r\n" + 
                 "Q: 1/4 = 100\r\n" + 
+                "V: voice1\n"+
+                "V: voice2\n"+
                 "K:D\n"+
-                "^^A _b'' c,3/4 D4 E/4 F/";
+                "V: voice1\n"+
+                "^^A _b'' c,3/4 D4 | E/4 F/|\n"+
+                "w: I a-m so happy~ness!\n"+
+                "V: voice2\n"+
+                "[AB] [A/2B/] (3ABC (2a/2b/2 c,3/4 D4 | E/4 F/|\n"+
+                "w: I a-m so happy~ness!\n";
+        
         System.out.println(input);
         MusicParser.parse(input);
         //System.out.println(expression);
