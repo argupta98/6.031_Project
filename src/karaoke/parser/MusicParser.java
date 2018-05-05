@@ -9,6 +9,7 @@ import java.io.IOException;
 import edu.mit.eecs.parserlib.ParseTree;
 import edu.mit.eecs.parserlib.Parser;
 import edu.mit.eecs.parserlib.UnableToParseException;
+import edu.mit.eecs.parserlib.Visualizer;
 import karaoke.Composition;
 
 public class MusicParser {
@@ -19,16 +20,25 @@ public class MusicParser {
      * @throws UnableToParseException if example expression can't be parsed
      */
     public static void main(final String[] args) throws UnableToParseException {
-        final String input = "AIWEUFHE";
+        final String input = "X:1\r\n" + 
+                "T:Title\r\n" + 
+                "M: 4/4 \r\n" + 
+                "L: 1/4 \r\n" + 
+                "Q: 1/4 = 100\r\n" + 
+                "K:D\n"+
+                "^^A _b'' c,3/4 D4 E/4 F/";
         System.out.println(input);
-        final Composition expression = MusicParser.parse(input);
-        System.out.println(expression);
+        MusicParser.parse(input);
+        //System.out.println(expression);
     }
     
     // the nonterminals of the grammar
     private static enum ExpressionGrammar {
-        EXPRESSION, RESIZE, VERTICAL, HORIZONTAL, UPPER, LOWER,PRIMITIVE,  
-        FILENAME, NUMBER, WHITESPACE, TOPTOBOTTOMOPERATOR, CAPTION
+        COMPOSITION, HEADER, TRACKNUMBER, COMPOSER, METER, LENGTH, TEMPO,
+        VOICENAME, KEY, VOICE, MUSICLINE, MEASURE, PRIMITIVE, NOTE, OCTAVEUP, OCTAVEDOWN,
+        NOTENUMERATOR, NOTEDENOMINATOR, ACCIDENTAL, SHARP, FLAT, LYRIC, SYLLABLENOTE, 
+        SYLLABLE, LETTER, COMMENT, NUMBER, END, WHITESPACE, WHITESPACEANDCOMMENT, TITLE,
+        CHORD, TUPLE
     }
 
     private static Parser<ExpressionGrammar> parser = makeParser();
@@ -42,8 +52,8 @@ public class MusicParser {
     private static Parser<ExpressionGrammar> makeParser() {
         try {
             // read the grammar as a file, relative to the project root.
-            final File grammarFile = new File("src/memely/Expression.g");
-            return Parser.compile(grammarFile, ExpressionGrammar.EXPRESSION);
+            final File grammarFile = new File("src/karaoke/parser/Abc.g");
+            return Parser.compile(grammarFile, ExpressionGrammar.COMPOSITION);
 
             // A better way would read the grammar as a "classpath resource", which would allow this code 
             // to be packed up in a jar and still be able to find its grammar file:
@@ -71,19 +81,20 @@ public class MusicParser {
      * @return Expression parsed from the string
      * @throws UnableToParseException if the string doesn't match the Expression grammar
      */
-    public static Composition parse(final String string) throws UnableToParseException {
+    public static void parse(final String string) throws UnableToParseException {
         // parse the example into a parse tree
         final ParseTree<ExpressionGrammar> parseTree = parser.parse(string);
 
         // display the parse tree in various ways, for debugging only
-        // System.out.println("parse tree " + parseTree);
-        // Visualizer.showInBrowser(parseTree);
-
+        System.out.println("parse tree " + parseTree);
+        Visualizer.showInBrowser(parseTree);
+        
+        //TODO
         // make an AST from the parse tree
-        final Composition composition = makeAbstractSyntaxTree(parseTree);
+        //final Composition composition = makeAbstractSyntaxTree(parseTree);
         // System.out.println("AST " + expression);
         
-        return composition;
+        //return composition;
     }
     
     /**
