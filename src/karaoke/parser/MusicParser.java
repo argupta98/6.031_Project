@@ -4,27 +4,37 @@
 package karaoke.parser;
 
 import java.util.List;
+import java.util.Map;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.Map;
 
 import edu.mit.eecs.parserlib.ParseTree;
 import edu.mit.eecs.parserlib.Parser;
 import edu.mit.eecs.parserlib.UnableToParseException;
 import edu.mit.eecs.parserlib.Visualizer;
+import karaoke.Chord;
 import karaoke.Composition;
+import karaoke.Composition.Key;
 import karaoke.Music;
 import karaoke.Voice;
+import karaoke.sound.Pitch;
 
 public class MusicParser {
     private static double DEFAULT_TEMPO = 100;
     private static String DEFAULT_COMPOSER = "Unknown";
     private static double DEFAULT_LENGTH = 1.0/4;
     private static double DEFAULT_METER = 1.0;
-    
+    private static Map<Key, List<Character>> SHARPS_FOR_KEY = new HashMap<>();
+    static {
+        //TODO
+    }
+    private static Map<Key, List<Character>> FLATS_FOR_KEY = new HashMap<>();
+    static {
+        //TODO
+    }
     /**
      * Main method. Parses and then reprints an example expression.
      * 
@@ -129,13 +139,15 @@ public class MusicParser {
     
 
     private static Composition makeComposition(ParseTree<MusicGrammar> compositionTree) {
-        ParseTree<MusicGrammar> headerTree = compositionTree.children().get(0);
+        ParseTree<MusicGrammar> headerTree = compositionTree.childrenByName(MusicGrammar.HEADER).get(0);
         double tempo = DEFAULT_TEMPO;
         String title;
         String composer = DEFAULT_COMPOSER;
         double length = DEFAULT_LENGTH;
         double meter = DEFAULT_METER;
+        Key key;
         int trackNumber;
+        List<String> voices = new ArrayList<>();
         
         //Parse Header info
         for(ParseTree<MusicGrammar> field: headerTree.children()) {
@@ -159,15 +171,23 @@ public class MusicParser {
             else if(field.name() == MusicGrammar.TEMPO) {
                 tempo = Integer.parseInt(field.childrenByName(MusicGrammar.NUMBER).get(0).text());
             }
+            else if(field.name() == MusicGrammar.KEY) {
+                key = Key.valueOf(field.text());
+            }
+            else if(field.name() == MusicGrammar.VOICENAME) {
+                voices.add(field.text());
+            }
             else {
                 throw new AssertionError("should never get here");
             }
         }
         
-        //Parse info from all voices
-        for(int i = 1; i<compositionTree.children().length(); i++) {
-            
-            ParseTree<MusicGrammar> voice = compositionTree.children().get(i);
+        //Parse info from all voices in the piece
+        for(ParseTree<MusicGrammar> voice: compositionTree.children()) {
+            //skip the header info
+            if(voice.name() == MusicGrammar.HEADER) {
+                continue;
+            }
             //Voice is composed of a Line of Music and a Line of Lyrics
             //ParseLyrics into single note lyrics
             List<String> lyricList = parseLyrics(compositionTree.childrenByName(MusicGrammar.LYRIC));
@@ -176,30 +196,82 @@ public class MusicParser {
             //Now create the associated line of music
             List<Music> lineOfMusic = new ArrayList<>();
             
-            for(int j = 0; j < voice.children().length(); j++) {
-                ParseTree<MusicGrammar> measure = voice.children().get(j);
+            for(ParseTree<MusicGrammar> measure:voice.children()) {
                 for(ParseTree<MusicGrammar> primitive: measure.children()) {
+                    //Case of Chord
                     if(primitive.name() == MusicGrammar.CHORD) {
+                        List<Music> chordNotes = new ArrayList<>();
                         for(ParseTree<MusicGrammar> note: primitive.childrenByName(MusicGrammar.NOTE)) {
-                            parseNote(note, 1, 1);
+                            chordNotes.add(parseNote(note, 4*length, -1));
                         }
+                        lineOfMusic.add(new Chord(chordNotes, lyricIndex));
+                        lyricIndex++;
                     }
+                    
+                    //Case of Tuple
                     else if(primitive.name() == MusicGrammar.TUPLE) {
+                        double tupleSize = Integer.parseInt(primitive.childrenByName(MusicGrammar.NUMBER)
+                                .get(0).text());
+                        assert primitive.childrenByName(MusicGrammar.NOTE).size() == tupleSize;
+                        for(ParseTree<MusicGrammar> note: primitive.childrenByName(MusicGrammar.NOTE)) {
+                            lineOfMusic.add(parseNote(note, 4*(tupleSize-1)/tupleSize, lyricIndex));
+                            lyricIndex++;
+                        }
                         
                     }
-                    else { //note
-                        parseNote(primitive, 1, );
+                    //Case of Note
+                    else if(primitive.name() == MusicGrammar.NOTE){ 
+                        parseNote(primitive, 4*length, lyricIndex);
+                        lyricIndex ++;
                     }
-                    lyricIndex ++;
                 }
                 
             }
         }
     }
 
-    private static List<String> parseLyrics(List<ParseTree<MusicGrammar>> childrenByName) {
-        // TODO Auto-generated method stub
-        return null;
+    private static Music parseNote(ParseTree<MusicGrammar> note, double multiplier, int lyricIndex) {
+        String value = note.childrenByName(MusicGrammar.LETTER).get(0).text();
+        Pitch notePitch = new Pitch(value.toUpperCase().charAt(0));
+        //case of one octave up due to being lowercase
+        if(value.toUpperCase() != value) {
+            notePitch = notePitch.transpose(Pitch.OCTAVE);
+        }
+        
+        for(ParseTree<MusicGrammar> accidental: note.childrenByName(MusicGrammar.ACCIDENTAL)) {
+            if(accidental.name() == MusicGrammar.FLAT) {
+                notePitch = notePitch.transpose(-1);
+            }
+            else if(accidental.name() == MusicGrammar.SHARP) {
+                notePitch = notePitch.transpose(1);
+            }
+        }
+        
+        for(ParseTree<MusicGrammar> octaveups: note.childrenByName(MusicGrammar.OCTAVEUP)) {
+            notePitch = notePitch.transpose(Pitch.OCTAVE);
+        }
+        
+        for(ParseTree<MusicGrammar> octaveDown: note.childrenByName(MusicGrammar.OCTAVEDOWN)) {
+            notePitch = notePitch.transpose(-Pitch.OCTAVE);
+        }
+        
+        double numerator = 1;
+        double denominator = 1;
+        
+        
+        return new Note(notePitch, multiplier*lyricIndex)
+        
+    }
+
+    private static List<String> parseLyrics(List<ParseTree<MusicGrammar>> lyricList) {
+        if(lyricList.size() ==0) {
+            return Collections.emptyList();
+        }
+        
+        List<String> lyricSyllables = new ArrayList<>();
+        for(ParseTree<MusicGrammar> syllableNote: lyricList.get(0).children()) {
+            //TODO fill in arrayList
+        }
     }
 }
 
