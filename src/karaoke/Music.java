@@ -11,6 +11,7 @@ public interface Music {
     //         + Chord(notes: List<Note>) + Tuplet(tupletNumber:int, notes: List<Music>)  
     //         + Repeat(main: Music, Endings: List<Music>) + Concat(left: Music, right: Music)
 
+
     
     /**
      * @return the length of this piece in beats

@@ -26,7 +26,7 @@ public class ParseASTTest {
     //              K: Key, which determines the key signature for the piece.
     //              L: Default length or duration of a note.
     //              M: Meter. It determines the sum of the durations of all notes within a bar, expressed as a rational number like 4/4 or 3/8. 
-    //                 The special meter C (“common time”) means 4/4, and C| (“cut common time”) means 2/2.
+    //                 The special meter C (ï¿½common timeï¿½) means 4/4, and C| (ï¿½cut common timeï¿½) means 2/2.
     //              Q: Tempo. It represents the number of beats of the given length to play per minute.
     //              T: Title of the piece.
     //              V: Voices used in the piece.
@@ -205,8 +205,25 @@ public class ParseASTTest {
     
     //REST Test Cases Dotun
     //Covers: parseString: rest: Handles 'z' rest operator
-    @Test public void testParseStringRest() {
-        
+    @Test public void testParseStringRest() throws UnableToParseException {
+        String basicSong = generateHeader(1.0/8, 8, 8, 100, Key.C) + "z ^A z _A";
+        Composition music = MusicParser.parse(basicSong);
+        assertEquals(basicSong, music.toString());
+    }
+    
+    //REPEAT Test Cases
+    // Covers: Repeat with the same ending
+    @Test public void testParseStringRepeat() throws UnableToParseException{
+        String basicSong = generateHeader(1.0/8, 8, 8, 100, Key.C) + "|: C D E F | G A B c :|";
+        Composition music = MusicParser.parse(basicSong);
+        assertEquals(basicSong, music.toString());
+    }
+    
+    // Covers: Repeat with different endings
+    @Test public void testParseStringRepeatDiffEnding() throws UnableToParseException{
+        String basicSong = generateHeader(1.0/8, 8, 8, 100, Key.C) + "|: C D E F |[1 G A B c | G A B B :|[2 F E D C |";
+        Composition music = MusicParser.parse(basicSong);
+        assertEquals(basicSong, music.toString()); 
     }
     
     //CHORDS Test Cases Nick implements

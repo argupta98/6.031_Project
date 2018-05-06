@@ -5,7 +5,7 @@ import com.sun.net.httpserver.HttpServer;
 public class StreamingServer {
     
     private final HttpServer server;
-    private final Compostion piece;
+    private final Composition piece;
     
     // Abstraction Function
     // AF(sever, piece) => A webserver server that streams the lyrics of piece for the client.
@@ -13,6 +13,11 @@ public class StreamingServer {
     // Rep Invaraint
     // - server cannot be null
     // - piece cannot be null
+    
+    // Safety from Rep Exposure
+    
+    
+    // Thread Safety Argument
     
     /**
      * Make a new server to stream lyrics to a given piece of music

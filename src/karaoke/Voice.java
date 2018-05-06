@@ -25,6 +25,9 @@ public class Voice {
     // - allSyllables cannot be null
     // - listeners cannot be null
     
+    // Safety from Rep Exposure 
+    
+    
     //Thread Safety Argument:
     // - 
     
