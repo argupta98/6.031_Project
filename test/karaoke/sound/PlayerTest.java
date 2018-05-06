@@ -6,61 +6,71 @@ package karaoke.sound;
  */
 public class PlayerTest {
     
-  //Test Partitions
-    //  parseFile():
-    //      File Existence: File exists, File Doesn't exist
-    //      File Formatting: File is correctly formatted, file is not correctly formatted
-    //      (Actual parsing is done by parseString which is tested for more parsing related things)
-    //
-    //  parseString():
-    //      Header: Correctly handles following Cases:
-    //              C: Name of the composer.
-    //              K: Key, which determines the key signature for the piece.
-    //              L: Default length or duration of a note.
-    //              M: Meter. It determines the sum of the durations of all notes within a bar, expressed as a rational number like 4/4 or 3/8. 
-    //                 The special meter C (�common time�) means 4/4, and C| (�cut common time�) means 2/2.
-    //              Q: Tempo. It represents the number of beats of the given length to play per minute.
-    //              T: Title of the piece.
-    //              V: Voices used in the piece.
-    //              X: Track number
-    //              Correctly handles omission of M, L, Q, C, and resulting AST has default values
-    //
-    //       Note:  Handles uppercase A-G, lowercase a-g, handle ' operator
-    //
-    //       Note Length: Handles numerator and denominator, numerator omitted, denominator omitted
-    //
-    //       Accidentals: Can parse ^,_,= operators, 
-    //                    Octaves: only one instance of that note in the bar, 
-    //                             multiple instances of the note in the bar,
-    //                             multiple instances of the note at different octaves
-    //                    number: 0 accidentals in bar, 
-    //                            1 accidental in bar, 
-    //                           >1 accidental in bar
-    //                    Overriden: Accidental is overriden over the course of a bar
-    //                               Accidental is not overriden over the course of a bar
-    //
-    //      Rests: Handles 'z' rest operator, note length tests apply
-    //
-    //      Chords: Duration: All notes have same duration, different notes have different durations 
-    //                          (chord duration is the duration of first note)
-    //              Can be parsed
-    //
-    //      Tuplets: Tuplets can be validly parsed
-    //               Number: Duplet, Triplet, Quadruplet (check duration of each)
-    //               Contains: notes, chords, both
-    //                 
-    //      Repeats: Ending: 1 ending, 2 different endings, >2 different endings
-    //               syntax: enclosed by |: :|, only ends with :|, has [1, [2 ending notation
-    //               number bars: repeat encloses 1 bar, 2 bars, >2 bars
-    //
-    //       Voices: number: 1 voice, 2 voices, >2 voices
-    //               ordering: interleaved (one voice spread over multiple lines), not interleaved
-    //
-    //       Lyrics: Operators: -, _,*,~,<,|
-    //               Operator partitions: - : location: between 2 strings, after a space, after a -, before a _
-    //                                     |: enough notes in bar (ignored), fewer notes than bar (advances to next bar)
-    //                                     _: 1, 2, >2 in a row 
-    //       
-    //       Comments: Comment at end of string, comment in beginning of string, comment in the midle of string
-
+  
+/**
+ * Testing Strategy 
+ * play() Partitions
+ * - Header Contents:
+ *   - Key: C (default key), none default keys
+ *   - Tempo: 100 bpm (default), > 0 && < 100 bpm, > 100 bpm
+ *   - Voices: 0 voices, 1 voice, > 1 voice
+ * - Music Contents:
+ *   - Notes:
+ *     - Number of notes: 0, 1, > 1
+ *     - Raised octaves: 0 notes, 1 note, > 1 note
+ *   - Rests:
+ *     - Number of rests: 0, 1, > 1
+ *   - Chords:
+ *     - Number of chords: 0, 1, > 1
+ *   - Accidentals:
+ *     - Number of accidentals: 0, 1, > 1
+ *   - Tuplets:
+ *     - Number of tuplets: 0, 1, > 1
+ *   - Repeats:
+ *     - Repeats: 0, 1 ending, > 1 endings
+ *     
+ */
+    
+    /**
+     * Manual Tests
+     * 
+     * Covers: Empty song
+     * 1. Create the empty abc file
+     * 2. Create new player for this file 
+     * 3. Assure that nothing will play
+     * 
+     * 
+     * 
+     * Covers: Non default Key, default tempo, 1 voice, > 1 notes
+     * 1. Create player for abc_song file
+     * 2. Call play()
+     * 3. Listen to it and make sure it sounds like the ABC song
+     * 
+     * 
+     * Covers: > 100 bpm, > 1 voice, > 1 Accidental, > 1 Rest, > 1 Chord, > 1 Tuplet
+     * 1. Create player for fur_elise abc file
+     * 2. Call play
+     * 3. Listen and ensure that it sounds like expected
+     * 
+     * Covers: > 0 && < 100 bpm
+     * 1. Create player for invention abc file
+     * 2. Call play
+     * 3. Listen and ensure that it sounds like expected
+     * 
+     * Covers 1 note, 1 accidental, 1 rest
+     * 1. Create abc file of standard header and the music composition of: C^ z
+     * 2. Create player for this abc file
+     * 3. Listen and ensure that it is a C# note and then a rest
+     * 
+     * Covers: > 1 endings in repeat
+     * 1. Create player for paddy abc file 
+     * 2. Call play
+     * 3. Listen and ensure that is the expected sound 
+     * 
+     * Covers: 1 ending in repeat 
+     * 1. Create abc file with the standard header and the music composition of: |: C D E F | G A B c :|
+     * 2. Create player for this abc file
+     * 3. Call play
+     * 4. Listen and ensure that the notes repeat 
+     */
 }
