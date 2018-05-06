@@ -1,7 +1,7 @@
 package karaoke.player;
 
 import karaoke.Composition;
-import karaoke.Composition.LyricListener;
+import karaoke.Voice.LyricListener;
 import karaoke.parser.MusicParser;
 
 import java.io.File;

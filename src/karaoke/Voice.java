@@ -1,5 +1,7 @@
 package karaoke;
 
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -9,7 +11,7 @@ public class Voice {
     
     
     private final Music piece;
-    private final List<Syllable> allSyllables;
+    private final List<String> allSyllables;
     private final Set<LyricListener> listeners;
     
     
@@ -28,10 +30,16 @@ public class Voice {
     //Thread Safety Argument:
     // - 
     
+    public Voice(Music piece, List<String> syllables) {
+        this.piece = piece;
+        this.allSyllables = syllables;
+        this.listeners = Collections.synchronizedSet(new HashSet<>());
+    }
+    
    /** Listens for note being played and provides the necessary lyric */
     public interface LyricListener{
        /** Called when note is being played */
-       public void notePlayed();
+       public void notePlayed(String line);
    }
     
     /**
@@ -50,6 +58,12 @@ public class Voice {
     public void addListener(LyricListener listener) {
         throw new RuntimeException("Not implemented");
     }
-    
 
+    public Object notifyAll(int lyricIndex) {
+        return null;
+    }
+    
+    public String name() {
+        
+    }
 }
