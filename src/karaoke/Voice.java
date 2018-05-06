@@ -1,5 +1,6 @@
 package karaoke;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
@@ -10,10 +11,10 @@ import karaoke.sound.SequencePlayer;
 public class Voice {
     
     
-    private final Music piece;
+    private final Music music;
     private final List<String> allSyllables;
     private final Set<LyricListener> listeners;
-    
+    private final String name;
     
     // Abstraction Function
     // AF(piece, allSyllables, listeners) => A Voice that sings the music piece which pronounces the syllables in allSyllables, and
@@ -27,10 +28,11 @@ public class Voice {
     //Thread Safety Argument:
     // - 
     
-    public Voice(Music piece, List<String> syllables) {
-        this.piece = piece;
+    public Voice(Music piece, List<String> syllables, String name) {
+        this.music = piece;
         this.allSyllables = syllables;
         this.listeners = Collections.synchronizedSet(new HashSet<>());
+        this.name = name;
     }
     
    /** Listens for note being played and provides the necessary lyric */
@@ -61,6 +63,13 @@ public class Voice {
     }
     
     public String name() {
-        
+        return this.name;
+    }
+    
+    public Voice join(Voice voice) {
+        Music newMusic = new Concat(this.music, voice.music);
+        List<String> combinedSyllables = new ArrayList<>(this.allSyllables);
+        combinedSyllables.addAll(voice.allSyllables);
+        return new Voice(newMusic, combinedSyllables, name);
     }
 }

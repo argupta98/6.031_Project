@@ -77,22 +77,22 @@ public class ParseASTTest {
     
     private static final String NEW_METER_HEADER = "X: 1\r\n" + 
             "T:Title\r\n"
-            + "L: 1/8" + 
+            + "L: 1/8\n" + 
             "K:C\n";
     
-    private static String generateHeader(double defaultNote, double meterNumerator, double meterDenominator, double tempo, Key key) {
+    private static String generateHeader(int defaultNoteDenominator, int meterNumerator, int meterDenominator, int tempo, Key key) {
         return "X:1\r\n" + 
                 "T:Title\r\n" + 
                 "M:"+meterNumerator+"/"+meterDenominator+"\r\n" + 
-                "L:"+defaultNote+"\r\n" + 
-                "Q:"+defaultNote+"="+tempo+"\r\n" + 
-                "K:D";
+                "L: 1/"+defaultNoteDenominator+"\r\n" + 
+                "Q: 1/"+defaultNoteDenominator+"="+tempo+"\r\n" + 
+                "K:D\n";
     }
     //HEADER Test Cases
     //Covers: parseString: Header: Handles all cases
     @Test public void testParseStringHeaderAllPresent() throws UnableToParseException {
         File headerFile = new File("sample-abc/abc_song.abc");
-        Composition music = MusicParser.parseFile(headerFile);
+        Composition music = (new MusicParser()).parseFile(headerFile);
         assertEquals("Alphabet Song", music.title());
         assertEquals("Traditional Kid's Song", music.composer());
         assertEquals(100, music.tempo(), .001);
@@ -105,7 +105,7 @@ public class ParseASTTest {
     //Covers: parseString: Header: Handles Omission of all possible omitted fields
     @Test public void testParseStringHeaderWithDefaults() throws UnableToParseException {
         String basicSong = DEFAULT_HEADER+"C C G";
-        Composition music = MusicParser.parse(basicSong);
+        Composition music = (new MusicParser()).parse(basicSong);
         assertEquals("Title", music.title());
         assertEquals("Unknown", music.composer());
         assertEquals(100, music.tempo(), .001);
@@ -119,50 +119,50 @@ public class ParseASTTest {
     //Covers: parseString: Note: A-G
     @Test public void testParseStringNoteUpperCase() throws UnableToParseException {
         String basicSong = DEFAULT_HEADER+"A B C DE F  G";
-        Composition music = MusicParser.parse(basicSong);
+        Composition music = (new MusicParser()).parse(basicSong);
         //figure out how to test that this is correct AST
     }
     
     //Covers: parseString: Note: a-g
     @Test public void testParseStringNoteLowerCaseNoOperator() throws UnableToParseException {
         String basicSong = DEFAULT_HEADER+"a b c de f  g";
-        Composition music = MusicParser.parse(basicSong);
+        Composition music = (new MusicParser()).parse(basicSong);
         //figure out how to test one octave up
     }
     
     //Covers: parseString: Note: a-g, ' operator: 1, >1
     @Test public void testParseStringNoteLowerCaseOctaveOperator() throws UnableToParseException {
         String basicSong = DEFAULT_HEADER+"a'' b' c''' de' f'  g";
-        Composition music = MusicParser.parse(basicSong);
+        Composition music = (new MusicParser()).parse(basicSong);
         //figure out how to test multiple octave's up
     }
     
     //NOTE LENGTH Test cases
     //Covers: parseString: Note Length: Handles numerator and denominator
     @Test public void testParseStringNoteLengthDenominatorAndNumerator() throws UnableToParseException {
-        String basicSong = DEFAULT_HEADER+"4A/3 17A/578";
-        Composition music = MusicParser.parse(basicSong);
+        String basicSong = DEFAULT_HEADER+"A4/3 A17/578";
+        Composition music = (new MusicParser()).parse(basicSong);
         assertEquals(4.0/3+17.0/578, music.duration(), .001);
     }
     
     //Covers: parseString: Note Length: Denominator
     @Test public void testParseStringNoteLengthDenominatorOnly() throws UnableToParseException {
         String basicSong = NEW_METER_HEADER+"A/3";
-        Composition music = MusicParser.parse(basicSong);
+        Composition music = (new MusicParser()).parse(basicSong);
         assertEquals(1/6, music.duration(), .001);
     }
     
     //Covers: parseString: Note Length: Handles denominator missing
     @Test public void testParseStringNoteLengthDenominatorMissing() throws UnableToParseException {
         String basicSong = NEW_METER_HEADER+"A/";
-        Composition music = MusicParser.parse(basicSong);
+        Composition music = (new MusicParser()).parse(basicSong);
         assertEquals(1/4, music.duration(), .001);
     }
     
     //Covers: parseString: Note Length: Numerator
     @Test public void testParseStringNoteLengthOnlyNumerator() throws UnableToParseException {
-        String basicSong = DEFAULT_HEADER+"14A";
-        Composition music = MusicParser.parse(basicSong);
+        String basicSong = DEFAULT_HEADER+"A14";
+        Composition music = (new MusicParser()).parse(basicSong);
         assertEquals(14, music.duration(), .001);
     }
     
@@ -170,37 +170,37 @@ public class ParseASTTest {
     //Covers: parseString: Accidental: Can be parsed
     @Test public void testParseStringAccidentalParse() throws UnableToParseException {
         String basicSong = NEW_METER_HEADER+"^A __c ^^B =A";
-        Composition music = MusicParser.parse(basicSong);
+        Composition music = (new MusicParser()).parse(basicSong);
         assertEquals(NEW_METER_HEADER+"^A __c ^^B =A", music.toString());
     }
     
     //Covers: parseString: Accidental: applied to one note in bar, >1 Accidental
     @Test public void testParseStringAccidentalOneNote() throws UnableToParseException {
-        String basicSong = generateHeader(1.0/8, 4, 4, 100, Key.F)+"^A";
-        Composition music = MusicParser.parse(basicSong);
-        assertEquals(generateHeader(1.0/8, 4, 4, 100, Key.F)+"^A", music.toString());
+        String basicSong = generateHeader(8, 4, 4, 100, Key.F)+"^A";
+        Composition music = (new MusicParser()).parse(basicSong);
+        assertEquals(generateHeader(8, 4, 4, 100, Key.F)+"^A", music.toString());
         
     }
     
     //Covers: parseString: Accidental: same note repeated in bar, not overridden, 1 accidental
     @Test public void testParseStringAccidentalMultipleNote() throws UnableToParseException {
-        String basicSong = generateHeader(1.0/8, 4, 8, 100, Key.C)+"^A A B A A A";
-        Composition music = MusicParser.parse(basicSong);
-        assertEquals(generateHeader(1.0/8, 4, 8, 100, Key.C)+"^A ^A B ^A A A", music.toString());
+        String basicSong = generateHeader(8, 4, 8, 100, Key.C)+"^A A B A A A";
+        Composition music = (new MusicParser()).parse(basicSong);
+        assertEquals(generateHeader(8, 4, 8, 100, Key.C)+"^A ^A B ^A A A", music.toString());
     }
     
     //Covers: parseString: Accidental: same note different octaves in bar
     @Test public void testParseStringAccidentalDifferentOctaves() throws UnableToParseException {
-        String basicSong = generateHeader(1.0/8, 4, 8, 100, Key.C)+"^A a B a'' A A";
-        Composition music = MusicParser.parse(basicSong);
-        assertEquals(generateHeader(1.0/8, 4, 8, 100, Key.C)+"^A a B a'' | A A", music.toString());
+        String basicSong = generateHeader(8, 4, 8, 100, Key.C)+"^A a B a'' A A";
+        Composition music = (new MusicParser()).parse(basicSong);
+        assertEquals(generateHeader(8, 4, 8, 100, Key.C)+"^A a B a'' | A A", music.toString());
     }
     
     //Covers: parseString: Accidental: Overriden, same note repeated, >1 accidental
     @Test public void testParseStringAccidentalOverride() throws UnableToParseException {
-        String basicSong = generateHeader(1.0/8, 8, 8, 100, Key.C)+"^A _A A =A A";
-        Composition music = MusicParser.parse(basicSong);
-        assertEquals(generateHeader(1.0/8, 8, 8, 100, Key.C)+"^A _A _A =A A", music.toString());
+        String basicSong = generateHeader(8, 8, 8, 100, Key.C)+"^A _A A =A A";
+        Composition music = (new MusicParser()).parse(basicSong);
+        assertEquals(generateHeader(8, 8, 8, 100, Key.C)+"^A _A _A =A A", music.toString());
     }
     
     //REST Test Cases Dotun
@@ -229,14 +229,14 @@ public class ParseASTTest {
     //Covers: parseString: Voices: 2 voices, not interleaved
     @Test public void testParseStringTwoVoice() throws UnableToParseException {
         File headerFile = new File("sample-abc/fur_elise.abc");
-        Composition music = MusicParser.parseFile(headerFile);
+        Composition music = (new MusicParser()).parseFile(headerFile);
         //check some property of voice is correct
     }
     
     //Covers: parseString: Voices: >2 voices, interleaved
     @Test public void testParseStringMultiVoiceInterleaved() throws UnableToParseException {
         File headerFile = new File("sample-abc/prelude.abc");
-        Composition music = MusicParser.parseFile(headerFile);
+        Composition music = (new MusicParser()).parseFile(headerFile);
         //check that some property of voice is correct
     }
     

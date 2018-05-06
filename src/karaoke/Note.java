@@ -18,6 +18,7 @@ public class Note implements Music{
         this.lyricIndex = lyricIndex;
     }
     
+    
     @Override
     public double duration() {
         return this.duration;

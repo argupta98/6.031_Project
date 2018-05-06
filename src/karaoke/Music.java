@@ -1,6 +1,4 @@
 package karaoke;
-
-import karaoke.Voice.LyricListener;
 import karaoke.sound.SequencePlayer;
 
 /**
@@ -9,8 +7,9 @@ import karaoke.sound.SequencePlayer;
 public interface Music {
     
     // Datatype Definiton:
-    // Music = Note(duration: double, pitch:Pitch, instrument: Instrument) + Accidental(accidental: Enum, note: Note) + Rest(duration: double)
-    //         + Chord(notes: List<Note>) + Tuplet(tupletNumber:int, notes: List<Notes>) + Measure(notes: List<Music>)+ Repeat(measures: List<Measures>, Endings: List<Measures>)
+    // Music = Note(duration: double, pitch:Pitch, instrument: Instrument) + Rest(duration: double)
+    //         + Chord(notes: List<Note>) + Tuplet(tupletNumber:int, notes: List<Music>)  
+    //         + Repeat(main: Music, Endings: List<Music>) + Concat(left: Music, right: Music)
 
     
     /**
