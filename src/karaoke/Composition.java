@@ -7,8 +7,13 @@ import karaoke.Voice.LyricListener;
 
 //Mutable class
 public class Composition {
-    private final Map<String, Voice> voices;
+    private static double DEFAULT_TEMPO = 100;
+    private static String DEFAULT_COMPOSER = "Unknown";
+    private static double DEFAULT_LENGTH = 1.0/4;
+    private static double DEFAULT_METER = 1.0;
+    private Map<String, Voice> voices;
     public enum Key{A, B, C, D, E, F, G}
+    public enum Accidental{FLAT, SHARP, DOUBLE_FLAT, DOUBLE_SHARP, NATURAL}
     //Modifiable
     private double tempo;
     private String title;
@@ -17,6 +22,7 @@ public class Composition {
     private double meter;
     private int trackNumber;
     private int numberOfVoices;
+    private Key key;
     
     //AF(Voices) = A composition music piece which consists of all the voices in voices played
     //             together
@@ -68,7 +74,7 @@ public class Composition {
      * @return the title of the composition
      */
     public String title() {
-        throw new UnsupportedOperationException("not implemented yet");
+        return this.title;
     }
     
     /**
@@ -82,7 +88,7 @@ public class Composition {
      * @return the composer of the composition
      */
     public String composer() {
-        throw new UnsupportedOperationException("not implemented yet");
+        return this.composer;
     }
     
     /**
@@ -96,7 +102,7 @@ public class Composition {
      * @return the tempo of the composition
      */
     public double tempo() {
-        throw new UnsupportedOperationException("not implemented yet");
+        return this.tempo;
     }
     
     /**
@@ -110,7 +116,7 @@ public class Composition {
      * @return the default length of a note in the composition
      */
     public double length() {
-        throw new UnsupportedOperationException("not implemented yet");
+        return this.length;
     }
     
     /**
@@ -124,7 +130,7 @@ public class Composition {
      * @return the track number of the composition in a set of compositions
      */
     public int trackNumber() {
-        throw new UnsupportedOperationException("not implemented yet"); 
+        return this.trackNumber;
     }
     
     /**
@@ -138,20 +144,31 @@ public class Composition {
      * @return the key the composition is written in
      */
     public Key key(){
-        throw new UnsupportedOperationException("not implemented yet");
+        return this.key;
     }
     
     /**
      * @return the key the composition is written in
      */
-    public void setKey(){
-        throw new UnsupportedOperationException("not implemented yet");
+    public void setKey(Key key){
+        this.key = key;
     }
     
     /**
      * @return the length of a bar of a composition
      */
     public double meter() {
-        throw new UnsupportedOperationException("not implemented yet");
+        return this.meter;
+    }
+    
+    /**
+     * @return the length of a bar of a composition
+     */
+    public void setMeter(double meter) {
+        this.meter = meter;
+    }
+
+    public void setVoices(Map<String, Voice> voiceMap) {
+        voices = new HashMap<>(voiceMap);
     }
 }

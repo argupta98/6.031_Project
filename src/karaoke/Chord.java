@@ -34,12 +34,13 @@ public class Chord implements Music{
     public double duration() {
         return notes.get(0).duration();
     }
+    
     @Override
     public void play(SequencePlayer player, double beat, Voice myVoice) {
         player.addEvent(beat, (newBeat) -> myVoice.notifyAll(lyricIndex));
         for(Music note: notes) {
             //Add a new voice that will do nothing when called (callback defined on the chord)
-            note.play(player, beat, new Voice(new Rest(0), Collections.emptyList()));
+            note.play(player, beat, new Voice(new Rest(0), Collections.emptyList(), ""));
         }
     }
 
