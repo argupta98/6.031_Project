@@ -9,7 +9,11 @@ import org.junit.Test;
 import edu.mit.eecs.parserlib.UnableToParseException;
 import karaoke.Composition;
 import karaoke.Composition.Key;
+import karaoke.Music;
+import karaoke.Note;
 import karaoke.parser.MusicParser;
+import karaoke.sound.Instrument;
+import karaoke.sound.Pitch;
 
 //Test class for parser and AST
 public class ParseASTTest {
@@ -51,11 +55,14 @@ public class ParseASTTest {
     //
     //      Chords: Duration: All notes have same duration, different notes have different durations 
     //                        (chord duration is the duration of first note)
+    //                        Consider case with staggering... example [C2E4]G2 should 
+    //                        be C played with E and then E played with G
     //              Can be parsed
     //
     //      Tuplets: Tuplets can be validly parsed
     //               Number: Duplet, Triplet, Quadruplet (check duration of each)
     //               Contains: notes, chords, both
+    //               Notes of different lengths, same length
     //                 
     //      Repeats: Ending: 1 ending, 2 different endings, >2 different endings
     //               syntax: enclosed by |: :|, only ends with :|, has [1, [2 ending notation
@@ -72,7 +79,7 @@ public class ParseASTTest {
     //       Comments: Comment at end of string, comment in beginning of string, comment in the middle of string
      
     private static final String DEFAULT_HEADER = "X: 1\r\n" + 
-            "T:Title\r\n" + 
+            "T:Title\n" + 
             "K:C\n";
     
     private static final String NEW_METER_HEADER = "X: 1\r\n" + 
@@ -171,44 +178,44 @@ public class ParseASTTest {
     @Test public void testParseStringAccidentalParse() throws UnableToParseException {
         String basicSong = NEW_METER_HEADER+"^A __c ^^B =A";
         Composition music = (new MusicParser()).parse(basicSong);
-        assertEquals(NEW_METER_HEADER+"^A __c ^^B =A", music.toString());
+        assertEquals("^A^A^CA", music.toString());
     }
     
     //Covers: parseString: Accidental: applied to one note in bar, >1 Accidental
     @Test public void testParseStringAccidentalOneNote() throws UnableToParseException {
         String basicSong = generateHeader(8, 4, 4, 100, Key.F)+"^A";
         Composition music = (new MusicParser()).parse(basicSong);
-        assertEquals(generateHeader(8, 4, 4, 100, Key.F)+"^A", music.toString());
+        assertEquals("^A\n", music.toString());
         
     }
     
     //Covers: parseString: Accidental: same note repeated in bar, not overridden, 1 accidental
     @Test public void testParseStringAccidentalMultipleNote() throws UnableToParseException {
-        String basicSong = generateHeader(8, 4, 8, 100, Key.C)+"^A A B A A A";
+        String basicSong = generateHeader(8, 4, 8, 100, Key.C)+"^A A B A | A A";
         Composition music = (new MusicParser()).parse(basicSong);
-        assertEquals(generateHeader(8, 4, 8, 100, Key.C)+"^A ^A B ^A A A", music.toString());
+        assertEquals("^A^AB^AAA\n", music.toString());
     }
     
     //Covers: parseString: Accidental: same note different octaves in bar
     @Test public void testParseStringAccidentalDifferentOctaves() throws UnableToParseException {
-        String basicSong = generateHeader(8, 4, 8, 100, Key.C)+"^A a B a'' A A";
+        String basicSong = generateHeader(8, 4, 8, 100, Key.C)+"^A a B a''| A A";
         Composition music = (new MusicParser()).parse(basicSong);
-        assertEquals(generateHeader(8, 4, 8, 100, Key.C)+"^A a B a'' | A A", music.toString());
+        assertEquals("^AA'BA'''AA\n", music.toString());
     }
     
     //Covers: parseString: Accidental: Overriden, same note repeated, >1 accidental
     @Test public void testParseStringAccidentalOverride() throws UnableToParseException {
         String basicSong = generateHeader(8, 8, 8, 100, Key.C)+"^A _A A =A A";
         Composition music = (new MusicParser()).parse(basicSong);
-        assertEquals(generateHeader(8, 8, 8, 100, Key.C)+"^A _A _A =A A", music.toString());
+        assertEquals("^A^G^GAA", music.toString());
     }
     
     //REST Test Cases Dotun
     //Covers: parseString: rest: Handles 'z' rest operator
     @Test public void testParseStringRest() throws UnableToParseException {
-        String basicSong = generateHeader(8, 8, 8, 100, Key.C) + "z ^A z _A";
+        String basicSong = generateHeader(8, 8, 8, 100, Key.C) + "z ^A z3/4 _A";
         Composition music = (new MusicParser()).parse(basicSong);
-        assertEquals(basicSong, music.toString());
+        assertEquals("z^Az^G\n", music.toString());
     }
     
     //REPEAT Test Cases
@@ -228,18 +235,64 @@ public class ParseASTTest {
     
     //CHORDS Test Cases Nick implements
     //Covers: parseString: Chord: All same duration
-    @Test public void testParseStringChordSameDuration() {
-        
+    @Test public void testParseStringChordSameDuration() throws UnableToParseException{
+        String basicSong = generateHeader(4, 4, 4, 100, Key.C) + "[CEG]";
+        Composition music = (new MusicParser()).parse(basicSong);
+        assertEquals(1.0, music.duration(), 0.001);
     }
     
     //Covers: parseString: Chord: Different durations
-    @Test public void testParseStringChordDifferentDuration() {
-        
+    @Test public void testParseStringChordDifferentDuration() throws UnableToParseException {
+        String basicSong = generateHeader(4, 4, 4, 100, Key.C) + "[C/EG]";
+        Composition music = (new MusicParser()).parse(basicSong);
+        assertEquals(1.0/2, music.duration(), 0.001);
     }
+    
+    //Covers: parseString: Chord: Staggering
+    // example [C2E4]G2 -> should be and E and C playing together and then an E and G playing together
+    @Test public void testParseStringChordsStaggered() throws UnableToParseException {
+        String basicSong = generateHeader(4, 4, 4, 100, Key.C) + "[C2E4]G2";
+        Composition music = (new MusicParser()).parse(basicSong);
+        assertEquals(4.0, music.duration(), 0.001);
+    } 
     
     //TUPLETS  Nick Implements
     
-
+    //Covers: duplet -> notes should be played 3/2 of the original duration
+    @Test public void testParseStringDuplet() throws UnableToParseException{
+        String basicSong = generateHeader(4, 4, 4, 100, Key.C) + "(2CC";
+        Composition music = (new MusicParser()).parse(basicSong);
+        assertEquals(3.0, music.duration(), 0.001);   
+    }
+    
+    //Covers: triplet -> notes should be played for 2/3 of the original duration
+    @Test public void testParseStringTriplet() throws UnableToParseException{
+        String basicSong = generateHeader(4, 4, 4, 100, Key.C) + "(3CCC";
+        Composition music = (new MusicParser()).parse(basicSong);
+        assertEquals(2.0, music.duration(), 0.001);
+    }
+    
+    //Covers: quadruplet -> notes should be played for 3/4 of the original duration
+    @Test public void testParseStringQuadruplet() throws UnableToParseException{
+        String basicSong = generateHeader(4, 4, 4, 100, Key.C) + "(4CCCC";
+        Composition music = (new MusicParser()).parse(basicSong);
+        assertEquals(3.0, music.duration(), 0.001);
+    }
+    
+    //Covers: tuplet containing chords
+    @Test public void testParseStringDupletWithChords() throws UnableToParseException{
+        String basicSong = generateHeader(4, 4, 4, 100, Key.C) + "(2[CEG]C";
+        Composition music = (new MusicParser()).parse(basicSong);
+        assertEquals(3.0, music.duration(), 0.001);
+    }
+    
+    //Covers: tuplet where notes are different lengths
+    @Test public void testParseStringTripletDifferentLengths() throws UnableToParseException{
+        String basicSong = generateHeader(4, 4, 4, 100, Key.C) + "(3C/EG";
+        Composition music = (new MusicParser()).parse(basicSong);
+        assertEquals(5.0/3, music.duration(), 0.001);
+    }
+    
     //VOICES tests (normal tests cover 1 voice not interleaved)
     
     //Covers: parseString: Voices: 2 voices, not interleaved
@@ -259,7 +312,6 @@ public class ParseASTTest {
     //LYRICS Nick
     
     //COMMENTS
-    
     
     
 }   

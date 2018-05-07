@@ -219,6 +219,7 @@ public class MusicParser {
             }
         else if(musicTree.name()== MusicGrammar.REPEAT)
             {
+            //TODO make type repeat and construct it here
                 return new Rest(0);
             }
         else if(musicTree.name() == MusicGrammar.MEASURE)
@@ -236,7 +237,12 @@ public class MusicParser {
                 List<Music> notes = new ArrayList<>();
                 double tupleSize = Integer.parseInt(musicTree.childrenByName(MusicGrammar.NUMBER)
                         .get(0).text());
-                environment.scaleLength((tupleSize-1)/tupleSize);
+                if(tupleSize != 2) {
+                    environment.scaleLength((tupleSize-1)/tupleSize);
+                }
+                else {
+                    environment.scaleLength((tupleSize+1)/tupleSize);
+                }
                 for(ParseTree<MusicGrammar> primitive: musicTree.children()) {
                     if(primitive.name() == MusicGrammar.NUMBER){
                         continue;
@@ -319,6 +325,7 @@ public class MusicParser {
             octaveModifier+=",";
         }
         
+        //TODO deal with accidentals in environment
         if(note.childrenByName(MusicGrammar.ACCIDENTAL).size() > 0) {
             ParseTree<MusicGrammar> accidental = note.childrenByName(MusicGrammar.ACCIDENTAL).get(0);
             MusicGrammar name = accidental.children().get(0).name();
@@ -367,7 +374,8 @@ public class MusicParser {
             }
         }
                
-        return new Note(environment.defaultDuration()*(numerator/denominator), notePitch, DEFAULT_INSTRUMENT, environment.lyricIndex);
+        return new Note(environment.defaultDuration()*(numerator/denominator), 
+                notePitch, DEFAULT_INSTRUMENT, environment.lyricIndex);
         
     }
 

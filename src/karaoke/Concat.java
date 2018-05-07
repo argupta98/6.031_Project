@@ -21,6 +21,7 @@ public class Concat implements Music{
         right.play(player, beat+left.duration(), voice);
     }
     
+    @Override
     public String toString() {
         return left.toString() + right.toString();
     }

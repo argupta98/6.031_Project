@@ -79,4 +79,29 @@ public class Voice {
     public double duration() {
         return music.duration();
     }
+    
+    private String printLyrics(int boldedIndex) {
+        String fullLine = "";
+        for(int index = 0; index < this.allSyllables.size(); index++) {
+            boolean bolded = false;
+            if(this.allSyllables.get(index) == "_") {
+                continue;
+            }
+            fullLine+=this.allSyllables.get(index);
+        }
+        return fullLine;
+    }
+    
+    @Override 
+    public String toString() {
+        String outString = "";
+        if(this.name != "") {
+            outString+= "V: "+this.name+"\n";
+        }
+        outString+= this.music.toString();
+        if(this.allSyllables.size() > 0) {
+            outString+= "\nw: "+printLyrics(-1);
+        }
+        return outString;
+    }
 }

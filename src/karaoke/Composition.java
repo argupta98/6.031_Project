@@ -15,6 +15,7 @@ public class Composition {
     private Map<String, Voice> voices;
     public enum Key{A, Am, B, C, D, E, F, G}
     public enum Accidental{FLAT, SHARP, DOUBLE_FLAT, DOUBLE_SHARP, NATURAL}
+    
     //Modifiable
     private double tempo;
     private String title;
@@ -180,5 +181,15 @@ public class Composition {
 
     public void setVoices(Map<String, Voice> voiceMap) {
         voices = new HashMap<>(voiceMap);
+    }
+    
+    @Override 
+    public String toString() {
+        String outString = "";
+        for(String voiceKey: voices.keySet()) {
+            Voice voice = voices.get(voiceKey);
+            outString+=voice.toString()+"\n";
+        }
+        return outString;
     }
 }

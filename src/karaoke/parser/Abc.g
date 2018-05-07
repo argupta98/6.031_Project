@@ -3,6 +3,7 @@
 
 @skip whitespaceAndComment{
 Composition ::= Header (Voice)+;
+
 //Header grammar
 Header ::= 'X:' TrackNumber '\n' 'T:' Title '\n'('C:' Composer '\n'|'M:' Meter '\n'|'L:' Length '\n'|'Q:' Tempo '\n'|'V:' VoiceName '\n')* 'K:' Key '\n';
 TrackNumber ::= Number;
@@ -13,13 +14,12 @@ Tempo ::= Length '=' Number;
 VoiceName ::= [^\r\t\n%]+;
 Key ::= [A-G#mb]+;
 Title ::= [^\r\t\n%]+;
+
 //Music grammar
 Voice ::= ('V:' VoiceName '\n')? MusicLine ('\n')?('w:' Lyric)?;
-MusicLine ::= (Measure)+;
-///////////////Add repeat and other things around measure
+MusicLine ::= (Measure | Repeat)+;
 Repeat ::= ('|:')? (Measure)+ (':|');
 Measure ::= ('|')? (Note | Chord | Tuple | Rest)+ ('[')?('|')?('|')?(']')?;
-///////////////
 Chord ::= '[' (note)+ ']';
 Tuple ::= '('Number (note|chord)+;
 Note ::= (Accidental)? Letter (OctaveUp|OctaveDown)* (Numerator)? (NoteDenominator)?;
@@ -34,8 +34,9 @@ DoubleSharp ::= '^^';
 DoubleFlat ::= '__';
 Natural ::= '=';
 }
+
 //Lyric grammar
-Lyric ::= SyllableNote ([-| ]+ SyllableNote | '_')* '\n';
+Lyric ::= SyllableNote ([-| ]+ SyllableNote | '_')* ('\n')?;
 SyllableNote ::= syllable ([~] syllable)*;
 Syllable ::= [\w*!?&^()$@'".,]+;
 Letter ::= [A-G]|[a-g];

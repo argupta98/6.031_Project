@@ -18,5 +18,15 @@ public class Rest implements Music {
     public void play(SequencePlayer player, double beat, Voice myVoice) {
         return;
     }
+    
+    @Override
+    public String toString() {
+        if(duration != 0) {
+            return "z";
+        }
+        else {
+            return "";
+        }
+    }
 
 }
