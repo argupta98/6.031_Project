@@ -13,7 +13,7 @@ public class Voice {
     
     private final Music music;
     private final List<String> allSyllables;
-    private final Set<LyricListener> listeners;
+    private final List<LyricListener> listeners;
     private final String name;
     
     // Abstraction Function
@@ -34,7 +34,7 @@ public class Voice {
     public Voice(Music piece, List<String> syllables, String name) {
         this.music = piece;
         this.allSyllables = syllables;
-        this.listeners = Collections.synchronizedSet(new HashSet<>());
+        this.listeners = Collections.synchronizedList(new ArrayList<>());
         this.name = name;
     }
     
@@ -50,7 +50,7 @@ public class Voice {
      * @param player to add the notes to be played
      */
     public void play (SequencePlayer player) {
-        throw new RuntimeException("Not implemented");
+        this.music.play(player, 0, this);
     }
     
     /**
@@ -58,11 +58,13 @@ public class Voice {
      * @param listener that will call for the correct lyric
      */
     public void addListener(LyricListener listener) {
-        throw new RuntimeException("Not implemented");
+        this.listeners.add(listener);
     }
 
-    public Object notifyAll(int lyricIndex) {
-        return null;
+    public void notifyAll(int lyricIndex) {
+        for(LyricListener listen: this.listeners) {
+            listen.notePlayed(constructLine(lyricIndex));
+        }
     }
     
     public String name() {
@@ -80,7 +82,7 @@ public class Voice {
         return music.duration();
     }
     
-    private String printLyrics(int boldedIndex) {
+    private String constructLine(int boldedIndex) {
         String fullLine = "";
         for(int index = 0; index < this.allSyllables.size(); index++) {
             boolean bolded = false;
@@ -100,7 +102,7 @@ public class Voice {
         }
         outString+= this.music.toString();
         if(this.allSyllables.size() > 0) {
-            outString+= "\nw: "+printLyrics(-1);
+            outString+= "\nw: "+constructLine(-1);
         }
         return outString;
     }

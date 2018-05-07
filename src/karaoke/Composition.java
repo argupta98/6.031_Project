@@ -14,7 +14,18 @@ public class Composition {
     private static double DEFAULT_METER = 1.0;
     private Map<String, Voice> voices;
     public enum Key{A, Am, B, C, D, E, F, G}
-    public enum Accidental{FLAT, SHARP, DOUBLE_FLAT, DOUBLE_SHARP, NATURAL}
+    
+    public enum Accidental{FLAT(-1), SHARP(1), DOUBLE_FLAT(-2), DOUBLE_SHARP(2), NATURAL(0);
+        
+        private final int semitonesUp;
+        Accidental(int semitonesUp) {
+            this.semitonesUp = semitonesUp;
+        }
+        
+        public int getTranspose() {
+            return this.semitonesUp;
+        }
+    }
     
     //Modifiable
     private double tempo;
@@ -63,7 +74,10 @@ public class Composition {
      * @param listener the listener object 
      */
     public void addVoiceListener(String voice, LyricListener listener) {
-        throw new UnsupportedOperationException("not implemented yet");
+        if(voices.containsKey(voice)) {
+            voices.get(voice).addListener(listener);
+        }
+        
     }
     
     /**

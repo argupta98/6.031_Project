@@ -46,6 +46,7 @@ public class Player {
      */
     public synchronized void play() {
         //play the piece
+        
         music.play();
     }
     

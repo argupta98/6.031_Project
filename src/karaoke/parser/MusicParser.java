@@ -24,6 +24,7 @@ import karaoke.Composition.Key;
 import karaoke.Concat;
 import karaoke.Music;
 import karaoke.Note;
+import karaoke.Repeat;
 import karaoke.Rest;
 import karaoke.Tuplet;
 import karaoke.Voice;
@@ -219,8 +220,13 @@ public class MusicParser {
             }
         else if(musicTree.name()== MusicGrammar.REPEAT)
             {
-            //TODO make type repeat and construct it here
-                return new Rest(0);
+                Music measures = new Rest(0);
+                //Don't let the syllable counter increment when parsing notes in chord
+                for(ParseTree<MusicGrammar> measure:musicTree.children()) {
+                    measures = new Concat(measures, makeMusicAST(measure, environment));
+                } 
+                Music repeat = new Repeat(measures, new ArrayList<>());
+                return repeat;
             }
         else if(musicTree.name() == MusicGrammar.MEASURE)
             {
@@ -330,19 +336,19 @@ public class MusicParser {
             ParseTree<MusicGrammar> accidental = note.childrenByName(MusicGrammar.ACCIDENTAL).get(0);
             MusicGrammar name = accidental.children().get(0).name();
             if(name == MusicGrammar.FLAT) { 
-                notePitch = notePitch.transpose(-1);
+                notePitch = notePitch.transpose(Accidental.FLAT.getTranspose());
                 environment.setAccidental(value+octaveModifier, Accidental.FLAT);
             }
             else if(name == MusicGrammar.DOUBLEFLAT) {
-                notePitch = notePitch.transpose(-2);
+                notePitch = notePitch.transpose(Accidental.DOUBLE_FLAT.getTranspose());
                 environment.setAccidental(value+octaveModifier, Accidental.DOUBLE_FLAT);
             }
             else if(name == MusicGrammar.SHARP) {
-                notePitch = notePitch.transpose(1);
+                notePitch = notePitch.transpose(Accidental.SHARP.getTranspose());
                 environment.setAccidental(value+octaveModifier, Accidental.SHARP);
             }
             else if(name == MusicGrammar.DOUBLESHARP) { 
-                notePitch = notePitch.transpose(2);
+                notePitch = notePitch.transpose(Accidental.DOUBLE_SHARP.getTranspose());
                 environment.setAccidental(value+octaveModifier, Accidental.DOUBLE_SHARP);
             }
             else if(name == MusicGrammar.NATURAL) {
@@ -352,6 +358,17 @@ public class MusicParser {
                 throw new AssertionError("should never get here: "+accidental.children().get(0).name().toString());
             }
         }
+        
+        else if(environment.accidentalsForMeasure().containsKey(value+octaveModifier)) {
+            Accidental modifier = environment.accidentalsForMeasure().get(value+octaveModifier);
+            notePitch = notePitch.transpose(modifier.getTranspose());
+        }
+        
+        else if(environment.accidentalsForKey().containsKey(value+octaveModifier)) {
+            Accidental modifier = environment.accidentalsForKey().get(value);
+            notePitch = notePitch.transpose(modifier.getTranspose());
+        }
+        
             
         //Parse time info
         double numerator = 1;
@@ -407,12 +424,14 @@ public class MusicParser {
         private int lyricIndex;
         private final List<String> lyrics;
         private boolean newMeasure;
-        private Map<String, Accidental> noteMap;
+        private Map<String, Accidental> keyMap;
+        private Map<String, Accidental> measureMap;
         private final Key key;
         private boolean lock;
         
         private NoteEnvironment(Composition composition, List<String> lyricList) {
-            noteMap = new HashMap<>(KEY_SIGNATURES.get(composition.key()));
+            keyMap = new HashMap<>(KEY_SIGNATURES.get(composition.key()));
+            measureMap = new HashMap<>();
             lyricIndex = 0;
             lyrics = lyricList;
             newMeasure = true;
@@ -455,19 +474,23 @@ public class MusicParser {
         }
         
         private void setAccidental(String key, Accidental accidental) {
-            noteMap.put(key, accidental);
+            measureMap.put(key, accidental);
         }
         
         private void resetAccidentals() {
-            noteMap = new HashMap<>(KEY_SIGNATURES.get(key));
+            measureMap = new HashMap<>();
         }
         
         private double defaultDuration() {
             return this.duration;
         }
         
-        private Map<String, Accidental> accidentalMap(){
-            return new HashMap<>(this.noteMap);
+        private Map<String, Accidental> accidentalsForKey(){
+            return new HashMap<>(this.keyMap);
+        }
+        
+        private Map<String, Accidental> accidentalsForMeasure(){
+            return new HashMap<>(this.measureMap);
         }
         
     }

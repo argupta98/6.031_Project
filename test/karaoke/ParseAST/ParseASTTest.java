@@ -176,9 +176,9 @@ public class ParseASTTest {
     //ACCIDENTAL Test Cases (other test cases cover 0 accidentals)
     //Covers: parseString: Accidental: Can be parsed
     @Test public void testParseStringAccidentalParse() throws UnableToParseException {
-        String basicSong = NEW_METER_HEADER+"^A __c ^^B =A";
+        String basicSong = NEW_METER_HEADER+"^A __c ^^B' =A";
         Composition music = (new MusicParser()).parse(basicSong);
-        assertEquals("^A^A^CA", music.toString());
+        assertEquals("^A^A^C''A\n", music.toString());
     }
     
     //Covers: parseString: Accidental: applied to one note in bar, >1 Accidental
@@ -207,7 +207,7 @@ public class ParseASTTest {
     @Test public void testParseStringAccidentalOverride() throws UnableToParseException {
         String basicSong = generateHeader(8, 8, 8, 100, Key.C)+"^A _A A =A A";
         Composition music = (new MusicParser()).parse(basicSong);
-        assertEquals("^A^G^GAA", music.toString());
+        assertEquals("^A^G^GAA\n", music.toString());
     }
     
     //REST Test Cases Dotun
@@ -223,7 +223,7 @@ public class ParseASTTest {
     @Test public void testParseStringRepeat() throws UnableToParseException{
         String basicSong = generateHeader(8, 8, 8, 100, Key.C) + "|: C D E F | G A B c :|";
         Composition music = (new MusicParser()).parse(basicSong);
-        assertEquals(basicSong, music.toString());
+        assertEquals("|:CDEFGABC':|\n", music.toString());
     }
     
     // Covers: Repeat with different endings
