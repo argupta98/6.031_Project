@@ -35,7 +35,7 @@ public class MusicParser {
     private static final Instrument DEFAULT_INSTRUMENT = Instrument.PIANO;
     private static final Map<Key, Map<String, Accidental>> KEY_SIGNATURES = new HashMap<>();
     static {
-        //TODO
+        //TODO fill in correct key signatures
         KEY_SIGNATURES.put(Key.A, new HashMap<>());
         KEY_SIGNATURES.put(Key.B, new HashMap<>());
         KEY_SIGNATURES.put(Key.C, new HashMap<>());
@@ -52,21 +52,7 @@ public class MusicParser {
      * @throws UnableToParseException if example expression can't be parsed
      */
     public static void main(final String[] args) throws UnableToParseException {
-        final String input = "X:1\r\n" + 
-                "T:Title\r\n" + 
-                "M: 4/4 \r\n" + 
-                "L: 1/4 \r\n" + 
-                "Q: 1/4 = 100\r\n" + 
-                "V: voice1\n"+
-                "V: voice2\n"+
-                "K:D\n"+
-                "V: voice1\n"+
-                "^^A _b'' c,3/4 D4 E/4 F/|\n"+
-                "w: I a-m so happy~ness!\n"+
-                "V: voice2\n"+
-                "[AB] [A/2B/] (3ABC (2a/2b/2 c,3/4 D4 | E/4 F/|\n"+
-                "w: I a-m so happy~ness!\n";
-        
+        final String input = "";
         System.out.println(input);
         (new MusicParser()).parse(input);
         //System.out.println(expression);
@@ -77,8 +63,8 @@ public class MusicParser {
         COMPOSITION, HEADER, TRACKNUMBER, COMPOSER, METER, LENGTH, TEMPO,
         VOICENAME, KEY, VOICE, MUSICLINE, MEASURE, NOTE, OCTAVEUP, OCTAVEDOWN,
         NOTEDENOMINATOR, ACCIDENTAL, SHARP, FLAT, LYRIC, SYLLABLENOTE, 
-        SYLLABLE, LETTER, COMMENT, NUMBER, END, WHITESPACE, WHITESPACEANDCOMMENT, TITLE,
-        CHORD, TUPLE, DENOMINATOR, NUMERATOR, REPEAT, DOUBLEFLAT, DOUBLESHARP, NATURAL
+        SYLLABLE, LETTER, COMMENT, NUMBER, WHITESPACE, WHITESPACEANDCOMMENT, TITLE,
+        CHORD, TUPLE, DENOMINATOR, NUMERATOR, REPEAT, DOUBLEFLAT, DOUBLESHARP, NATURAL, REST
     }
 
     private static Parser<MusicGrammar> parser = makeParser();
@@ -130,7 +116,7 @@ public class MusicParser {
         //Visualizer.showInBrowser(parseTree);
         
         final Composition composition = makeCompositionHeader(parseTree);
-       // System.out.println("AST " + expression);
+        //System.out.println("AST " + expression);
         Map<String, Voice> voiceMap = new HashMap<>();
         for(int voiceNumber = 1; voiceNumber < parseTree.children().size(); voiceNumber++) {
             ParseTree<MusicGrammar> voice = parseTree.children().get(voiceNumber);
@@ -173,11 +159,11 @@ public class MusicParser {
             String input = "";
             Scanner inFile = new Scanner(file);
             while(inFile.hasNextLine()) {
-                input+=inFile.nextLine();
+                input+=inFile.nextLine()+"\n";
             }
             return this.parse(input);
         }
-        catch(Exception e) {
+        catch(IOException e) {
             throw new UnableToParseException("File not found");
         }
     }
@@ -282,6 +268,30 @@ public class MusicParser {
                 environment.incrementSyllable();
                 return note;
             }
+        
+        else if(musicTree.name()== MusicGrammar.REST)
+        {
+            double numerator = 1;
+            double denominator = 1;
+            
+            if(musicTree.childrenByName(MusicGrammar.NUMERATOR).size() > 0) {
+                numerator = Integer.parseInt(musicTree.childrenByName(MusicGrammar.NUMERATOR)
+                        .get(0).text());
+            }
+            
+            if(musicTree.childrenByName(MusicGrammar.NOTEDENOMINATOR).size() > 0) {
+                ParseTree<MusicGrammar> noteDenominator = musicTree.childrenByName(MusicGrammar.NOTEDENOMINATOR)
+                        .get(0);
+                if(noteDenominator.childrenByName(MusicGrammar.DENOMINATOR).size() > 0) {
+                    denominator= Integer.parseInt(noteDenominator.childrenByName(MusicGrammar.DENOMINATOR)
+                            .get(0).text());
+                }
+                else {
+                    denominator = DEFAULT_DENOMINATOR;
+                }
+            }
+            return new Rest(environment.defaultDuration()*(numerator/denominator));
+        }
             
         else {
             throw new AssertionError("Invalid Music: "+musicTree.name());
@@ -383,7 +393,7 @@ public class MusicParser {
     }
     
     
-    protected class NoteEnvironment{
+    private class NoteEnvironment{
         private final double defaultDuration;
         private double duration;
         private int lyricIndex;

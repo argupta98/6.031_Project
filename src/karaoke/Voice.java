@@ -75,4 +75,8 @@ public class Voice {
         combinedSyllables.addAll(voice.allSyllables);
         return new Voice(newMusic, combinedSyllables, name);
     }
+
+    public double duration() {
+        return music.duration();
+    }
 }

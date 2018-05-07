@@ -27,7 +27,7 @@ public class Player {
      */
     public Player(File input) throws UnableToParseException {
         //parse input into a Piece object
-        this.music = MusicParser.parseFile(input);
+        this.music = (new MusicParser()).parseFile(input);
     }
     
     /**
@@ -37,7 +37,7 @@ public class Player {
      */
     public Player(String input) throws UnableToParseException {
         //parse input into a Piece object
-        this.music = MusicParser.parse(input);
+        this.music = (new MusicParser()).parse(input);
     }
     
     

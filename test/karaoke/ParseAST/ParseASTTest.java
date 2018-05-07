@@ -149,14 +149,14 @@ public class ParseASTTest {
     @Test public void testParseStringNoteLengthDenominatorOnly() throws UnableToParseException {
         String basicSong = NEW_METER_HEADER+"A/3";
         Composition music = (new MusicParser()).parse(basicSong);
-        assertEquals(1/6, music.duration(), .001);
+        assertEquals(1.0/6, music.duration(), .001);
     }
     
     //Covers: parseString: Note Length: Handles denominator missing
     @Test public void testParseStringNoteLengthDenominatorMissing() throws UnableToParseException {
         String basicSong = NEW_METER_HEADER+"A/";
         Composition music = (new MusicParser()).parse(basicSong);
-        assertEquals(1/4, music.duration(), .001);
+        assertEquals(1.0/4, music.duration(), .001);
     }
     
     //Covers: parseString: Note Length: Numerator
@@ -206,23 +206,23 @@ public class ParseASTTest {
     //REST Test Cases Dotun
     //Covers: parseString: rest: Handles 'z' rest operator
     @Test public void testParseStringRest() throws UnableToParseException {
-        String basicSong = generateHeader(1.0/8, 8, 8, 100, Key.C) + "z ^A z _A";
-        Composition music = MusicParser.parse(basicSong);
+        String basicSong = generateHeader(8, 8, 8, 100, Key.C) + "z ^A z _A";
+        Composition music = (new MusicParser()).parse(basicSong);
         assertEquals(basicSong, music.toString());
     }
     
     //REPEAT Test Cases
     // Covers: Repeat with the same ending
     @Test public void testParseStringRepeat() throws UnableToParseException{
-        String basicSong = generateHeader(1.0/8, 8, 8, 100, Key.C) + "|: C D E F | G A B c :|";
-        Composition music = MusicParser.parse(basicSong);
+        String basicSong = generateHeader(8, 8, 8, 100, Key.C) + "|: C D E F | G A B c :|";
+        Composition music = (new MusicParser()).parse(basicSong);
         assertEquals(basicSong, music.toString());
     }
     
     // Covers: Repeat with different endings
     @Test public void testParseStringRepeatDiffEnding() throws UnableToParseException{
-        String basicSong = generateHeader(1.0/8, 8, 8, 100, Key.C) + "|: C D E F |[1 G A B c | G A B B :|[2 F E D C |";
-        Composition music = MusicParser.parse(basicSong);
+        String basicSong = generateHeader(8, 8, 8, 100, Key.C) + "|: C D E F |[1 G A B c | G A B B :|[2 F E D C |";
+        Composition music = (new MusicParser()).parse(basicSong);
         assertEquals(basicSong, music.toString()); 
     }
     
@@ -236,7 +236,6 @@ public class ParseASTTest {
     @Test public void testParseStringChordDifferentDuration() {
         
     }
-    
     
     //TUPLETS  Nick Implements
     

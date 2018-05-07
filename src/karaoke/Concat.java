@@ -20,6 +20,10 @@ public class Concat implements Music{
         left.play(player, beat, voice);
         right.play(player, beat+left.duration(), voice);
     }
+    
+    public String toString() {
+        return left.toString() + right.toString();
+    }
 
 }
 

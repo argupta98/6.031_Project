@@ -20,15 +20,16 @@ public class Tuplet implements Music {
         for(Music note: this.notes) {
             duration+=note.duration();
         }
-        return duration*(this.tupletNumber-1)/this.tupletNumber;
+        return duration;
     }
     
     
     @Override
     public void play(SequencePlayer player, double beat, Voice myVoice) {
-        //TODO
+        double currentBeat = beat;
         for(Music note: notes) {
-            note.play(player, beat, myVoice);
+            note.play(player, currentBeat, myVoice);
+            currentBeat+=note.duration();
         }
     }
 

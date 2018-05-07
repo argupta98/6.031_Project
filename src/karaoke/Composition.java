@@ -4,6 +4,7 @@ package karaoke;
 import java.util.HashMap;
 import java.util.Map;
 import karaoke.Voice.LyricListener;
+import karaoke.sound.SequencePlayer;
 
 //Mutable class
 public class Composition {
@@ -12,7 +13,7 @@ public class Composition {
     private static double DEFAULT_LENGTH = 1.0/4;
     private static double DEFAULT_METER = 1.0;
     private Map<String, Voice> voices;
-    public enum Key{A, B, C, D, E, F, G}
+    public enum Key{A, Am, B, C, D, E, F, G}
     public enum Accidental{FLAT, SHARP, DOUBLE_FLAT, DOUBLE_SHARP, NATURAL}
     //Modifiable
     private double tempo;
@@ -48,8 +49,10 @@ public class Composition {
     /**
      * play all voices at once
      */
-    public void play() {
-        throw new UnsupportedOperationException("not implemented yet");
+    public void play(SequencePlayer player) {
+        for(String voiceKey: voices.keySet()) {
+            voices.get(voiceKey).play(player);
+        }
     }
     
     /**
@@ -66,7 +69,14 @@ public class Composition {
      * @return the duration of the entire Composition
      */
     public double duration() {
-        throw new UnsupportedOperationException("not implemented yet");
+        double maxDuration = 0;
+        for(String voiceKey: voices.keySet()) {
+            Voice voice = voices.get(voiceKey);
+            if(voice.duration() > maxDuration) {
+                maxDuration = voice.duration();
+            }
+        }
+        return maxDuration;
     }
     
     
