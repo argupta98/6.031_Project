@@ -51,11 +51,14 @@ public class ParseASTTest {
     //
     //      Chords: Duration: All notes have same duration, different notes have different durations 
     //                        (chord duration is the duration of first note)
+    //                        Consider case with staggering... example [C2E4]G2 should 
+    //                        be C played with E and then E played with G
     //              Can be parsed
     //
     //      Tuplets: Tuplets can be validly parsed
     //               Number: Duplet, Triplet, Quadruplet (check duration of each)
     //               Contains: notes, chords, both
+    //               Notes of different lengths, same length
     //                 
     //      Repeats: Ending: 1 ending, 2 different endings, >2 different endings
     //               syntax: enclosed by |: :|, only ends with :|, has [1, [2 ending notation
@@ -228,19 +231,64 @@ public class ParseASTTest {
     
     //CHORDS Test Cases Nick implements
     //Covers: parseString: Chord: All same duration
-    @Test public void testParseStringChordSameDuration() {
-        
+    @Test public void testParseStringChordSameDuration() throws UnableToParseException{
+        String basicSong = generateHeader(1.0/4, 4, 4, 100, Key.C) + "[CEG]";
+        Composition music = MusicParser.parse(basicSong);
+        assertEquals(1.0, music.duration(), 0.001);
     }
     
     //Covers: parseString: Chord: Different durations
-    @Test public void testParseStringChordDifferentDuration() {
-        
+    @Test public void testParseStringChordDifferentDuration() throws UnableToParseException {
+        String basicSong = generateHeader(1.0/4, 4, 4, 100, Key.C) + "[C/EG]";
+        Composition music = MusicParser.parse(basicSong);
+        assertEquals(1.0/2, music.duration(), 0.001);
     }
     
+    //Covers: parseString: Chord: Staggering
+    // example [C2E4]G2 -> should be and E and C playing together and then an E and G playing together
+    @Test public void testParseStringChordsStaggered() throws UnableToParseException {
+        String basicSong = generateHeader(1.0/4, 4, 4, 100, Key.C) + "[C2E4]G2";
+        Composition music = MusicParser.parse(basicSong);
+        assertEquals(4.0, music.duration(), 0.001);
+    } 
     
     //TUPLETS  Nick Implements
     
-
+    //Covers: duplet -> notes should be played 3/2 of the original duration
+    @Test public void testParseStringDuplet() throws UnableToParseException{
+        String basicSong = generateHeader(1.0/4, 4, 4, 100, Key.C) + "(2CC";
+        Composition music = MusicParser.parse(basicSong);
+        assertEquals(3.0, music.duration(), 0.001);   
+    }
+    
+    //Covers: triplet -> notes should be played for 2/3 of the original duration
+    @Test public void testParseStringTriplet() throws UnableToParseException{
+        String basicSong = generateHeader(1.0/4, 4, 4, 100, Key.C) + "(3CCC";
+        Composition music = MusicParser.parse(basicSong);
+        assertEquals(2.0, music.duration(), 0.001);
+    }
+    
+    //Covers: quadruplet -> notes should be played for 3/4 of the original duration
+    @Test public void testParseStringQuadruplet() throws UnableToParseException{
+        String basicSong = generateHeader(1.0/4, 4, 4, 100, Key.C) + "(4CCCC";
+        Composition music = MusicParser.parse(basicSong);
+        assertEquals(3.0, music.duration(), 0.001);
+    }
+    
+    //Covers: tuplet containing chords
+    @Test public void testParseStringDupletWithChords() throws UnableToParseException{
+        String basicSong = generateHeader(1.0/4, 4, 4, 100, Key.C) + "(2[CEG]C";
+        Composition music = MusicParser.parse(basicSong);
+        assertEquals(3.0, music.duration(), 0.001);
+    }
+    
+    //Covers: tuplet where notes are different lengths
+    @Test public void testParseStringTripletDifferentLengths() throws UnableToParseException{
+        String basicSong = generateHeader(1.0/4, 4, 4, 100, Key.C) + "(3C/EG";
+        Composition music = MusicParser.parse(basicSong);
+        assertEquals(5.0/3, music.duration(), 0.001);
+    }
+    
     //VOICES tests (normal tests cover 1 voice not interleaved)
     
     //Covers: parseString: Voices: 2 voices, not interleaved
