@@ -5,10 +5,27 @@ import java.util.List;
 
 import karaoke.sound.SequencePlayer;
 
+/**
+ * A Chord is a set of notes that are played simultaneously
+ */
 public class Chord implements Music{
     
     private final List<Music> notes;
     private final int lyricIndex;
+    
+    // AF(notes, lyricIndex) = a Chord consisting of the notes in <notes>
+    //                         associated with a lyric at index <lyricIndex>
+    
+    // Rep Invariant
+    // lyricIndex is non-negative
+    
+    // Safety from Rep Exposure
+    // all variables are private
+    // lyricIndex is an immutable reference to an immutable value
+    // we do not return references to notes
+    
+    // Thread Safety
+    
     public Chord(List<Music> notes, int lyricIndex) {
         this.notes = notes;
         this.lyricIndex = lyricIndex;
