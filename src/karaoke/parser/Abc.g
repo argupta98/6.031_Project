@@ -18,8 +18,9 @@ Title ::= [^\r\t\n%]+;
 //Music grammar
 Voice ::= ('V:' VoiceName '\n')? MusicLine ('\n')?('w:' Lyric)?;
 MusicLine ::= (Measure | Repeat)+;
-Repeat ::= ('|:')? (Measure)+ (':|');
-Measure ::= ('|')? (Note | Chord | Tuple | Rest)+ ('[')?('|')?('|')?(']')?;
+Repeat ::= ('|:')? (Measure)+ ((':|') | Ending)+ ;
+Ending ::= '[' Number (Measure)+ ( (':|') | ('\n'));
+Measure ::= ('|')? (Note | Chord | Tuple | Rest)+ ('[|' | '|' | '|]' | '||')?;
 Chord ::= '[' (note)+ ']';
 Tuple ::= '('Number (note|chord)+;
 Note ::= (Accidental)? Letter (OctaveUp|OctaveDown)* (Numerator)? (NoteDenominator)?;
@@ -36,9 +37,11 @@ Natural ::= '=';
 }
 
 //Lyric grammar
-Lyric ::= SyllableNote ([-| ]+ SyllableNote | '_')* ('\n')?;
+Lyric ::= SyllableNote (([- ]|NewMeasure)* SyllableNote |([- ]|NewMeasure)* Hold)* ('\n')?;
+Hold ::= '_';
+NewMeasure ::= '|';
 SyllableNote ::= syllable ([~] syllable)*;
-Syllable ::= [\w*!?&^()$@'".,]+;
+Syllable ::= [a-zA-Z0-9\!.\*\(\)\']+[ ]?;
 Letter ::= [A-G]|[a-g];
 Comment ::= '%'[^\n]* '\n';
 whitespace ::= [ \t\r]+;

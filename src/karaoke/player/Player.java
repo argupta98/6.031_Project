@@ -3,8 +3,13 @@ package karaoke.player;
 import karaoke.Composition;
 import karaoke.Voice.LyricListener;
 import karaoke.parser.MusicParser;
+import karaoke.sound.MidiSequencePlayer;
+import karaoke.sound.SequencePlayer;
 
 import java.io.File;
+
+import javax.sound.midi.InvalidMidiDataException;
+import javax.sound.midi.MidiUnavailableException;
 
 import edu.mit.eecs.parserlib.UnableToParseException;
 
@@ -43,11 +48,16 @@ public class Player {
     
     /**
      * Plays the music described by this.music
+     * @throws InvalidMidiDataException 
+     * @throws MidiUnavailableException 
      */
-    public synchronized void play() {
+    public synchronized void play() throws MidiUnavailableException, InvalidMidiDataException {
         //play the piece
-        
-        music.play();
+        final int beatsPerMinute = 100;
+        final int ticksPerBeat = 64;
+        SequencePlayer player = new MidiSequencePlayer(ticksPerBeat, beatsPerMinute);
+        music.play(player);
+        player.play();
     }
     
     /**

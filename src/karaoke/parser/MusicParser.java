@@ -34,6 +34,8 @@ import karaoke.sound.Pitch;
 public class MusicParser {
     private static final double DEFAULT_DENOMINATOR = 2;
     private static final Instrument DEFAULT_INSTRUMENT = Instrument.PIANO;
+    private static final double DEFAULT_NOTE_LENGTH = 1.0/4;
+    private static final double DEFAULT_TEMPO = 100;
     private static final Map<Key, Map<String, Accidental>> KEY_SIGNATURES = new HashMap<>();
     static {
         //TODO fill in correct key signatures
@@ -53,9 +55,10 @@ public class MusicParser {
      * @throws UnableToParseException if example expression can't be parsed
      */
     public static void main(final String[] args) throws UnableToParseException {
-        final String input = "";
-        System.out.println(input);
-        (new MusicParser()).parse(input);
+        //final String input = "";
+        final File input = new File("sample-abc/piece3.abc");
+        //System.out.println(input);
+        (new MusicParser()).parseFile(input);
         //System.out.println(expression);
     }
     
@@ -63,9 +66,9 @@ public class MusicParser {
     private static enum MusicGrammar {
         COMPOSITION, HEADER, TRACKNUMBER, COMPOSER, METER, LENGTH, TEMPO,
         VOICENAME, KEY, VOICE, MUSICLINE, MEASURE, NOTE, OCTAVEUP, OCTAVEDOWN,
-        NOTEDENOMINATOR, ACCIDENTAL, SHARP, FLAT, LYRIC, SYLLABLENOTE, 
-        SYLLABLE, LETTER, COMMENT, NUMBER, WHITESPACE, WHITESPACEANDCOMMENT, TITLE,
-        CHORD, TUPLE, DENOMINATOR, NUMERATOR, REPEAT, DOUBLEFLAT, DOUBLESHARP, NATURAL, REST
+        NOTEDENOMINATOR, ACCIDENTAL, SHARP, FLAT, LYRIC, SYLLABLENOTE, NEWMEASURE, 
+        SYLLABLE, LETTER, COMMENT, NUMBER, WHITESPACE, WHITESPACEANDCOMMENT, TITLE, HOLD,
+        CHORD, TUPLE, DENOMINATOR, NUMERATOR, REPEAT, DOUBLEFLAT, DOUBLESHARP, NATURAL, REST, ENDING
     }
 
     private static Parser<MusicGrammar> parser = makeParser();
@@ -122,6 +125,7 @@ public class MusicParser {
         for(int voiceNumber = 1; voiceNumber < parseTree.children().size(); voiceNumber++) {
             ParseTree<MusicGrammar> voice = parseTree.children().get(voiceNumber);
             List<String> lyricList = parseLyrics(voice.childrenByName(MusicGrammar.LYRIC));
+            System.out.println(lyricList);
             NoteEnvironment environment = new NoteEnvironment(composition, lyricList);
             String voiceName = "";
             if(voice.childrenByName(MusicGrammar.VOICENAME).size() > 0) {
@@ -131,7 +135,7 @@ public class MusicParser {
             //use parsetree to make a line of music aligned with voices
             Music line = makeMusicAST(voice.childrenByName(MusicGrammar.MUSICLINE)
                     .get(0), environment);
-            
+            System.out.println(line);
             Voice newVoice = new Voice(line, lyricList, voiceName);
             if(voiceMap.containsKey(voiceName)) {
                 voiceMap.put(voiceName, voiceMap.get(voiceName).join(newVoice));
@@ -222,10 +226,20 @@ public class MusicParser {
             {
                 Music measures = new Rest(0);
                 //Don't let the syllable counter increment when parsing notes in chord
-                for(ParseTree<MusicGrammar> measure:musicTree.children()) {
+                for(ParseTree<MusicGrammar> measure:musicTree.childrenByName(MusicGrammar.MEASURE)) {
                     measures = new Concat(measures, makeMusicAST(measure, environment));
                 } 
-                Music repeat = new Repeat(measures, new ArrayList<>());
+                
+                ArrayList<Music> endings = new ArrayList<>();
+                for(ParseTree<MusicGrammar> ending:musicTree.childrenByName(MusicGrammar.ENDING)) {
+                    Music endingMeasures = new Rest(0);
+                    //Don't let the syllable counter increment when parsing notes in chord
+                    for(ParseTree<MusicGrammar> endingMeasure: ending.childrenByName(MusicGrammar.MEASURE)) {
+                        endingMeasures = new Concat(endingMeasures, makeMusicAST(endingMeasure, environment));
+                    }
+                    endings.add(endingMeasures);
+                } 
+                Music repeat = new Repeat(measures, endings);
                 return repeat;
             }
         else if(musicTree.name() == MusicGrammar.MEASURE)
@@ -304,7 +318,9 @@ public class MusicParser {
             }
             return new Rest(environment.defaultDuration()*(numerator/denominator));
         }
-            
+        
+        
+         
         else {
             throw new AssertionError("Invalid Music: "+musicTree.name());
         }
@@ -404,14 +420,20 @@ public class MusicParser {
         List<String> lyricSyllables = new ArrayList<>();
         for(ParseTree<MusicGrammar> syllableNote: lyricList.get(0).children()) {
             String syllable ="";
-            for(ParseTree<MusicGrammar> child: syllableNote.children()) {
-                if(child.text().equals("~")) {
-                    syllable += " ";
+            if(syllableNote.name() == MusicGrammar.SYLLABLENOTE) {
+                for(ParseTree<MusicGrammar> child: syllableNote.children()) {
+                    if(child.text().equals("~")) {
+                        syllable += " ";
+                    }
+                    else {
+                        syllable+=child.text();
+                    }
                 }
-                else {
-                    syllable+= child.text();
-                }
+            }           
+            else {
+                syllable = syllableNote.text();
             }
+            
             lyricSyllables.add(syllable);
         }
         return lyricSyllables;
@@ -435,7 +457,7 @@ public class MusicParser {
             lyricIndex = 0;
             lyrics = lyricList;
             newMeasure = true;
-            defaultDuration = 4*100*composition.length()*(1/composition.tempo());
+            defaultDuration = (1/DEFAULT_NOTE_LENGTH)*DEFAULT_TEMPO*composition.length()*(1/composition.tempo());
             duration = defaultDuration;
             key = composition.key();
             lock = false;
@@ -466,8 +488,16 @@ public class MusicParser {
         
         private void incrementSyllable() {
             if(!lock && lyricIndex < lyrics.size()-1) {
-                if(!lyrics.get(lyricIndex+1).equals("|") || newMeasure) {
-                    lyricIndex+=1;
+                if(!lyrics.get(lyricIndex).equals("|") || newMeasure) {
+                    if(lyrics.get(lyricIndex).equals("|")) {
+                        lyrics.remove(lyricIndex);
+                        if(lyricIndex < lyrics.size()-1) {
+                            lyricIndex+=1;
+                        }
+                    }
+                    else {
+                        lyricIndex+=1;
+                    }
                     newMeasure = false;
                 }
             }

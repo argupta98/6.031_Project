@@ -57,7 +57,10 @@ public class Repeat implements Music{
         }
         else {
             for(int i = 0; i < endings.size(); i++) {
-                outString+="["+i+endings.get(i).toString()+":|";
+                outString+="["+(i+1)+endings.get(i).toString();
+                if(i != endings.size() -1) {
+                    outString+=":|";
+                }
             }
         }
         return outString;

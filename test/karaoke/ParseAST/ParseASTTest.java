@@ -228,9 +228,9 @@ public class ParseASTTest {
     
     // Covers: Repeat with different endings
     @Test public void testParseStringRepeatDiffEnding() throws UnableToParseException{
-        String basicSong = generateHeader(8, 8, 8, 100, Key.C) + "|: C D E F |[1 G A B c | G A B B :|[2 F E D C |";
+        String basicSong = generateHeader(8, 8, 8, 100, Key.C) + "|: C D E F |[1 G A B c | G A B B :|[2 F E D C |\n";
         Composition music = (new MusicParser()).parse(basicSong);
-        assertEquals(basicSong, music.toString()); 
+        assertEquals("|:CDEF[1GABC'GABB:|[2FEDC\n", music.toString()); 
     }
     
     //CHORDS Test Cases Nick implements

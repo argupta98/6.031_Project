@@ -40,7 +40,6 @@ public class PlayerTest {
      * 3. Assure that nothing will play
      * 
      * 
-     * 
      * Covers: Non default Key, default tempo, 1 voice, > 1 notes
      * 1. Create player for abc_song file
      * 2. Call play()
