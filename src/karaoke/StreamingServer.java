@@ -1,17 +1,20 @@
 package karaoke;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
+
 import java.io.IOException;
+import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.net.InetSocketAddress;
-import java.nio.charset.StandardCharsets;
 import java.util.concurrent.Executors;
 
+import com.sun.net.httpserver.HttpContext;
 import com.sun.net.httpserver.HttpExchange;
+import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpServer;
 
-import karaoke.parser.MusicParser;
-import karaoke.server.LyricStreamingTest;
+import karaoke.Voice.LyricListener;
 
 public class StreamingServer {
     
@@ -19,7 +22,8 @@ public class StreamingServer {
     private final Composition piece;
     
     // Abstraction Function
-    // AF(sever, piece) => A webserver server that streams the lyrics of piece for the client.
+    // AF(sever, piece) => A webserver server that streams the lyrics of piece for the client and plays piece
+    //                       locally
     
     // Rep Invaraint
     // - server cannot be null
@@ -34,16 +38,66 @@ public class StreamingServer {
      * Make a new server to stream lyrics to a given piece of music
      * @param music to the server will stream the lyrics to
      * @param port number that the server will listen to 
+     * @throws IOException 
      */
-    public StreamingServer(Composition piece, int port) throws IOException {
-        this.piece = piece;
+    public StreamingServer(Composition music, int port) throws IOException {
         this.server = HttpServer.create(new InetSocketAddress(port), 0);
+        this.piece = music;
         
         // handle concurrent requests with multiple threads
         server.setExecutor(Executors.newCachedThreadPool());
         
-        // register handler
-        server.createContext("/htmlWaitReload", StreamingServer::htmlWaitReload);
+        //  handle requests for /voice/voiceID
+        HttpContext voice = server.createContext("/voice/", new HttpHandler() {
+            public void handle(HttpExchange exchange) throws IOException {
+                handleVoice(exchange);
+                checkRep();
+            }
+        }); 
+    }
+    
+    /**
+     * Handles requests for streaming the lyrics for a voice from the piece 
+     * @param HTTP request/response, modified by this method to send a response and close the exchange
+     */
+    private void handleVoice(HttpExchange exchange) {
+        final int successCode = 200;
+        final int failureCode = 404;
+        
+        // requested path
+        final String path = exchange.getRequestURI().getPath();
+        // check that the correct exchange is being handled in this case
+        final String base = exchange.getHttpContext().getPath();
+        assert path.startsWith(base);
+        
+        String voice = path.substring(base.length());
+        String voiceID = voice.split("/")[0];
+     
+        piece.addVoiceListener(voiceID, new LyricListener() {
+            public void notePlayed(String line) {
+                try {
+                    exchange.sendResponseHeaders(successCode, 0);
+                } catch (IOException e) {
+                    try {
+                        exchange.sendResponseHeaders(failureCode, 0);
+                    } catch (IOException e1) {
+
+                        e1.printStackTrace();
+                    }
+                }
+                OutputStream body = exchange.getResponseBody();
+                PrintWriter out = new PrintWriter(new OutputStreamWriter(body, UTF_8), true);
+                out.println(line);
+            }
+        });
+        
+        checkRep();
+        exchange.close();
+    }
+    
+    private void checkRep() {
+        assert server != null;
+        assert piece != null;
     }
     
     /**
@@ -65,65 +119,7 @@ public class StreamingServer {
      * Stop the server.
      */
     public void stop() {
-        System.err.println("Server will stop");
-        server.stop(0);
-    }
-    
-    /**
-     * This handler waits for an event to occur in the server
-     * before sending a complete HTML page to the web browser.
-     * The page ends with a Javascript command that immediately starts
-     * reloading the page at the same URL, which causes this handler to be
-     * run, wait for the next event, and send an updated HTML page.
-     * In this simple example, the "server event" is just a brief timeout, but it
-     * could synchronize with another thread instead.
-     * 
-     * @param exchange request/reply object
-     * @throws IOException if network problem
-     */
-    private static void htmlWaitReload(HttpExchange exchange) throws IOException {
-        final String path = exchange.getRequestURI().getPath();
-        System.err.println("received request " + path);
-
-        // html response
-        exchange.getResponseHeaders().add("Content-Type", "text/html; charset=utf-8");
-        
-        // must call sendResponseHeaders() before calling getResponseBody()
-        final int successCode = 200;
-        final int lengthNotKnownYet = 0;
-        exchange.sendResponseHeaders(successCode, lengthNotKnownYet);
-
-        // get output stream to write to web browser
-        final boolean autoflushOnPrintln = true;
-        PrintWriter out = new PrintWriter(
-                              new OutputStreamWriter(
-                                  exchange.getResponseBody(), 
-                                  StandardCharsets.UTF_8), 
-                              autoflushOnPrintln);
-        
-        try {
-
-            // Wait until an event occurs in the server.
-            // In this example, the event is just a brief fixed-length delay, but it
-            // could synchronize with another thread instead.
-            final int millisecondsToWait = 200;
-            try {
-                Thread.sleep(millisecondsToWait);
-            } catch (InterruptedException e) {
-                return;
-            }
-            
-            // Send a full HTML page to the web browser
-            out.println(System.currentTimeMillis() + "<br>");
-            
-            // End the page with Javascript that causes the browser to immediately start 
-            // reloading this URL, so that this handler runs again and waits for the next event
-            out.println("<script>location.reload()</script>");
-            
-        } finally {
-            exchange.close();
-        }
-        System.err.println("done streaming request");
+       server.stop(0);
     }
 
 }
