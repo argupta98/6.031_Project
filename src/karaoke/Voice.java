@@ -124,4 +124,8 @@ public class Voice {
         }
         return outString;
     }
+
+    public int lyricLength() {
+        return this.allSyllables.size();
+    }
 }
