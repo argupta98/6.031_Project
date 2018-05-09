@@ -3,6 +3,9 @@ package karaoke.ParseAST;
 import static org.junit.Assert.*;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 import org.junit.Test;
 
@@ -312,6 +315,97 @@ public class ParseASTTest {
     }
     
     //LYRICS Nick
+    //Covers: hyphen between strings
+    @Test public void testParseLyricsHyphenBetweenStrings() throws UnableToParseException {
+        String basicSong = generateHeader(4, 4, 4, 100, Key.C) + "C C C C|\nw: syll-a-ble";
+        Composition music = (new MusicParser()).parse(basicSong);
+        List<String> lines = new ArrayList<>();
+        music.addVoiceListener("", (String line) -> {lines.add(line);});
+        List<String> expected = Arrays.asList("*syll*able", "syll*a*ble", "sylla*ble*", "syllable");
+        assertEquals(expected, lines);
+    }
+    
+    //Covers: hyphen before underscore
+    @Test public void testParseLyricsHyphenBeforeUnderScore() throws UnableToParseException {
+        String basicSong = generateHeader(4, 4, 4, 100, Key.C) + "C C C C|\nw: syll-a-_ble";
+        Composition music = (new MusicParser()).parse(basicSong);
+        List<String> lines = new ArrayList<>();
+        music.addVoiceListener("", (String line) -> {lines.add(line);});
+        List<String> expected = Arrays.asList("*syll*able", "syll*a*ble", "syll*a*ble", "sylla*ble*");
+        assertEquals(expected, lines);
+    }
+    
+    //Covers: hyphen after hyphen
+    @Test public void testParseLyricsHyphenAfterHyphen() throws UnableToParseException {
+        String basicSong = generateHeader(4, 4, 4, 100, Key.C) + "C C C C|\nw: syll-a--ble";
+        Composition music = (new MusicParser()).parse(basicSong);
+        List<String> lines = new ArrayList<>();
+        music.addVoiceListener("", (String line) -> {lines.add(line);});
+        List<String> expected = Arrays.asList("*syll*able", "syll*a*ble", "sylla**ble", "sylla*ble*");
+        assertEquals(expected, lines);
+    }
+    
+    //Covers: hyphen after space
+    @Test public void testParseLyricsHyphenAfterSpace() throws UnableToParseException {
+        String basicSong = generateHeader(4, 4, 4, 100, Key.C) + "C C C C|\nw: syll-a -ble";
+        Composition music = (new MusicParser()).parse(basicSong);
+        List<String> lines = new ArrayList<>();
+        music.addVoiceListener("", (String line) -> {lines.add(line);});
+        List<String> expected = Arrays.asList("*syll*able", "syll*a*ble", "sylla**ble", "sylla*ble*");
+        assertEquals(expected, lines);
+    }
+    
+    //Covers: single underscore
+    @Test public void testParseStringLyricsSingleUnderScore() throws UnableToParseException {
+        String basicSong = generateHeader(4, 4, 4, 100, Key.C) + "C C C C|\nw: time_";
+        Composition music = (new MusicParser()).parse(basicSong);
+        List<String> lines = new ArrayList<>();
+        music.addVoiceListener("", (String line) -> {lines.add(line);});
+        List<String> expected = Arrays.asList("*time*", "*time*", "time", "time");
+        assertEquals(expected, lines);
+    }
+    
+    //Covers: multiple underscore
+    @Test public void testParseStringLyricsMultipleUnderScore() throws UnableToParseException {
+        String basicSong = generateHeader(4, 4, 4, 100, Key.C) + "C C C C|\nw: time__";
+        Composition music = (new MusicParser()).parse(basicSong);
+        List<String> lines = new ArrayList<>();
+        music.addVoiceListener("", (String line) -> {lines.add(line);});
+        List<String> expected = Arrays.asList("*time*", "*time*", "*time*", "time");
+        assertEquals(expected, lines);
+    }
+    
+    //Covers: blank operator
+    @Test public void testParseStringLyricsBlankSyllable() throws UnableToParseException {
+        String basicSong = generateHeader(4, 4, 4, 100, Key.C) + "C C C C|\nw: syll*ble";
+        Composition music = (new MusicParser()).parse(basicSong);
+        List<String> lines = new ArrayList<>();
+        music.addVoiceListener("", (String line) -> {lines.add(line);});
+        List<String> expected = Arrays.asList("*syll**ble*", "syll***ble", "syll**ble*", "syll*ble");
+        assertEquals(expected, lines);
+    }
+    
+    //Covers: squiggle operator
+    @Test public void testParseLyricsSquiggleOperator() throws UnableToParseException {
+        String basicSong = generateHeader(4, 4, 4, 100, Key.C) + "C C C C|\nw: of~the~day";
+        Composition music = (new MusicParser()).parse(basicSong);
+        List<String> lines = new ArrayList<>();
+        music.addVoiceListener("", (String line) -> {lines.add(line);});
+        List<String> expected = Arrays.asList("*of the day*", "of the day", "of the day", "of the day");
+        assertEquals(expected, lines);
+    }
+    
+    //Covers: \- operator
+    @Test public void testParseLyricsSquiggleOperator() throws UnableToParseException {
+        String basicSong = generateHeader(4, 4, 4, 100, Key.C) + "C C C C|\nw: of\-the  day";
+        Composition music = (new MusicParser()).parse(basicSong);
+        List<String> lines = new ArrayList<>();
+        music.addVoiceListener("", (String line) -> {lines.add(line);});
+        List<String> expected = Arrays.asList("*of-the* day", "of-the *day*", "of-the day", "of-the day");
+        assertEquals(expected, lines);
+    }
+    
+    //Covers: | operator, enough notes in bar (ignored), fewer notes than bar (advances to next bar)
     
     //COMMENTS
     
