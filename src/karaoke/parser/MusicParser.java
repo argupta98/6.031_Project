@@ -158,8 +158,8 @@ public class MusicParser {
     /**
      * Parse a string into an Composition.
      * @param string string to parse
-     * @return Expression parsed from the string
-     * @throws UnableToParseException if the string doesn't match the Expression grammar
+     * @return Composition parsed from the string
+     * @throws UnableToParseException if the string doesn't match the Abc grammar
      */
     public Composition parse(final String string) throws UnableToParseException {
         // parse the example into a parse tree
@@ -209,9 +209,8 @@ public class MusicParser {
     /**
      * Parse a File into an Composition.
      * @param file file to parse
-     * @return Expression parsed from the string
-     * @throws UnableToParseException if the string doesn't match the Expression grammar
-     * @throws FileNotFoundException 
+     * @return Composition parsed from the string
+     * @throws UnableToParseException if the string doesn't match the ABC grammar 
      */
     public Composition parseFile(final File file) throws UnableToParseException {
         // parse the example into a parse tree

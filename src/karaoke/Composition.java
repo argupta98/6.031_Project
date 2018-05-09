@@ -18,10 +18,17 @@ public class Composition {
     public enum Accidental{FLAT(-1), SHARP(1), DOUBLE_FLAT(-2), DOUBLE_SHARP(2), NATURAL(0);
         
         private final int semitonesUp;
+        /**
+         * Creates a new accidental 
+         * @param semitonesUp the number of semitones up the accidental is
+         */
         Accidental(int semitonesUp) {
             this.semitonesUp = semitonesUp;
         }
         
+        /**
+         * @return the number of semitones up the Accidental represents
+         */
         public int getTranspose() {
             return this.semitonesUp;
         }
@@ -34,7 +41,6 @@ public class Composition {
     private double length;
     private double meter;
     private int trackNumber;
-    private int numberOfVoices;
     private Key key;
     
     //AF(Voices) = A composition music piece which consists of all the voices in voices played
@@ -47,19 +53,25 @@ public class Composition {
     //  The client has no access to any of the variables. 
     
     /**
-     * Creates a new composition with all the voices
+     * Creates a new composition with default values
      */
     public Composition() {
         this.voices = new HashMap<>();
-        this.numberOfVoices = 0;
         this.tempo = DEFAULT_TEMPO;
         this.meter = DEFAULT_METER;
         this.length= DEFAULT_LENGTH;
         this.composer = DEFAULT_COMPOSER;
     }
     
+    private void checkRep() {
+        assert title != null;
+        assert voices != null;
+        assert key != null;
+        assert composer != null;
+    }
     /**
-     * play all voices at once
+     * modifies the player to play all the voices at once
+     * @param player the player to have play the music
      */
     public void play(SequencePlayer player) {
         for(String voiceKey: voices.keySet()) {
@@ -104,6 +116,7 @@ public class Composition {
     
     /**
      * set the title of the composition
+     * @param title the title of the piece
      */
     public void setTitle(String title) {
         this.title = title;
@@ -117,7 +130,8 @@ public class Composition {
     }
     
     /**
-     * @return the composer of the composition
+     * set the composer of the composition
+     * @param composer the composer of the piece
      */
     public void setComposer(String composer) {
         this.composer = composer;
@@ -131,7 +145,8 @@ public class Composition {
     }
     
     /**
-     * @return the tempo of the composition
+     * set the tempo of the composition
+     * @param tempo the tempo to set the piece to
      */
     public void setTempo(double tempo) {
         this.tempo = tempo;
@@ -145,7 +160,8 @@ public class Composition {
     }
     
     /**
-     * @return the default length of a note in the composition
+     * set the default length of a note in the composition
+     * @param length the length of the piece
      */
     public void setLength(double length) {
         this.length = length;
@@ -159,7 +175,8 @@ public class Composition {
     }
     
     /**
-     * @return the track number of the composition in a set of compositions
+     * set the track number of the composition in a set of compositions
+     * @param tracknumber the tracknumber of the piece
      */
     public void setTrackNumber(int trackNumber) {
         this.trackNumber = trackNumber; 
@@ -173,7 +190,8 @@ public class Composition {
     }
     
     /**
-     * @return the key the composition is written in
+     * set the key the composition is written in
+     * @param key the key of the piece
      */
     public void setKey(Key key){
         this.key = key;
@@ -187,12 +205,17 @@ public class Composition {
     }
     
     /**
-     * @return the length of a bar of a composition
+     * set the length of a bar of a composition
+     * @param meter the meter of the composition
      */
     public void setMeter(double meter) {
         this.meter = meter;
     }
-
+    
+    /**
+     * Set the voices of this piece to voicemap
+     * @param voiceMap a map of voice names to voices
+     */
     public void setVoices(Map<String, Voice> voiceMap) {
         voices = new HashMap<>(voiceMap);
     }
