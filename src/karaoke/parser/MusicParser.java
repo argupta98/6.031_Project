@@ -237,9 +237,9 @@ public class MusicParser {
     // the nonterminals of the grammar
     private static enum MusicGrammar {
         COMPOSITION, HEADER, TRACKNUMBER, COMPOSER, METER, LENGTH, TEMPO,
-        VOICENAME, KEY, VOICE, MUSICLINE, MEASURE, NOTE, OCTAVEUP, OCTAVEDOWN,
-        NOTEDENOMINATOR, ACCIDENTAL, SHARP, FLAT, LYRIC, SYLLABLENOTE, NEWMEASURE, 
-        SYLLABLE, LETTER, COMMENT, NUMBER, WHITESPACE, WHITESPACEANDCOMMENT, TITLE, HOLD,
+        VOICENAME, KEY, VOICE, MUSICLINE, MEASURE, NOTE, OCTAVEUP, OCTAVEDOWN, TILDA,
+        NOTEDENOMINATOR, ACCIDENTAL, SHARP, FLAT, LYRIC, SYLLABLENOTE, NEWMEASURE, BACKSLASHHYPHEN,
+        SYLLABLE, LETTER, COMMENT, NUMBER, WHITESPACE, WHITESPACEANDCOMMENT, TITLE, HOLD, SPACE, 
         CHORD, TUPLE, DENOMINATOR, NUMERATOR, REPEAT, DOUBLEFLAT, DOUBLESHARP, NATURAL, REST, ENDING
     }
 
@@ -523,7 +523,6 @@ public class MusicParser {
             octaveModifier+=",";
         }
         
-        //TODO deal with accidentals in environment
         if(note.childrenByName(MusicGrammar.ACCIDENTAL).size() > 0) {
             ParseTree<MusicGrammar> accidental = note.childrenByName(MusicGrammar.ACCIDENTAL).get(0);
             MusicGrammar name = accidental.children().get(0).name();
@@ -600,6 +599,9 @@ public class MusicParser {
                 for(ParseTree<MusicGrammar> child: syllableNote.children()) {
                     if(child.text().equals("~")) {
                         syllable += " ";
+                    }
+                    else if(child.text().equals("\\-")) {
+                        syllable += "-";
                     }
                     else {
                         syllable+=child.text();

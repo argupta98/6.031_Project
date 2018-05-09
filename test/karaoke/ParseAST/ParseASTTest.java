@@ -67,6 +67,7 @@ public class ParseASTTest {
     //      Repeats: Ending: 1 ending, 2 different endings, >2 different endings
     //               syntax: enclosed by |: :|, only ends with :|, has [1, [2 ending notation
     //               number bars: repeat encloses 1 bar, 2 bars, >2 bars
+    //               repeat occurs over mutiple lines
     //
     //       Voices: number: 1 voice, 2 voices, >2 voices
     //               ordering: interleaved (one voice spread over multiple lines), not interleaved
@@ -93,7 +94,7 @@ public class ParseASTTest {
                 "M:"+meterNumerator+"/"+meterDenominator+"\r\n" + 
                 "L: 1/"+defaultNoteDenominator+"\r\n" + 
                 "Q: 1/"+defaultNoteDenominator+"="+tempo+"\r\n" + 
-                "K:D\n";
+                "K: "+key+"\n";
     }
     //HEADER Test Cases
     //Covers: parseString: Header: Handles all cases
@@ -223,6 +224,7 @@ public class ParseASTTest {
     @Test public void testParseStringRepeat() throws UnableToParseException{
         String basicSong = generateHeader(8, 8, 8, 100, Key.C) + "|: C D E F | G A B c :|";
         Composition music = (new MusicParser()).parse(basicSong);
+        assertEquals(Key.C, music.key());
         assertEquals("|:CDEFGABC':|\n", music.toString());
     }
     

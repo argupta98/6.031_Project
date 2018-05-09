@@ -17,9 +17,9 @@ Title ::= [^\r\t\n%]+;
 
 //Music grammar
 Voice ::= ('V:' VoiceName '\n')? MusicLine ('\n')?('w:' Lyric)?;
-MusicLine ::= (Measure | Repeat)+;
-Repeat ::= ('|:')? (Measure)+ ((':|') | Ending)+ ;
-Ending ::= '[' Number (Measure)+ ( (':|') | ('\n'));
+MusicLine ::= (Measure | Repeat | Ending)+;
+Repeat ::= ('|:')? (Measure)+ ((':|') | Ending | '\n')+ ; 
+Ending ::= '[' Number (Measure)+ ( (':|') | ('|') | '\n');
 Measure ::= ('|')? (Note | Chord | Tuple | Rest)+ ('[|' | '|' | '|]' | '||')?;
 Chord ::= '[' (note)+ ']';
 Tuple ::= '('Number (note|chord)+;
@@ -37,13 +37,21 @@ Natural ::= '=';
 }
 
 //Lyric grammar
-Lyric ::= SyllableNote (([- ]|NewMeasure)* SyllableNote |([- ]|NewMeasure)* Hold)* ('\n')?;
+Lyric ::= SyllableNote (([-]|Space|NewMeasure)* SyllableNote |([-]|Space|NewMeasure)* Hold)* ('\n')?;
+Space ::= [ ];
 Hold ::= '_';
 NewMeasure ::= '|';
-SyllableNote ::= syllable ([~] syllable)*;
+SyllableNote ::= Syllable ((Tilda|backslashhyphen)+ Syllable)*;
+Tilda ::= '~';
+backslashhyphen ::= "\\""-";
 Syllable ::= [a-zA-Z0-9\!.\*\(\)\'\?\,]+[ ]?;
+
+//Misc
 Letter ::= [A-G]|[a-g];
-Comment ::= '%'[^\n]* '\n';
+
+@skip whitespace{
+    Comment ::= '%'[^\n]* '\n';
+}
 whitespace ::= [ \t\r]+;
 whitespaceAndComment ::= (comment | whitespace)+;
 Number ::= [1-9][0-9]*;
