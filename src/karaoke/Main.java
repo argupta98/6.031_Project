@@ -29,7 +29,7 @@ public class Main {
      *  
      */
     public static void main(String[] args) throws UnableToParseException, IOException {
-        final File input = new File("sample-abc/piece3.abc");
+        final File input = new File("sample-abc/waxies_dargle.abc");
         try {
             Player musicPlayer = new Player(input);
             musicPlayer.addLyricListener("",  (String line) -> System.out.println(line));
@@ -38,7 +38,7 @@ public class Main {
             //  Auto-generated catch block
             e.printStackTrace();
         }
-        
+        /*
         final Queue<String> arguments = new LinkedList<>(Arrays.asList(args));
         final String filename;
         final int port;
@@ -65,7 +65,6 @@ public class Main {
         System.out.println(streamingInstructions);
         String playBackInstructions = "To play song go to http://localhost:{INSERT PORT NUMBER PASSED IN}/play/{ABC FILENAME}";
         System.out.println(playBackInstructions);
-        
-        
+        */
     }
 }
