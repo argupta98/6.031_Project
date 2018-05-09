@@ -2,6 +2,7 @@ package karaoke;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
@@ -9,21 +10,27 @@ import java.io.PrintWriter;
 import java.net.InetSocketAddress;
 import java.util.concurrent.Executors;
 
+import javax.sound.midi.InvalidMidiDataException;
+import javax.sound.midi.MidiUnavailableException;
+
 import com.sun.net.httpserver.HttpContext;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpServer;
 
+import edu.mit.eecs.parserlib.UnableToParseException;
 import karaoke.Voice.LyricListener;
+import karaoke.parser.MusicParser;
+import karaoke.player.Player;
 
 public class StreamingServer {
     
     private final HttpServer server;
     private final Composition piece;
-    
+    private final String filename;
     // Abstraction Function
-    // AF(sever, piece) => A webserver server that streams the lyrics of piece for the client and plays piece
-    //                       locally
+    // AF(sever, piece) => A webserver server that streams the piece noted in the abc file, filename. The lyrics of piece for the client 
+    //                   and plays piece locally
     
     // Rep Invaraint
     // - server cannot be null
@@ -42,13 +49,15 @@ public class StreamingServer {
     
     /**
      * Make a new server to stream lyrics to a given piece of music
-     * @param music to the server will stream the lyrics to
+     * @param filename to the server will stream the lyrics to
      * @param port number that the server will listen to 
      * @throws IOException 
+     * @throws UnableToParseException 
      */
-    public StreamingServer(Composition music, int port) throws IOException {
+    public StreamingServer(String filename, int port) throws IOException, UnableToParseException {
         this.server = HttpServer.create(new InetSocketAddress(port), 0);
-        this.piece = music;
+        this.filename = filename;
+        this.piece = (new MusicParser()).parseFile(new File(this.filename));
         
         // handle concurrent requests with multiple threads
         server.setExecutor(Executors.newCachedThreadPool());
@@ -60,8 +69,33 @@ public class StreamingServer {
                 checkRep();
             }
         }); 
+        
+    //  handle requests for /play/filename
+        HttpContext play = server.createContext("/play/", new HttpHandler() {
+            public void handle(HttpExchange exchange) throws IOException {
+                try {
+                    handlePlay(exchange);
+                } catch (UnableToParseException | MidiUnavailableException | InvalidMidiDataException e) {
+                    //  Auto-generated catch block
+                    e.printStackTrace();
+                }
+                checkRep();
+            }
+        }); 
     }
     
+    /**
+     * Plays back piece that on the machine running the StreamingServer
+     * @param filename of file to be played 
+     * @throws UnableToParseException if the file is invalid. 
+     * @throws InvalidMidiDataException 
+     * @throws MidiUnavailableException 
+     */
+    public void playback(String filename) throws UnableToParseException, MidiUnavailableException, InvalidMidiDataException {
+        File song = new File(filename);
+        Player songPlayback = new Player(song);
+        songPlayback.play();
+    }
     /**
      * Handles requests for streaming the lyrics for a voice from the piece 
      * @param HTTP request/response, modified by this method to send a response and close the exchange
@@ -101,9 +135,36 @@ public class StreamingServer {
         exchange.close();
     }
     
+    /**
+     * Handles requests for streaming the lyrics for a voice from the piece 
+     * @param HTTP request/response, modified by this method to send a response and close the exchange
+     * @throws UnableToParseException 
+     * @throws InvalidMidiDataException 
+     * @throws MidiUnavailableException 
+     */
+    private synchronized void handlePlay(HttpExchange exchange) throws UnableToParseException, MidiUnavailableException, InvalidMidiDataException {
+        final int successCode = 200;
+        final int failureCode = 404;
+        
+        // requested path
+        final String path = exchange.getRequestURI().getPath();
+        // check that the correct exchange is being handled in this case
+        final String base = exchange.getHttpContext().getPath();
+        assert path.startsWith(base);
+        
+        String playCommand = path.substring(base.length());
+        String file = playCommand.split("/")[0];
+     
+        Player karoke = new Player(new File(file));
+        karoke.play();
+        
+        checkRep();
+        exchange.close();
+    }
     private void checkRep() {
         assert server != null;
         assert piece != null;
+        assert filename != null;
     }
     
     /**

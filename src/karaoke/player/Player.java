@@ -51,6 +51,14 @@ public class Player {
         checkRep();
     }
     
+    /**
+     * @return the title and composer of the piece to be played
+     */
+    public String songInfo() {
+        String title = music.title();
+        String composer = music.composer();
+        return "Title: " + title + ", Composer: " + composer;
+    }
     
     /**
      * Plays the music described by this.music

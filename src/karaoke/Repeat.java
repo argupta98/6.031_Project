@@ -32,6 +32,11 @@ public class Repeat implements Music{
         this.endings = new ArrayList<>(endings);
     }
     
+    private void checkRep() {
+        assert measures != null;
+        assert endings != null;
+    }
+    
     @Override
     public double duration() {
         double totalDuration = 0;

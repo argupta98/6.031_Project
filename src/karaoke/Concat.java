@@ -27,6 +27,11 @@ public class Concat implements Music{
         this.right = right;
     }
     
+    private void checkRep() {
+        assert left != null;
+        assert right != null;
+    }
+    
     @Override
     public double duration() {
         return left.duration()+right.duration();

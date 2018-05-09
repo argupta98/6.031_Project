@@ -21,9 +21,7 @@ public class Voice {
     //                                       has listeners in the set listeners which provide callbacks for the lyric highlight 
     
     // Rep Invaraint
-    // - piece cannot be null
-    // - allSyllables cannot be null
-    // - listeners cannot be null
+    // - true 
     
     // Safety from Rep Exposure 
     //  - Client has no reference to internal representation
@@ -35,6 +33,13 @@ public class Voice {
         this.allSyllables = syllables;
         this.listeners = Collections.synchronizedList(new ArrayList<>());
         this.name = name;
+    }
+    
+    private void checkRep() {
+        assert music != null;
+        assert allSyllables != null;
+        assert listeners != null;
+        assert name != null;
     }
     
    /** Listens for note being played and provides the necessary lyric */

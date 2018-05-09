@@ -40,6 +40,13 @@ public class Note implements Music{
         this.lyricIndex = lyricIndex;
     }
     
+    private void checkRep() {
+        assert pitch != null;
+        assert instrument != null;
+        
+        assert duration >= 0;
+        assert lyricIndex >= 0;
+    }
     
     @Override
     public double duration() {

@@ -59,7 +59,7 @@ public class LyricStreamingTest {
     public void testLyricsSingleLine() throws UnableToParseException, IOException {
     	final int serverPort = 4567;
     	Composition piece = (new MusicParser()).parseFile(new File("sample-abc/piece1.abc"));
-        final StreamingServer server = new StreamingServer(piece, serverPort);
+        final StreamingServer server = new StreamingServer("sample-abc/piece1.abc", serverPort);
         
         // start the server
         server.start();

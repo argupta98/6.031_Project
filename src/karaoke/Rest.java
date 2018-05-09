@@ -25,6 +25,9 @@ public class Rest implements Music {
         this.duration = duration;
     }
     
+    private void checkRep() {
+        assert duration > 0;
+    }
     
     @Override
     public double duration() {

@@ -33,6 +33,13 @@ public class Chord implements Music{
         this.notes = notes;
         this.lyricIndex = lyricIndex;
     }
+    
+    private void checkRep() {
+        assert notes != null;
+        assert lyricIndex >= 0;
+
+    }
+    
     @Override
     public double duration() {
         return notes.get(0).duration();
