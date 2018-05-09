@@ -10,6 +10,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 
@@ -39,8 +40,81 @@ public class MusicParser {
     private static final Map<Key, Map<String, Accidental>> KEY_SIGNATURES = new HashMap<>();
     static {
         //TODO fill in correct key signatures
-        KEY_SIGNATURES.put(Key.A, new HashMap<>());
+    	Map<String, Accidental> C = new HashMap<>();
+    	C.put("A", Accidental.NATURAL);
+    	C.put("B", Accidental.NATURAL);
+    	C.put("C", Accidental.NATURAL);
+    	C.put("D", Accidental.NATURAL);
+    	C.put("E", Accidental.NATURAL);
+    	C.put("F", Accidental.NATURAL);
+    	C.put("G", Accidental.NATURAL);    	
+    	
+        KEY_SIGNATURES.put(Key.C, C);
+        KEY_SIGNATURES.put(Key.Am, C);
+        
+    	Map<String, Accidental> G = new HashMap<>();
+    	C.put("A", Accidental.NATURAL);
+    	C.put("B", Accidental.NATURAL);
+    	C.put("C", Accidental.NATURAL);
+    	C.put("D", Accidental.NATURAL);
+    	C.put("E", Accidental.NATURAL);
+    	C.put("F", Accidental.SHARP);
+    	C.put("G", Accidental.NATURAL);    	
+    	
+        KEY_SIGNATURES.put(Key.G, G);
+        KEY_SIGNATURES.put(Key.Em, G);
+        
+    	Map<String, Accidental> D = new HashMap<>();
+    	C.put("A", Accidental.NATURAL);
+    	C.put("B", Accidental.NATURAL);
+    	C.put("C", Accidental.SHARP);
+    	C.put("D", Accidental.NATURAL);
+    	C.put("E", Accidental.NATURAL);
+    	C.put("F", Accidental.SHARP);
+    	C.put("G", Accidental.NATURAL);    	
+    	
+        KEY_SIGNATURES.put(Key.D, D);
+        KEY_SIGNATURES.put(Key.Bm, D);
+        
+    	Map<String, Accidental> A = new HashMap<>();
+    	C.put("A", Accidental.NATURAL);
+    	C.put("B", Accidental.NATURAL);
+    	C.put("C", Accidental.SHARP);
+    	C.put("D", Accidental.NATURAL);
+    	C.put("E", Accidental.NATURAL);
+    	C.put("F", Accidental.SHARP);
+    	C.put("G", Accidental.SHARP);    	
+    	
+        KEY_SIGNATURES.put(Key.A, A);
+        KEY_SIGNATURES.put(Key.F#m, A);
+        
+    	Map<String, Accidental> E = new HashMap<>();
+    	C.put("A", Accidental.NATURAL);
+    	C.put("B", Accidental.NATURAL);
+    	C.put("C", Accidental.SHARP);
+    	C.put("D", Accidental.SHARP);
+    	C.put("E", Accidental.NATURAL);
+    	C.put("F", Accidental.SHARP);
+    	C.put("G", Accidental.SHARP);    	
+    	
+        KEY_SIGNATURES.put(Key.E, E);
+        KEY_SIGNATURES.put(Key.C#m, E);
+        
+    	Map<String, Accidental> E = new HashMap<>();
+    	C.put("A", Accidental.NATURAL);
+    	C.put("B", Accidental.NATURAL);
+    	C.put("C", Accidental.SHARP);
+    	C.put("D", Accidental.SHARP);
+    	C.put("E", Accidental.NATURAL);
+    	C.put("F", Accidental.SHARP);
+    	C.put("G", Accidental.SHARP);    	
+    	
+        KEY_SIGNATURES.put(Key.B, E);
+        KEY_SIGNATURES.put(Key.G#m, E);
+        
+        KEY_SIGNATURES.put(Key.Am, new HashMap<>());   
         KEY_SIGNATURES.put(Key.B, new HashMap<>());
+        KEY_SIGNATURES.put(Key.Bm, new HashMap<>());
         KEY_SIGNATURES.put(Key.C, new HashMap<>());
         KEY_SIGNATURES.put(Key.D, new HashMap<>());
         KEY_SIGNATURES.put(Key.E, new HashMap<>());
@@ -126,13 +200,17 @@ public class MusicParser {
             ParseTree<MusicGrammar> voice = parseTree.children().get(voiceNumber);
             List<String> lyricList = parseLyrics(voice.childrenByName(MusicGrammar.LYRIC));
             System.out.println(lyricList);
-            NoteEnvironment environment = new NoteEnvironment(composition, lyricList);
             String voiceName = "";
             if(voice.childrenByName(MusicGrammar.VOICENAME).size() > 0) {
                 voiceName = voice.childrenByName(MusicGrammar.VOICENAME)
                         .get(0).text();
             }
             //use parsetree to make a line of music aligned with voices
+            int indexModifier = 0;
+            if(voiceMap.containsKey(voiceName)) {
+                indexModifier = voiceMap.get(voiceName).lyricLength();
+            }
+            NoteEnvironment environment = new NoteEnvironment(composition, lyricList, indexModifier);
             Music line = makeMusicAST(voice.childrenByName(MusicGrammar.MUSICLINE)
                     .get(0), environment);
             System.out.println(line);

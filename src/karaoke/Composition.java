@@ -13,7 +13,8 @@ public class Composition {
     private static double DEFAULT_LENGTH = 1.0/4;
     private static double DEFAULT_METER = 1.0;
     private Map<String, Voice> voices;
-    public enum Key{A, Am, B, C, D, E, F, G}
+    public enum Key{C, Am, G, Em, D, Bm, A, F#m, E, C#m, B, G#m, Cb, Abm, Gb, Ebm, F#, D#m, Db, Bbm,
+    	C#, A#m, B, C, D, E, G}
     
     public enum Accidental{FLAT(-1), SHARP(1), DOUBLE_FLAT(-2), DOUBLE_SHARP(2), NATURAL(0);
         
