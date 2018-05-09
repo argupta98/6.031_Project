@@ -30,9 +30,15 @@ public class StreamingServer {
     // - piece cannot be null
     
     // Safety from Rep Exposure
+    // - All fields are private and final
+    // - No mutable fields are directly returned to the client
     
     
     // Thread Safety Argument
+    // - Follows monitor pattern
+    // - All functions that could be called by multiple threads
+   //    must be acquire the lock on the voice to be streamed before
+    //   they are allowed to stream the contents
     
     /**
      * Make a new server to stream lyrics to a given piece of music
@@ -60,7 +66,7 @@ public class StreamingServer {
      * Handles requests for streaming the lyrics for a voice from the piece 
      * @param HTTP request/response, modified by this method to send a response and close the exchange
      */
-    private void handleVoice(HttpExchange exchange) {
+    private synchronized void handleVoice(HttpExchange exchange) {
         final int successCode = 200;
         final int failureCode = 404;
         

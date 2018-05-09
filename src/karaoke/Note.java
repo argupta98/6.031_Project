@@ -1,6 +1,4 @@
 package karaoke;
-
-import karaoke.Composition.Accidental;
 import karaoke.sound.Instrument;
 import karaoke.sound.Pitch;
 import karaoke.sound.SequencePlayer;
@@ -27,8 +25,14 @@ public class Note implements Music{
     // Safety from Rep Exposure
     // All fields are private and immutable
     
-    // Thread Safety
     
+    /**
+     * Creates a new Note Instance
+     * @param duration the duration of the note
+     * @param pitch the pitch of the note 
+     * @param instrument the instrument to play the note
+     * @param lyricIndex the index of the syllable corresponding to the note in the list of syllables
+     */
     public Note(double duration, Pitch pitch, Instrument instrument, int lyricIndex) {
         this.duration = duration;
         this.pitch = pitch;

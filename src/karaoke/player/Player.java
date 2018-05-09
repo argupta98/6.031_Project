@@ -25,6 +25,7 @@ public class Player {
     //Thread Safety:
     //  Uses monitor pattern
     
+    
     /**
      * Creates a new player that plays the music represented in the given file
      * @param input the file containing the music
@@ -33,8 +34,12 @@ public class Player {
     public Player(File input) throws UnableToParseException {
         //parse input into a Piece object
         this.music = (new MusicParser()).parseFile(input);
+        checkRep();
     }
     
+    private void checkRep() {
+        assert music != null;
+    }
     /**
      * Creates a new player that plays the music represented by the given string
      * @param input the string containing the music
@@ -43,6 +48,7 @@ public class Player {
     public Player(String input) throws UnableToParseException {
         //parse input into a Piece object
         this.music = (new MusicParser()).parse(input);
+        checkRep();
     }
     
     
@@ -58,6 +64,7 @@ public class Player {
         SequencePlayer player = new MidiSequencePlayer(ticksPerBeat, beatsPerMinute);
         music.play(player);
         player.play();
+        checkRep();
     }
     
     /**
@@ -68,5 +75,6 @@ public class Player {
      */
     public synchronized void addLyricListener(String voice, LyricListener listener) {
             music.addVoiceListener(voice, listener);
+            checkRep();
     }
 }

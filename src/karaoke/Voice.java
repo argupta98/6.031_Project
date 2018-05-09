@@ -26,10 +26,9 @@ public class Voice {
     // - listeners cannot be null
     
     // Safety from Rep Exposure 
-    
-    
-    //Thread Safety Argument:
-    // - 
+    //  - Client has no reference to internal representation
+    //  - All fields are private and final
+    //  - None of the internal rep variables are returned directly
     
     public Voice(Music piece, List<String> syllables, String name) {
         this.music = piece;
@@ -123,5 +122,9 @@ public class Voice {
             outString+= "\nw: "+constructLine(-1);
         }
         return outString;
+    }
+
+    public int lyricLength() {
+        return this.allSyllables.size();
     }
 }

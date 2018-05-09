@@ -24,8 +24,11 @@ public class Chord implements Music{
     // lyricIndex is an immutable reference to an immutable value
     // we do not return references to notes
     
-    // Thread Safety
-    
+    /**
+     * Creates a new instance of Chord
+     * @param notes the notes in the chord
+     * @param lyricIndex the index of the syllable corresponding to the chord in the list of syllables
+     */
     public Chord(List<Music> notes, int lyricIndex) {
         this.notes = notes;
         this.lyricIndex = lyricIndex;

@@ -39,87 +39,185 @@ public class MusicParser {
     private static final double DEFAULT_TEMPO = 100;
     private static final Map<Key, Map<String, Accidental>> KEY_SIGNATURES = new HashMap<>();
     static {
-        //TODO fill in correct key signatures
-    	Map<String, Accidental> C = new HashMap<>();
-    	C.put("A", Accidental.NATURAL);
-    	C.put("B", Accidental.NATURAL);
-    	C.put("C", Accidental.NATURAL);
-    	C.put("D", Accidental.NATURAL);
-    	C.put("E", Accidental.NATURAL);
-    	C.put("F", Accidental.NATURAL);
-    	C.put("G", Accidental.NATURAL);    	
+    	Map<String, Accidental> c = new HashMap<>();
+    	c.put("A", Accidental.NATURAL);
+    	c.put("B", Accidental.NATURAL);
+    	c.put("C", Accidental.NATURAL);
+    	c.put("D", Accidental.NATURAL);
+    	c.put("E", Accidental.NATURAL);
+    	c.put("F", Accidental.NATURAL);
+    	c.put("G", Accidental.NATURAL);    	
     	
-        KEY_SIGNATURES.put(Key.C, C);
-        KEY_SIGNATURES.put(Key.Am, C);
+        KEY_SIGNATURES.put(Key.C, c);
+        KEY_SIGNATURES.put(Key.Am, c);
         
-    	Map<String, Accidental> G = new HashMap<>();
-    	C.put("A", Accidental.NATURAL);
-    	C.put("B", Accidental.NATURAL);
-    	C.put("C", Accidental.NATURAL);
-    	C.put("D", Accidental.NATURAL);
-    	C.put("E", Accidental.NATURAL);
-    	C.put("F", Accidental.SHARP);
-    	C.put("G", Accidental.NATURAL);    	
+    	Map<String, Accidental> g = new HashMap<>();
+    	g.put("A", Accidental.NATURAL);
+    	g.put("B", Accidental.NATURAL);
+    	g.put("C", Accidental.NATURAL);
+    	g.put("D", Accidental.NATURAL);
+    	g.put("E", Accidental.NATURAL);
+    	g.put("F", Accidental.SHARP);
+    	g.put("G", Accidental.NATURAL);    	
     	
-        KEY_SIGNATURES.put(Key.G, G);
-        KEY_SIGNATURES.put(Key.Em, G);
+        KEY_SIGNATURES.put(Key.G, g);
+        KEY_SIGNATURES.put(Key.Em, g);
         
-    	Map<String, Accidental> D = new HashMap<>();
-    	C.put("A", Accidental.NATURAL);
-    	C.put("B", Accidental.NATURAL);
-    	C.put("C", Accidental.SHARP);
-    	C.put("D", Accidental.NATURAL);
-    	C.put("E", Accidental.NATURAL);
-    	C.put("F", Accidental.SHARP);
-    	C.put("G", Accidental.NATURAL);    	
+    	Map<String, Accidental> d = new HashMap<>();
+    	d.put("A", Accidental.NATURAL);
+    	d.put("B", Accidental.NATURAL);
+    	d.put("C", Accidental.SHARP);
+    	d.put("D", Accidental.NATURAL);
+    	d.put("E", Accidental.NATURAL);
+    	d.put("F", Accidental.SHARP);
+    	d.put("G", Accidental.NATURAL);    	
     	
-        KEY_SIGNATURES.put(Key.D, D);
-        KEY_SIGNATURES.put(Key.Bm, D);
+        KEY_SIGNATURES.put(Key.D, d);
+        KEY_SIGNATURES.put(Key.Bm, d);
         
-    	Map<String, Accidental> A = new HashMap<>();
-    	C.put("A", Accidental.NATURAL);
-    	C.put("B", Accidental.NATURAL);
-    	C.put("C", Accidental.SHARP);
-    	C.put("D", Accidental.NATURAL);
-    	C.put("E", Accidental.NATURAL);
-    	C.put("F", Accidental.SHARP);
-    	C.put("G", Accidental.SHARP);    	
+    	Map<String, Accidental> a = new HashMap<>();
+    	a.put("A", Accidental.NATURAL);
+    	a.put("B", Accidental.NATURAL);
+    	a.put("C", Accidental.SHARP);
+    	a.put("D", Accidental.NATURAL);
+    	a.put("E", Accidental.NATURAL);
+    	a.put("F", Accidental.SHARP);
+    	a.put("G", Accidental.SHARP);    	
     	
-        KEY_SIGNATURES.put(Key.A, A);
-        KEY_SIGNATURES.put(Key.F#m, A);
+        KEY_SIGNATURES.put(Key.A, a);
+        KEY_SIGNATURES.put(Key.Fsharpm, a);
         
-    	Map<String, Accidental> E = new HashMap<>();
-    	C.put("A", Accidental.NATURAL);
-    	C.put("B", Accidental.NATURAL);
-    	C.put("C", Accidental.SHARP);
-    	C.put("D", Accidental.SHARP);
-    	C.put("E", Accidental.NATURAL);
-    	C.put("F", Accidental.SHARP);
-    	C.put("G", Accidental.SHARP);    	
+    	Map<String, Accidental> e = new HashMap<>();
+    	e.put("A", Accidental.NATURAL);
+    	e.put("B", Accidental.NATURAL);
+    	e.put("C", Accidental.SHARP);
+    	e.put("D", Accidental.SHARP);
+    	e.put("E", Accidental.NATURAL);
+    	e.put("F", Accidental.SHARP);
+    	e.put("G", Accidental.SHARP);    	
     	
-        KEY_SIGNATURES.put(Key.E, E);
-        KEY_SIGNATURES.put(Key.C#m, E);
+        KEY_SIGNATURES.put(Key.E, e);
+        KEY_SIGNATURES.put(Key.Csharpm, e);
         
-    	Map<String, Accidental> E = new HashMap<>();
-    	C.put("A", Accidental.NATURAL);
-    	C.put("B", Accidental.NATURAL);
-    	C.put("C", Accidental.SHARP);
-    	C.put("D", Accidental.SHARP);
-    	C.put("E", Accidental.NATURAL);
-    	C.put("F", Accidental.SHARP);
-    	C.put("G", Accidental.SHARP);    	
+    	Map<String, Accidental> b = new HashMap<>();
+    	b.put("A", Accidental.SHARP);
+    	b.put("B", Accidental.NATURAL);
+    	b.put("C", Accidental.SHARP);
+    	b.put("D", Accidental.SHARP);
+    	b.put("E", Accidental.NATURAL);
+    	b.put("F", Accidental.SHARP);
+    	b.put("G", Accidental.SHARP);    	
     	
-        KEY_SIGNATURES.put(Key.B, E);
-        KEY_SIGNATURES.put(Key.G#m, E);
+        KEY_SIGNATURES.put(Key.B, b);
+        KEY_SIGNATURES.put(Key.Gsharpm, b);
         
-        KEY_SIGNATURES.put(Key.Am, new HashMap<>());   
-        KEY_SIGNATURES.put(Key.B, new HashMap<>());
-        KEY_SIGNATURES.put(Key.Bm, new HashMap<>());
-        KEY_SIGNATURES.put(Key.C, new HashMap<>());
-        KEY_SIGNATURES.put(Key.D, new HashMap<>());
-        KEY_SIGNATURES.put(Key.E, new HashMap<>());
-        KEY_SIGNATURES.put(Key.F, new HashMap<>());
-        KEY_SIGNATURES.put(Key.G, new HashMap<>());
+    	Map<String, Accidental> cFlat = new HashMap<>();
+    	cFlat.put("A", Accidental.FLAT);
+    	cFlat.put("B", Accidental.FLAT);
+    	cFlat.put("C", Accidental.FLAT);
+    	cFlat.put("D", Accidental.FLAT);
+    	cFlat.put("E", Accidental.FLAT);
+    	cFlat.put("F", Accidental.FLAT);
+    	cFlat.put("G", Accidental.FLAT);    	
+    	
+        KEY_SIGNATURES.put(Key.Cflat, cFlat);
+        KEY_SIGNATURES.put(Key.Aflatm, cFlat);
+        
+    	Map<String, Accidental> fSharp = new HashMap<>();
+    	fSharp.put("A", Accidental.SHARP);
+    	fSharp.put("B", Accidental.NATURAL);
+    	fSharp.put("C", Accidental.SHARP);
+    	fSharp.put("D", Accidental.SHARP);
+    	fSharp.put("E", Accidental.SHARP);
+    	fSharp.put("F", Accidental.SHARP);
+    	fSharp.put("G", Accidental.SHARP);    	
+    	
+        KEY_SIGNATURES.put(Key.Fsharp, fSharp);
+        KEY_SIGNATURES.put(Key.Dsharpm, fSharp);
+        
+    	Map<String, Accidental> gFlat = new HashMap<>();
+    	gFlat.put("A", Accidental.FLAT);
+    	gFlat.put("B", Accidental.FLAT);
+    	gFlat.put("C", Accidental.FLAT);
+    	gFlat.put("D", Accidental.FLAT);
+    	gFlat.put("E", Accidental.FLAT);
+    	gFlat.put("F", Accidental.NATURAL);
+    	gFlat.put("G", Accidental.FLAT);    	
+    	
+        KEY_SIGNATURES.put(Key.Gflat, gFlat);
+        KEY_SIGNATURES.put(Key.Eflatm, gFlat);
+        
+    	Map<String, Accidental> cSharp = new HashMap<>();
+    	cSharp.put("A", Accidental.SHARP);
+    	cSharp.put("B", Accidental.SHARP);
+    	cSharp.put("C", Accidental.SHARP);
+    	cSharp.put("D", Accidental.SHARP);
+    	cSharp.put("E", Accidental.SHARP);
+    	cSharp.put("F", Accidental.SHARP);
+    	cSharp.put("G", Accidental.SHARP);    	
+    	
+        KEY_SIGNATURES.put(Key.Csharp, cSharp);
+        KEY_SIGNATURES.put(Key.Asharpm, cSharp);
+        
+    	Map<String, Accidental> dFlat = new HashMap<>();
+    	dFlat.put("A", Accidental.FLAT);
+    	dFlat.put("B", Accidental.FLAT);
+    	dFlat.put("C", Accidental.NATURAL);
+    	dFlat.put("D", Accidental.FLAT);
+    	dFlat.put("E", Accidental.FLAT);
+    	dFlat.put("F", Accidental.NATURAL);
+    	dFlat.put("G", Accidental.FLAT);    	
+    	
+        KEY_SIGNATURES.put(Key.Dflat, dFlat);
+        KEY_SIGNATURES.put(Key.Bflatm, dFlat);
+        
+    	Map<String, Accidental> aFlat = new HashMap<>();
+    	aFlat.put("A", Accidental.FLAT);
+    	aFlat.put("B", Accidental.FLAT);
+    	aFlat.put("C", Accidental.NATURAL);
+    	aFlat.put("D", Accidental.FLAT);
+    	aFlat.put("E", Accidental.FLAT);
+    	aFlat.put("F", Accidental.NATURAL);
+    	aFlat.put("G", Accidental.NATURAL);    	
+    	
+        KEY_SIGNATURES.put(Key.Aflat, aFlat);
+        KEY_SIGNATURES.put(Key.Fm, aFlat);
+        
+    	Map<String, Accidental> eFlat = new HashMap<>();
+    	eFlat.put("A", Accidental.FLAT);
+    	eFlat.put("B", Accidental.FLAT);
+    	eFlat.put("C", Accidental.NATURAL);
+    	eFlat.put("D", Accidental.NATURAL);
+    	eFlat.put("E", Accidental.FLAT);
+    	eFlat.put("F", Accidental.NATURAL);
+    	eFlat.put("G", Accidental.NATURAL);    	
+    	
+        KEY_SIGNATURES.put(Key.Eflat, eFlat);
+        KEY_SIGNATURES.put(Key.Cm, eFlat);
+        
+    	Map<String, Accidental> bFlat = new HashMap<>();
+    	eFlat.put("A", Accidental.NATURAL);
+    	eFlat.put("B", Accidental.FLAT);
+    	eFlat.put("C", Accidental.NATURAL);
+    	eFlat.put("D", Accidental.NATURAL);
+    	eFlat.put("E", Accidental.FLAT);
+    	eFlat.put("F", Accidental.NATURAL);
+    	eFlat.put("G", Accidental.NATURAL);    	
+    	
+        KEY_SIGNATURES.put(Key.Bflat, bFlat);
+        KEY_SIGNATURES.put(Key.Gm, bFlat);
+        
+    	Map<String, Accidental> f = new HashMap<>();
+    	f.put("A", Accidental.NATURAL);
+    	f.put("B", Accidental.FLAT);
+    	f.put("C", Accidental.NATURAL);
+    	f.put("D", Accidental.NATURAL);
+    	f.put("E", Accidental.NATURAL);
+    	f.put("F", Accidental.NATURAL);
+    	f.put("G", Accidental.NATURAL);    	
+    	
+        KEY_SIGNATURES.put(Key.F, f);
+        KEY_SIGNATURES.put(Key.Dm, f);
     }
     
     /**
@@ -182,8 +280,8 @@ public class MusicParser {
     /**
      * Parse a string into an Composition.
      * @param string string to parse
-     * @return Expression parsed from the string
-     * @throws UnableToParseException if the string doesn't match the Expression grammar
+     * @return Composition parsed from the string
+     * @throws UnableToParseException if the string doesn't match the Abc grammar
      */
     public Composition parse(final String string) throws UnableToParseException {
         // parse the example into a parse tree
@@ -211,6 +309,7 @@ public class MusicParser {
                 indexModifier = voiceMap.get(voiceName).lyricLength();
             }
             NoteEnvironment environment = new NoteEnvironment(composition, lyricList, indexModifier);
+
             Music line = makeMusicAST(voice.childrenByName(MusicGrammar.MUSICLINE)
                     .get(0), environment);
             System.out.println(line);
@@ -232,9 +331,8 @@ public class MusicParser {
     /**
      * Parse a File into an Composition.
      * @param file file to parse
-     * @return Expression parsed from the string
-     * @throws UnableToParseException if the string doesn't match the Expression grammar
-     * @throws FileNotFoundException 
+     * @return Composition parsed from the string
+     * @throws UnableToParseException if the string doesn't match the ABC grammar 
      */
     public Composition parseFile(final File file) throws UnableToParseException {
         // parse the example into a parse tree
@@ -361,7 +459,7 @@ public class MusicParser {
                 for(ParseTree<MusicGrammar> primitive: musicTree.children()) {
                     notes.add(makeMusicAST(primitive, environment));
                 }
-                Music chord = new Chord(notes, environment.lyricIndex);
+                Music chord = new Chord(notes, environment.lyricIndex());
                 environment.lockSyllableCounter();
                 environment.incrementSyllable();
                 return chord;
@@ -486,7 +584,7 @@ public class MusicParser {
         }
                
         return new Note(environment.defaultDuration()*(numerator/denominator), 
-                notePitch, DEFAULT_INSTRUMENT, environment.lyricIndex);
+                notePitch, DEFAULT_INSTRUMENT, environment.lyricIndex());
         
     }
 
@@ -526,10 +624,10 @@ public class MusicParser {
         private boolean newMeasure;
         private Map<String, Accidental> keyMap;
         private Map<String, Accidental> measureMap;
-        private final Key key;
         private boolean lock;
+        private final int indexModifier;
         
-        private NoteEnvironment(Composition composition, List<String> lyricList) {
+        private NoteEnvironment(Composition composition, List<String> lyricList, int indexModifier) {
             keyMap = new HashMap<>(KEY_SIGNATURES.get(composition.key()));
             measureMap = new HashMap<>();
             lyricIndex = 0;
@@ -537,8 +635,8 @@ public class MusicParser {
             newMeasure = true;
             defaultDuration = (1/DEFAULT_NOTE_LENGTH)*DEFAULT_TEMPO*composition.length()*(1/composition.tempo());
             duration = defaultDuration;
-            key = composition.key();
             lock = false;
+            this.indexModifier = indexModifier;
         }
         
         
@@ -599,6 +697,10 @@ public class MusicParser {
         
         private Map<String, Accidental> accidentalsForMeasure(){
             return new HashMap<>(this.measureMap);
+        }
+        
+        private int lyricIndex() {
+            return this.lyricIndex+this.indexModifier;
         }
         
     }

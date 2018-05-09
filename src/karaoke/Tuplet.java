@@ -26,8 +26,12 @@ public class Tuplet implements Music {
     // tupletNumber is private and immutable
     // notes is private and references to the list are not returned to the client
     
-    // Thread Safety
     
+    /**
+     * Creates a new instance of the Tuplet
+     * @param tupletNumber the number of notes in the tuplet
+     * @param notes the notes in the Tuplet
+     */
     public Tuplet(int tupletNumber, List<Music> notes) {
         this.tupletNumber = tupletNumber;
         this.notes = notes;
