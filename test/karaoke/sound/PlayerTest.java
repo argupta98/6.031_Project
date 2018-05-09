@@ -1,5 +1,15 @@
 package karaoke.sound;
 
+import java.io.File;
+
+import javax.sound.midi.InvalidMidiDataException;
+import javax.sound.midi.MidiUnavailableException;
+
+import org.junit.Test;
+
+import edu.mit.eecs.parserlib.UnableToParseException;
+import karaoke.player.Player;
+
 /**
  * Tests by hearing, so we do not want didit to run them
  * @category no_didit
@@ -71,5 +81,44 @@ public class PlayerTest {
      * 2. Create player for this abc file
      * 3. Call play
      * 4. Listen and ensure that the notes repeat 
+     * @throws UnableToParseException 
+     * @throws InvalidMidiDataException 
+     * @throws MidiUnavailableException 
      */
+    
+    // Covers: Player correctly playing abc 
+    
+    @Test
+    private void testABCSong() throws UnableToParseException, MidiUnavailableException, InvalidMidiDataException {
+        File abcSong = new File("sample-abc/abc_song.abc");
+        Player abc = new Player(abcSong);
+        abc.play();
+    }
+    
+// Covers: Player correctly playing fur_elise 
+    @Test
+    private void testFurEliseSong() throws UnableToParseException, MidiUnavailableException, InvalidMidiDataException {
+        File furElise = new File("sample-abc/fur_elise.abc");
+        Player furElisePlayer = new Player(furElise);
+        furElisePlayer.play();
+    }
+    
+// Covers: Player correctly playing invention 
+    
+    @Test
+    private void testInventionSong() throws UnableToParseException, MidiUnavailableException, InvalidMidiDataException {
+        File inventionSong = new File("sample-abc/invention.abc");
+        Player invention = new Player(inventionSong);
+        invention.play();
+    }
+    
+// Covers: Player correctly playing paddy 
+    
+    @Test
+    private void testPaddySong() throws UnableToParseException, MidiUnavailableException, InvalidMidiDataException {
+        File paddySong = new File("sample-abc/pafy.abc");
+        Player paddy = new Player(paddySong);
+        paddy.play();
+    }
+    
 }
