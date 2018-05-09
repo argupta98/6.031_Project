@@ -15,7 +15,7 @@ public class Main {
      * @param args TODO
      */
     public static void main(String[] args) {
-        final File input = new File("sample-abc/abc_song.abc");
+        final File input = new File("sample-abc/piece3.abc");
         try {
             Player musicPlayer = new Player(input);
             musicPlayer.addLyricListener("",  (String line) -> System.out.println(line));

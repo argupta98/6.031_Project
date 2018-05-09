@@ -30,8 +30,6 @@ import karaoke.StreamingServer;
 import karaoke.parser.MusicParser;
 import karaoke.sound.MidiSequencePlayer;
 import karaoke.sound.SequencePlayer;
-import memory.Board;
-import memory.WebServer;
 import edu.mit.eecs.parserlib.UnableToParseException;
 
 
@@ -47,6 +45,13 @@ public class LyricStreamingTest {
     * make sure that number of lines matches expected.
     * Also check that words are displayed correctly.
     * 
+    * Number of specified voices: 0, 1, 2, >2
+    * 
+    * Lyrics: Voice has lyrics, voice does not have lyrics (place holder)
+    * 
+    * MANUAL TESTING Partitions:
+    * 
+    * Lyrics: Lyrics appear in time with music
     */
 
     //Covers: Streaming single line of lyrics
@@ -59,20 +64,38 @@ public class LyricStreamingTest {
         // start the server
         server.start();
 
-        final URL valid = new URL("http://localhost:" + serverPort);
+        final URL valid = new URL("http://localhost:" + serverPort + "/voice/");
         
-        // sleep for 10 seconds while we connect to server
-        try {
-			Thread.sleep(10000);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
+        // start and wait for duration of song .....
         
         final InputStream input = valid.openStream();
         final BufferedReader reader = new BufferedReader(new InputStreamReader(input, UTF_8));
         
-        assertEquals("Amazing grace! How sweet the sound That saved a wretch like me.", reader.readLine()); 
         
+        String expected = "*A*mazing grace! How sweet the sound That saved a wretch like me.\n" + 
+                "A*ma*zing grace! How sweet the sound That saved a wretch like me.\n" + 
+                "Ama*zing* grace! How sweet the sound That saved a wretch like me.\n" + 
+                "Ama*zing* grace! How sweet the sound That saved a wretch like me.\n" + 
+                "Amazing *grace!*How sweet the sound That saved a wretch like me.\n" + 
+                "Amazing grace! *How*sweet the sound That saved a wretch like me.\n" + 
+                "Amazing grace! How *sweet*the sound That saved a wretch like me.\n" + 
+                "Amazing grace! How sweet *the*sound That saved a wretch like me.\n" + 
+                "Amazing grace! How sweet the *sound*That saved a wretch like me.\n" + 
+                "Amazing grace! How sweet the sound *That*saved a wretch like me.\n" + 
+                "Amazing grace! How sweet the sound That *saved*a wretch like me.\n" + 
+                "Amazing grace! How sweet the sound That saved *a* wretch like me.\n" + 
+                "Amazing grace! How sweet the sound That saved *a* wretch like me.\n" + 
+                "Amazing grace! How sweet the sound That saved a *wretch*like me.\n" + 
+                "Amazing grace! How sweet the sound That saved a wretch *like*me.\n" + 
+                "Amazing grace! How sweet the sound That saved a wretch like *me.*\n";
+        
+        String result = "";
+        for(int i = 0; i< 16 ; i++) {
+            result+=reader.readLine()+"\n";
+        }
+        
+        assertEquals(expected, result);
+        server.stop();
     }
         
 }

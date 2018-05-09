@@ -62,7 +62,7 @@ public class MusicParser {
     	C.put("G", Accidental.NATURAL);    	
     	
         KEY_SIGNATURES.put(Key.G, G);
-        KEY_SIGNATURES.put(Key.Em, G);
+
         
     	Map<String, Accidental> D = new HashMap<>();
     	C.put("A", Accidental.NATURAL);
@@ -74,7 +74,7 @@ public class MusicParser {
     	C.put("G", Accidental.NATURAL);    	
     	
         KEY_SIGNATURES.put(Key.D, D);
-        KEY_SIGNATURES.put(Key.Bm, D);
+
         
     	Map<String, Accidental> A = new HashMap<>();
     	C.put("A", Accidental.NATURAL);
@@ -86,11 +86,11 @@ public class MusicParser {
     	C.put("G", Accidental.SHARP);    	
     	
         KEY_SIGNATURES.put(Key.D, D);
-        KEY_SIGNATURES.put(Key.Bm, D);
+
         
         KEY_SIGNATURES.put(Key.Am, new HashMap<>());   
         KEY_SIGNATURES.put(Key.B, new HashMap<>());
-        KEY_SIGNATURES.put(Key.Bm, new HashMap<>());
+
         KEY_SIGNATURES.put(Key.C, new HashMap<>());
         KEY_SIGNATURES.put(Key.D, new HashMap<>());
         KEY_SIGNATURES.put(Key.E, new HashMap<>());
@@ -503,7 +503,6 @@ public class MusicParser {
         private boolean newMeasure;
         private Map<String, Accidental> keyMap;
         private Map<String, Accidental> measureMap;
-        private final Key key;
         private boolean lock;
         private final int indexModifier;
         
@@ -515,8 +514,8 @@ public class MusicParser {
             newMeasure = true;
             defaultDuration = (1/DEFAULT_NOTE_LENGTH)*DEFAULT_TEMPO*composition.length()*(1/composition.tempo());
             duration = defaultDuration;
-            key = composition.key();
             lock = false;
+            this.indexModifier = indexModifier;
         }
         
         
