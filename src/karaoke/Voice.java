@@ -89,6 +89,11 @@ public class Voice {
     private String constructLine(int boldedIndex) {
         String fullLine = "";
         
+        if(boldedIndex >= this.allSyllables.size()) {
+            boldedIndex = this.allSyllables.size();
+            allSyllables.add(" ");
+        }
+        
         if(this.allSyllables.get(boldedIndex).equals("_")) {
             while(this.allSyllables.get(boldedIndex).equals("_") || this.allSyllables.get(boldedIndex).equals("-")) {
                 boldedIndex--;
@@ -98,12 +103,18 @@ public class Voice {
         for(int index = 0; index < this.allSyllables.size(); index++) {
             boolean bolded = false;
             if(this.allSyllables.get(index).equals("_")) {
-                fullLine+=" ";
+                continue;
+            }
+            else if(this.allSyllables.get(index).equals(" ") || this.allSyllables.get(index).equals("")) {
+                fullLine+= " ";
+            }
+            else if(this.allSyllables.get(index).equals("*")) {
+                fullLine+= " ";
             }
             else if(index == boldedIndex) {
                 String syllable = this.allSyllables.get(index);
                 if(syllable.endsWith(" ")) {
-                    fullLine+="*"+this.allSyllables.get(index).substring(0, syllable.length()-1)+"*";
+                    fullLine+="*"+this.allSyllables.get(index).substring(0, syllable.length()-1)+"* ";
                 }
                 else {
                     fullLine+="*"+this.allSyllables.get(index)+"*";

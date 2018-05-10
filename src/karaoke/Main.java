@@ -40,7 +40,7 @@ public class Main {
             e.printStackTrace();
         }
         */
-        
+
         final Queue<String> arguments = new LinkedList<>(Arrays.asList(args));
         final String filename;
         final int port;
@@ -59,13 +59,13 @@ public class Main {
         
         StreamingServer server = new StreamingServer(filename,port);
         server.start();
-        Player karaoke = new Player(filename);
+        Player karaoke = new Player(new File(filename));
         String songInfo = karaoke.songInfo();
         System.out.println(songInfo);
         
-        String streamingInstructions = "To stream lyrics go to http://localhost:{INSERT PORT NUMBER PASSED IN}/voice/{WANTED VOICE ID}";
+        String streamingInstructions = "To stream lyrics go to http://localhost:" + port + "/voice/{WANTED VOICE ID}";
         System.out.println(streamingInstructions);
-        String playBackInstructions = "To play song go to http://localhost:{INSERT PORT NUMBER PASSED IN}/play/{ABC FILENAME}";
+        String playBackInstructions = "To play song go to http://localhost:" + port + "/play/";
         System.out.println(playBackInstructions);
     }
 }

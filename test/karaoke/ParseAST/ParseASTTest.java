@@ -7,6 +7,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import javax.sound.midi.InvalidMidiDataException;
+import javax.sound.midi.MidiUnavailableException;
+
 import org.junit.Test;
 
 import edu.mit.eecs.parserlib.UnableToParseException;
@@ -16,7 +19,9 @@ import karaoke.Music;
 import karaoke.Note;
 import karaoke.parser.MusicParser;
 import karaoke.sound.Instrument;
+import karaoke.sound.MidiSequencePlayer;
 import karaoke.sound.Pitch;
+import karaoke.sound.SequencePlayer;
 
 //Test class for parser and AST
 public class ParseASTTest {
@@ -98,6 +103,29 @@ public class ParseASTTest {
                 "L: 1/"+defaultNoteDenominator+"\r\n" + 
                 "Q: 1/"+defaultNoteDenominator+"="+tempo+"\r\n" + 
                 "K: "+key+"\n";
+    }
+    
+    private static void playMusic(Composition music, List<String> lyriclines) throws MidiUnavailableException, InvalidMidiDataException {
+        final int beatsPerMinute = 100;
+        final int ticksPerBeat = 64;
+        SequencePlayer player = new MidiSequencePlayer(ticksPerBeat, beatsPerMinute);
+        music.play(player);
+        Object lock = new Object();
+        player.addEvent(music.duration(), (Double beat) -> {
+            synchronized (lock) {
+                lock.notify();
+            }
+        });
+        
+        player.play();
+        
+        synchronized (lock) {
+            try {
+                lock.wait();
+            } catch (InterruptedException e) {
+                return;
+            }
+        }
     }
     //HEADER Test Cases
     //Covers: parseString: Header: Handles all cases
@@ -316,92 +344,101 @@ public class ParseASTTest {
     
     //LYRICS Nick
     //Covers: hyphen between strings
-    @Test public void testParseLyricsHyphenBetweenStrings() throws UnableToParseException {
+    @Test public void testParseLyricsHyphenBetweenStrings() throws UnableToParseException, MidiUnavailableException, InvalidMidiDataException {
         String basicSong = generateHeader(4, 4, 4, 100, Key.C) + "C C C C|\nw: syll-a-ble";
         Composition music = (new MusicParser()).parse(basicSong);
         List<String> lines = new ArrayList<>();
-        music.addVoiceListener("", (String line) -> {lines.add(line);});
-        List<String> expected = Arrays.asList("*syll*able", "syll*a*ble", "sylla*ble*", "syllable");
+        music.addVoiceListener("", (String line) -> {lines.add(line); System.out.println(line);});
+        playMusic(music, lines);
+        List<String> expected = Arrays.asList("*syll*able", "syll*a*ble", "sylla*ble*", "syllable ");
         assertEquals(expected, lines);
     }
     
     //Covers: hyphen before underscore
-    @Test public void testParseLyricsHyphenBeforeUnderScore() throws UnableToParseException {
+    @Test public void testParseLyricsHyphenBeforeUnderScore() throws UnableToParseException, MidiUnavailableException, InvalidMidiDataException {
         String basicSong = generateHeader(4, 4, 4, 100, Key.C) + "C C C C|\nw: syll-a-_ble";
         Composition music = (new MusicParser()).parse(basicSong);
         List<String> lines = new ArrayList<>();
         music.addVoiceListener("", (String line) -> {lines.add(line);});
+        playMusic(music, lines);
         List<String> expected = Arrays.asList("*syll*able", "syll*a*ble", "syll*a*ble", "sylla*ble*");
         assertEquals(expected, lines);
     }
     
     //Covers: hyphen after hyphen
-    @Test public void testParseLyricsHyphenAfterHyphen() throws UnableToParseException {
+    @Test public void testParseLyricsHyphenAfterHyphen() throws UnableToParseException, MidiUnavailableException, InvalidMidiDataException {
         String basicSong = generateHeader(4, 4, 4, 100, Key.C) + "C C C C|\nw: syll-a--ble";
         Composition music = (new MusicParser()).parse(basicSong);
         List<String> lines = new ArrayList<>();
         music.addVoiceListener("", (String line) -> {lines.add(line);});
-        List<String> expected = Arrays.asList("*syll*able", "syll*a*ble", "sylla**ble", "sylla*ble*");
+        playMusic(music, lines);
+        List<String> expected = Arrays.asList("*syll*a ble", "syll*a* ble", "sylla ble", "sylla *ble*");
         assertEquals(expected, lines);
     }
     
     //Covers: hyphen after space
-    @Test public void testParseLyricsHyphenAfterSpace() throws UnableToParseException {
+    @Test public void testParseLyricsHyphenAfterSpace() throws UnableToParseException, MidiUnavailableException, InvalidMidiDataException {
         String basicSong = generateHeader(4, 4, 4, 100, Key.C) + "C C C C|\nw: syll-a -ble";
         Composition music = (new MusicParser()).parse(basicSong);
         List<String> lines = new ArrayList<>();
         music.addVoiceListener("", (String line) -> {lines.add(line);});
-        List<String> expected = Arrays.asList("*syll*able", "syll*a*ble", "sylla**ble", "sylla*ble*");
+        playMusic(music, lines);
+        List<String> expected = Arrays.asList("*syll*a ble", "syll*a* ble", "sylla ble", "sylla *ble*");
         assertEquals(expected, lines);
     }
     
     //Covers: single underscore
-    @Test public void testParseStringLyricsSingleUnderScore() throws UnableToParseException {
+    @Test public void testParseStringLyricsSingleUnderScore() throws UnableToParseException, MidiUnavailableException, InvalidMidiDataException {
         String basicSong = generateHeader(4, 4, 4, 100, Key.C) + "C C C C|\nw: time_";
         Composition music = (new MusicParser()).parse(basicSong);
         List<String> lines = new ArrayList<>();
         music.addVoiceListener("", (String line) -> {lines.add(line);});
-        List<String> expected = Arrays.asList("*time*", "*time*", "time", "time");
+        playMusic(music, lines);
+        List<String> expected = Arrays.asList("*time*", "*time*", "time ", "time ");
         assertEquals(expected, lines);
     }
     
     //Covers: multiple underscore
-    @Test public void testParseStringLyricsMultipleUnderScore() throws UnableToParseException {
+    @Test public void testParseStringLyricsMultipleUnderScore() throws UnableToParseException, MidiUnavailableException, InvalidMidiDataException {
         String basicSong = generateHeader(4, 4, 4, 100, Key.C) + "C C C C|\nw: time__";
         Composition music = (new MusicParser()).parse(basicSong);
         List<String> lines = new ArrayList<>();
         music.addVoiceListener("", (String line) -> {lines.add(line);});
-        List<String> expected = Arrays.asList("*time*", "*time*", "*time*", "time");
+        playMusic(music, lines);
+        List<String> expected = Arrays.asList("*time*", "*time*", "*time*", "time ");
         assertEquals(expected, lines);
     }
     
     //Covers: blank operator
-    @Test public void testParseStringLyricsBlankSyllable() throws UnableToParseException {
+    @Test public void testParseStringLyricsBlankSyllable() throws UnableToParseException, MidiUnavailableException, InvalidMidiDataException {
         String basicSong = generateHeader(4, 4, 4, 100, Key.C) + "C C C C|\nw: syll*ble";
         Composition music = (new MusicParser()).parse(basicSong);
         List<String> lines = new ArrayList<>();
         music.addVoiceListener("", (String line) -> {lines.add(line);});
-        List<String> expected = Arrays.asList("*syll**ble*", "syll***ble", "syll**ble*", "syll*ble");
+        playMusic(music, lines);
+        List<String> expected = Arrays.asList("*syll* ble", "syll ble", "syll *ble*", "syll ble ");
         assertEquals(expected, lines);
     }
     
     //Covers: squiggle operator
-    @Test public void testParseLyricsSquiggleOperator() throws UnableToParseException {
+    @Test public void testParseLyricsSquiggleOperator() throws UnableToParseException, MidiUnavailableException, InvalidMidiDataException {
         String basicSong = generateHeader(4, 4, 4, 100, Key.C) + "C C C C|\nw: of~the~day";
         Composition music = (new MusicParser()).parse(basicSong);
         List<String> lines = new ArrayList<>();
         music.addVoiceListener("", (String line) -> {lines.add(line);});
-        List<String> expected = Arrays.asList("*of the day*", "of the day", "of the day", "of the day");
+        playMusic(music, lines);
+        List<String> expected = Arrays.asList("*of the day*", "of the day ", "of the day ", "of the day ");
         assertEquals(expected, lines);
     }
     
     //Covers: \- operator
-    @Test public void testParseLyricsSquiggleOperator() throws UnableToParseException {
-        String basicSong = generateHeader(4, 4, 4, 100, Key.C) + "C C C C|\nw: of\-the  day";
+    @Test public void testParseLyricsSlashDash() throws UnableToParseException, MidiUnavailableException, InvalidMidiDataException {
+        String basicSong = generateHeader(4, 4, 4, 100, Key.C) + "C C C C|\nw: of\\-the day";
         Composition music = (new MusicParser()).parse(basicSong);
         List<String> lines = new ArrayList<>();
         music.addVoiceListener("", (String line) -> {lines.add(line);});
-        List<String> expected = Arrays.asList("*of-the* day", "of-the *day*", "of-the day", "of-the day");
+        playMusic(music, lines);
+        List<String> expected = Arrays.asList("*of-the* day", "of-the *day*", "of-the day ", "of-the day ");
         assertEquals(expected, lines);
     }
     
