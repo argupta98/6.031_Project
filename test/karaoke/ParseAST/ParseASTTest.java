@@ -7,6 +7,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import javax.sound.midi.InvalidMidiDataException;
+import javax.sound.midi.MidiUnavailableException;
+
 import org.junit.Test;
 
 import edu.mit.eecs.parserlib.UnableToParseException;
@@ -16,7 +19,9 @@ import karaoke.Music;
 import karaoke.Note;
 import karaoke.parser.MusicParser;
 import karaoke.sound.Instrument;
+import karaoke.sound.MidiSequencePlayer;
 import karaoke.sound.Pitch;
+import karaoke.sound.SequencePlayer;
 
 //Test class for parser and AST
 public class ParseASTTest {
@@ -319,6 +324,17 @@ public class ParseASTTest {
         Composition music = (new MusicParser()).parse(basicSong);
         List<String> lines = new ArrayList<>();
         music.addVoiceListener("", (String line) -> {lines.add(line);});
+
+        try {
+            final int beatsPerMinute = 100;
+            final int ticksPerBeat = 64;
+            SequencePlayer player = new MidiSequencePlayer(ticksPerBeat, beatsPerMinute);
+            music.play(player);
+            player.play();
+		} catch (MidiUnavailableException | InvalidMidiDataException e) {
+			e.printStackTrace();
+		}
+        
         List<String> expected = Arrays.asList("*syll*able", "syll*a*ble", "sylla*ble*", "syllable");
         assertEquals(expected, lines);
     }
@@ -329,6 +345,17 @@ public class ParseASTTest {
         Composition music = (new MusicParser()).parse(basicSong);
         List<String> lines = new ArrayList<>();
         music.addVoiceListener("", (String line) -> {lines.add(line);});
+        
+        try {
+            final int beatsPerMinute = 100;
+            final int ticksPerBeat = 64;
+            SequencePlayer player = new MidiSequencePlayer(ticksPerBeat, beatsPerMinute);
+            music.play(player);
+            player.play();
+        } catch (MidiUnavailableException | InvalidMidiDataException e) {
+            e.printStackTrace();
+        }
+        
         List<String> expected = Arrays.asList("*syll*able", "syll*a*ble", "syll*a*ble", "sylla*ble*");
         assertEquals(expected, lines);
     }
@@ -339,6 +366,17 @@ public class ParseASTTest {
         Composition music = (new MusicParser()).parse(basicSong);
         List<String> lines = new ArrayList<>();
         music.addVoiceListener("", (String line) -> {lines.add(line);});
+        
+        try {
+            final int beatsPerMinute = 100;
+            final int ticksPerBeat = 64;
+            SequencePlayer player = new MidiSequencePlayer(ticksPerBeat, beatsPerMinute);
+            music.play(player);
+            player.play();
+        } catch (MidiUnavailableException | InvalidMidiDataException e) {
+            e.printStackTrace();
+        }
+        
         List<String> expected = Arrays.asList("*syll*able", "syll*a*ble", "sylla**ble", "sylla*ble*");
         assertEquals(expected, lines);
     }
@@ -349,6 +387,17 @@ public class ParseASTTest {
         Composition music = (new MusicParser()).parse(basicSong);
         List<String> lines = new ArrayList<>();
         music.addVoiceListener("", (String line) -> {lines.add(line);});
+        
+        try {
+            final int beatsPerMinute = 100;
+            final int ticksPerBeat = 64;
+            SequencePlayer player = new MidiSequencePlayer(ticksPerBeat, beatsPerMinute);
+            music.play(player);
+            player.play();
+        } catch (MidiUnavailableException | InvalidMidiDataException e) {
+            e.printStackTrace();
+        }
+        
         List<String> expected = Arrays.asList("*syll*able", "syll*a*ble", "sylla**ble", "sylla*ble*");
         assertEquals(expected, lines);
     }
@@ -359,6 +408,17 @@ public class ParseASTTest {
         Composition music = (new MusicParser()).parse(basicSong);
         List<String> lines = new ArrayList<>();
         music.addVoiceListener("", (String line) -> {lines.add(line);});
+        
+        try {
+            final int beatsPerMinute = 100;
+            final int ticksPerBeat = 64;
+            SequencePlayer player = new MidiSequencePlayer(ticksPerBeat, beatsPerMinute);
+            music.play(player);
+            player.play();
+        } catch (MidiUnavailableException | InvalidMidiDataException e) {
+            e.printStackTrace();
+        }
+        
         List<String> expected = Arrays.asList("*time*", "*time*", "time", "time");
         assertEquals(expected, lines);
     }
@@ -369,6 +429,17 @@ public class ParseASTTest {
         Composition music = (new MusicParser()).parse(basicSong);
         List<String> lines = new ArrayList<>();
         music.addVoiceListener("", (String line) -> {lines.add(line);});
+        
+        try {
+            final int beatsPerMinute = 100;
+            final int ticksPerBeat = 64;
+            SequencePlayer player = new MidiSequencePlayer(ticksPerBeat, beatsPerMinute);
+            music.play(player);
+            player.play();
+        } catch (MidiUnavailableException | InvalidMidiDataException e) {
+            e.printStackTrace();
+        }
+        
         List<String> expected = Arrays.asList("*time*", "*time*", "*time*", "time");
         assertEquals(expected, lines);
     }
@@ -379,7 +450,18 @@ public class ParseASTTest {
         Composition music = (new MusicParser()).parse(basicSong);
         List<String> lines = new ArrayList<>();
         music.addVoiceListener("", (String line) -> {lines.add(line);});
-        List<String> expected = Arrays.asList("*syll**ble*", "syll***ble", "syll**ble*", "syll*ble");
+        
+        try {
+            final int beatsPerMinute = 200;
+            final int ticksPerBeat = 64;
+            SequencePlayer player = new MidiSequencePlayer(ticksPerBeat, beatsPerMinute);
+            music.play(player);
+            player.play();
+        } catch (MidiUnavailableException | InvalidMidiDataException e) {
+            e.printStackTrace();
+        }
+        
+        List<String> expected = Arrays.asList("*syll**ble", "syll***ble", "syll**ble*", "syll*ble");
         assertEquals(expected, lines);
     }
     
@@ -389,6 +471,17 @@ public class ParseASTTest {
         Composition music = (new MusicParser()).parse(basicSong);
         List<String> lines = new ArrayList<>();
         music.addVoiceListener("", (String line) -> {lines.add(line);});
+        
+        try {
+            final int beatsPerMinute = 100;
+            final int ticksPerBeat = 64;
+            SequencePlayer player = new MidiSequencePlayer(ticksPerBeat, beatsPerMinute);
+            music.play(player);
+            player.play();
+        } catch (MidiUnavailableException | InvalidMidiDataException e) {
+            e.printStackTrace();
+        }
+        
         List<String> expected = Arrays.asList("*of the day*", "of the day", "of the day", "of the day");
         assertEquals(expected, lines);
     }
@@ -399,6 +492,17 @@ public class ParseASTTest {
         Composition music = (new MusicParser()).parse(basicSong);
         List<String> lines = new ArrayList<>();
         music.addVoiceListener("", (String line) -> {lines.add(line);});
+        
+        try {
+            final int beatsPerMinute = 100;
+            final int ticksPerBeat = 64;
+            SequencePlayer player = new MidiSequencePlayer(ticksPerBeat, beatsPerMinute);
+            music.play(player);
+            player.play();
+        } catch (MidiUnavailableException | InvalidMidiDataException e) {
+            e.printStackTrace();
+        }
+        
         List<String> expected = Arrays.asList("*of-the* day", "of-the *day*", "of-the day", "of-the day");
         assertEquals(expected, lines);
     }
