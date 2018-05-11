@@ -348,7 +348,7 @@ public class ParseASTTest {
         String basicSong = generateHeader(4, 4, 4, 100, Key.C) + "C C C C|\nw: syll-a-ble";
         Composition music = (new MusicParser()).parse(basicSong);
         List<String> lines = new ArrayList<>();
-        music.addVoiceListener("", (String line) -> {lines.add(line); System.out.println(line);});
+        music.addVoiceListener("", (String line) -> {lines.add(line);});
         playMusic(music, lines);
         List<String> expected = Arrays.asList("*syll*able", "syll*a*ble", "sylla*ble*", "syllable ");
         assertEquals(expected, lines);
@@ -359,7 +359,7 @@ public class ParseASTTest {
         String basicSong = generateHeader(4, 4, 4, 100, Key.C) + "C C C C|\nw: syll-a-_ble";
         Composition music = (new MusicParser()).parse(basicSong);
         List<String> lines = new ArrayList<>();
-        music.addVoiceListener("", (String line) -> {lines.add(line); System.out.println(line);});
+        music.addVoiceListener("", (String line) -> {lines.add(line);});
         playMusic(music, lines);
         List<String> expected = Arrays.asList("*syll*able", "syll*a*ble", "syll*a*ble", "sylla*ble*");
         assertEquals(expected, lines);
@@ -442,7 +442,27 @@ public class ParseASTTest {
         assertEquals(expected, lines);
     }
     
-    //Covers: | operator, enough notes in bar (ignored), fewer notes than bar (advances to next bar)
+    //Covers: | operator, enough notes in bar (ignored)
+    @Test public void testParseLyricsBarEnoughNotes() throws UnableToParseException, MidiUnavailableException, InvalidMidiDataException {
+        String basicSong = generateHeader(4, 4, 4, 100, Key.C) + "C C C C| C C C C|\nw: a-b-c-d | a-b-c-d";
+        Composition music = (new MusicParser()).parse(basicSong);
+        List<String> lines = new ArrayList<>();
+        music.addVoiceListener("", (String line) -> {lines.add(line);});
+        playMusic(music, lines);
+        List<String> expected = Arrays.asList("*a*bcd abcd", "a*b*cd abcd", "ab*c*d abcd", "abc*d* abcd", "abcd *a*bcd", "abcd a*b*cd", "abcd ab*c*d", "abcd abc*d*");
+        assertEquals(expected, lines);
+    }
+    
+    //Covers: | operator, fewer notes than bar (advances to next bar)
+    @Test public void testParseLyricsBarNotEnoughNotes() throws UnableToParseException, MidiUnavailableException, InvalidMidiDataException {
+        String basicSong = generateHeader(4, 4, 4, 100, Key.C) + "C C C z | C C C C|\nw: a-b-c | a-b-c-d";
+        Composition music = (new MusicParser()).parse(basicSong);
+        List<String> lines = new ArrayList<>();
+        music.addVoiceListener("", (String line) -> {lines.add(line);});
+        playMusic(music, lines);
+        List<String> expected = Arrays.asList("*a*bc abcd", "a*b*c abcd", "ab*c* abcd", "abc *a*bcd", "abc a*b*cd", "abc ab*c*d", "abc abc*d*");
+        assertEquals(expected, lines);
+    }
     
     //COMMENTS
     
