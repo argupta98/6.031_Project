@@ -64,14 +64,9 @@ public class Voice {
      */
     public synchronized void addListener(LyricListener listener) {
         this.listeners.add(listener);
-        System.out.println("Added listener!");
-        System.out.println(listeners);
-        System.out.println(this.hashCode());
     }
 
     public synchronized void notifyAll(int lyricIndex) {
-    	System.out.println(this.hashCode());
-    	System.out.println("Notified listener!: "+this.listeners);
         for(LyricListener listen: this.listeners) {
             listen.notePlayed(constructLine(lyricIndex));
         }
@@ -100,10 +95,12 @@ public class Voice {
     
     private String constructLine(int boldedIndex) {
         String fullLine = "";
-        
+        if(this.allSyllables.size() == 0) {
+        	return "No Lyrics";
+        }
         if(boldedIndex >= this.allSyllables.size()) {
             boldedIndex = this.allSyllables.size();
-            allSyllables.add(" ");
+            allSyllables.add("");
         }
         
         if(this.allSyllables.get(boldedIndex).trim().equals("_")) {
@@ -115,13 +112,16 @@ public class Voice {
         for(int index = 0; index < this.allSyllables.size(); index++) {
             boolean bolded = false;
             if(this.allSyllables.get(index).trim().equals("_")) {
-                fullLine+=" ";
+                fullLine+="";
             }
-            else if(this.allSyllables.get(index).equals(" ") || this.allSyllables.get(index).equals("")) {
+            else if(this.allSyllables.get(index).equals(" ")) {
                 fullLine+= " ";
+            }
+            else if(this.allSyllables.get(index).equals("")) {
+            	continue;
             }
             else if(this.allSyllables.get(index).trim().equals("*")) {
-                fullLine+= " ";
+                continue;
             }
             else if(index == boldedIndex) {
                 String syllable = this.allSyllables.get(index);

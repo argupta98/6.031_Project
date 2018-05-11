@@ -294,7 +294,7 @@ public class MusicParser {
         for(int voiceNumber = 1; voiceNumber < parseTree.children().size(); voiceNumber++) {
             ParseTree<MusicGrammar> voice = parseTree.children().get(voiceNumber);
             List<String> lyricList = parseLyrics(voice.childrenByName(MusicGrammar.LYRIC));
-            System.out.println(lyricList);
+            //System.out.println(lyricList);
             String voiceName = "";
             if(voice.childrenByName(MusicGrammar.VOICENAME).size() > 0) {
                 voiceName = voice.childrenByName(MusicGrammar.VOICENAME)
