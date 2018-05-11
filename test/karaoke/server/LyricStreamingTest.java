@@ -56,21 +56,22 @@ public class LyricStreamingTest {
 
     //Covers: Streaming single line of lyrics
     @Test
-    public void testLyricsSingleLine() throws UnableToParseException, IOException {
+    public void testLyricsSingleLine() throws UnableToParseException, IOException, MidiUnavailableException, InvalidMidiDataException {
     	final int serverPort = 4567;
     	Composition piece = (new MusicParser()).parseFile(new File("sample-abc/piece1.abc"));
         final StreamingServer server = new StreamingServer("sample-abc/piece1.abc", serverPort);
         
         // start the server
         server.start();
-
+        
+        
         final URL valid = new URL("http://localhost:" + serverPort + "/voice/");
         
         // start and wait for duration of song .....
         
         final InputStream input = valid.openStream();
         final BufferedReader reader = new BufferedReader(new InputStreamReader(input, UTF_8));
-        
+        server.playback();
         
         String expected = "*A*mazing grace! How sweet the sound That saved a wretch like me.\n" + 
                 "A*ma*zing grace! How sweet the sound That saved a wretch like me.\n" + 
