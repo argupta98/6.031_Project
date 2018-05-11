@@ -116,6 +116,8 @@ public class StreamingServer {
         System.err.println("Voice ID: " + voiceID);
         exchange.sendResponseHeaders(successCode, 0);
         
+
+
         karaoke.addLyricListener(voiceID, (line) -> {
                 System.err.println("Current line: " + line);
                 if(line.equals("END")) {
@@ -182,6 +184,13 @@ public class StreamingServer {
      */
     public void stop() {
        server.stop(0);
+    }
+    
+    /**
+     * @return address that the server is hosted on
+     */
+    public String getAddress() {
+        return server.getAddress().toString();
     }
 
 }
