@@ -7,17 +7,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 
 import edu.mit.eecs.parserlib.ParseTree;
 import edu.mit.eecs.parserlib.Parser;
 import edu.mit.eecs.parserlib.UnableToParseException;
-import edu.mit.eecs.parserlib.Visualizer;
 import karaoke.Composition.Accidental;
 import karaoke.Chord;
 import karaoke.Composition;
@@ -682,8 +679,8 @@ public class MusicParser {
                 return;
             }
             if(!lock) {
-                if(!lyrics.get(lyricIndex).equals("|") || newMeasure) {
-                    if(lyrics.get(lyricIndex).equals("|")) {
+                if(!lyrics.get(lyricIndex).trim().equals("|") || newMeasure) {
+                    if(lyrics.get(lyricIndex).trim().equals("|")) {
                         lyrics.remove(lyricIndex);
                         lyricIndex+=1;
                     }
@@ -692,6 +689,7 @@ public class MusicParser {
                     }
                     newMeasure = false;
                 }
+                //otherwise do nothing
             }
         }
         

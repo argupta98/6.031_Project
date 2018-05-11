@@ -102,7 +102,7 @@ public class StreamingServer {
      * @param HTTP request/response, modified by this method to send a response and close the exchange
      * @throws IOException 
      */
-    private synchronized void handleVoice(HttpExchange exchange) throws IOException {
+    private void handleVoice(HttpExchange exchange) throws IOException {
         final int successCode = 200;
         final int failureCode = 404;
         
@@ -140,7 +140,7 @@ public class StreamingServer {
      * @throws MidiUnavailableException 
      * @throws IOException 
      */
-    private synchronized void handlePlay(HttpExchange exchange) throws UnableToParseException, MidiUnavailableException, InvalidMidiDataException, IOException {
+    private void handlePlay(HttpExchange exchange) throws UnableToParseException, MidiUnavailableException, InvalidMidiDataException, IOException {
         final int successCode = 200;
         final int failureCode = 404;
         
