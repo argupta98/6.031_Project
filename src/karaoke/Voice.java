@@ -53,21 +53,33 @@ public class Voice {
      * a callback is made to the current lyric as well.
      * @param player to add the notes to be played
      */
-    public void play (SequencePlayer player) {
+    public synchronized void play (SequencePlayer player) {
         this.music.play(player, 0, this);
+        player.addEvent(music.duration(), (beat) -> this.notifyEnd());
     }
     
     /**
      * Adds a LyricListener for the voice
      * @param listener that will call for the correct lyric
      */
-    public void addListener(LyricListener listener) {
+    public synchronized void addListener(LyricListener listener) {
         this.listeners.add(listener);
+        System.out.println("Added listener!");
+        System.out.println(listeners);
+        System.out.println(this.hashCode());
     }
 
-    public void notifyAll(int lyricIndex) {
+    public synchronized void notifyAll(int lyricIndex) {
+    	System.out.println(this.hashCode());
+    	System.out.println("Notified listener!: "+this.listeners);
         for(LyricListener listen: this.listeners) {
             listen.notePlayed(constructLine(lyricIndex));
+        }
+    }
+    
+    public synchronized void notifyEnd() {
+    	for(LyricListener listen: this.listeners) {
+            listen.notePlayed("END");
         }
     }
     
@@ -94,21 +106,21 @@ public class Voice {
             allSyllables.add(" ");
         }
         
-        if(this.allSyllables.get(boldedIndex).equals("_")) {
-            while(this.allSyllables.get(boldedIndex).equals("_") || this.allSyllables.get(boldedIndex).equals("-")) {
+        if(this.allSyllables.get(boldedIndex).trim().equals("_")) {
+            while(this.allSyllables.get(boldedIndex).trim().equals("_") || this.allSyllables.get(boldedIndex).equals("-")) {
                 boldedIndex--;
             }
         }
         
         for(int index = 0; index < this.allSyllables.size(); index++) {
             boolean bolded = false;
-            if(this.allSyllables.get(index).equals("_")) {
-                continue;
+            if(this.allSyllables.get(index).trim().equals("_")) {
+                fullLine+=" ";
             }
             else if(this.allSyllables.get(index).equals(" ") || this.allSyllables.get(index).equals("")) {
                 fullLine+= " ";
             }
-            else if(this.allSyllables.get(index).equals("*")) {
+            else if(this.allSyllables.get(index).trim().equals("*")) {
                 fullLine+= " ";
             }
             else if(index == boldedIndex) {

@@ -26,7 +26,6 @@ import karaoke.player.Player;
 public class StreamingServer {
     
     private final HttpServer server;
-    private final Composition piece;
     private final Player karaoke;
     // Abstraction Function
     // AF(sever, piece, karaoke) => A webserver server that streams the music in piece, through the player karaoke and streams the lyrics
@@ -59,7 +58,6 @@ public class StreamingServer {
         this.server = HttpServer.create(new InetSocketAddress(port), 0);
         File abcFile = new File(filename);
         this.karaoke = new Player(abcFile);
-        this.piece = (new MusicParser()).parseFile(abcFile);
         
         // handle concurrent requests with multiple threads
         server.setExecutor(Executors.newCachedThreadPool());
@@ -118,19 +116,20 @@ public class StreamingServer {
         System.err.println("Voice ID: " + voiceID);
         exchange.sendResponseHeaders(successCode, 0);
         
-        piece.addVoiceListener(voiceID, new LyricListener() {
-            public void notePlayed(String line) {
+        karaoke.addLyricListener(voiceID, (line) -> {
                 System.err.println("Current line: " + line);
-      
-                OutputStream body = exchange.getResponseBody();
-                PrintWriter out = new PrintWriter(new OutputStreamWriter(body, UTF_8), true);
-                out.println(line);
-                out.flush();
-            }
+                if(line.equals("END")) {
+                	exchange.close();
+                }
+                else {
+                	OutputStream body = exchange.getResponseBody();
+                	PrintWriter out = new PrintWriter(new OutputStreamWriter(body, UTF_8), true);
+                	out.println(line);
+                	out.flush();
+                }
         });
         
         checkRep();
-        exchange.close();
     }
     
     /**
@@ -160,7 +159,6 @@ public class StreamingServer {
     }
     private void checkRep() {
         assert server != null;
-        assert piece != null;
         assert karaoke != null;
     }
     

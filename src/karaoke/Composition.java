@@ -78,6 +78,7 @@ public class Composition {
         for(String voiceKey: voices.keySet()) {
             voices.get(voiceKey).play(player);
         }
+        //player.addEvent(this.duration(), (beat) -> this.notifyEnd());
     }
     
     /**
@@ -90,7 +91,6 @@ public class Composition {
         if(voices.containsKey(voice)) {
             voices.get(voice).addListener(listener);
         }
-        
     }
     
     /**
