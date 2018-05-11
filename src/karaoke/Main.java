@@ -63,9 +63,9 @@ public class Main {
         String songInfo = karaoke.songInfo();
         System.out.println(songInfo);
         
-        String streamingInstructions = "To stream lyrics go to http://localhost:" + port + "/voice/{WANTED VOICE ID}";
+        String streamingInstructions = "To stream lyrics go to http:/" + server.getAddress() + ":" + port + "/voice/{WANTED VOICE ID}";
         System.out.println(streamingInstructions);
-        String playBackInstructions = "To play song go to http://localhost:" + port + "/play/";
+        String playBackInstructions = "To play song go to http:/" + server.getAddress() + ":" + port + "/play/";
         System.out.println(playBackInstructions);
     }
 }
