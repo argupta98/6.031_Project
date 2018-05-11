@@ -72,7 +72,7 @@ public class StreamingServer {
             }
         }); 
         
-    //  handle requests for /play/
+        //  handle requests for /play/
         HttpContext play = server.createContext("/play/", new HttpHandler() {
             public void handle(HttpExchange exchange) throws IOException {
                 try {
@@ -92,10 +92,11 @@ public class StreamingServer {
      * @throws UnableToParseException if the file is invalid. 
      * @throws InvalidMidiDataException 
      * @throws MidiUnavailableException 
+     * @return An object that can be used to wait for the song to finish
      */
-    public void playback() throws UnableToParseException, MidiUnavailableException, InvalidMidiDataException {
-        this.karaoke.play();
+    public Object playback() throws UnableToParseException, MidiUnavailableException, InvalidMidiDataException {
         System.err.println("Called");
+        return this.karaoke.play();
     }
     /**
      * Handles requests for streaming the lyrics for a voice from the piece 

@@ -71,7 +71,16 @@ public class LyricStreamingTest {
         
         final InputStream input = valid.openStream();
         final BufferedReader reader = new BufferedReader(new InputStreamReader(input, UTF_8));
-        server.playback();
+        
+        Object lock = server.playback();
+        
+        synchronized (lock) {
+            try {
+                lock.wait();
+            } catch (InterruptedException e) {
+                return;
+            }
+        }
         
         String expected = "*A*mazing grace! How sweet the sound That saved a wretch like me.\n" + 
                 "A*ma*zing grace! How sweet the sound That saved a wretch like me.\n" + 
