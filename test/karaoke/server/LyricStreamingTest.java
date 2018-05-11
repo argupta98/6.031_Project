@@ -32,7 +32,10 @@ import karaoke.sound.MidiSequencePlayer;
 import karaoke.sound.SequencePlayer;
 import edu.mit.eecs.parserlib.UnableToParseException;
 
-
+/**
+ * Tests require music be played, so we do not want didit to run them
+ * @category no_didit
+ */
 public class LyricStreamingTest {
     
     
