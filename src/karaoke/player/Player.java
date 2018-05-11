@@ -7,6 +7,7 @@ import karaoke.sound.MidiSequencePlayer;
 import karaoke.sound.SequencePlayer;
 
 import java.io.File;
+import java.util.List;
 
 import javax.sound.midi.InvalidMidiDataException;
 import javax.sound.midi.MidiUnavailableException;
@@ -64,16 +65,25 @@ public class Player {
      * Plays the music described by this.music
      * @throws InvalidMidiDataException 
      * @throws MidiUnavailableException 
+     * @return an object that can be used as a lock to wait for the piece to finish
      */
-    public synchronized void play() throws MidiUnavailableException, InvalidMidiDataException {
+    public synchronized Object play() throws MidiUnavailableException, InvalidMidiDataException {
         //play the piece
         final int beatsPerMinute = 100;
-        final int ticksPerBeat = 64;
+        final int ticksPerBeat = 64;    
         SequencePlayer player = new MidiSequencePlayer(ticksPerBeat, beatsPerMinute);
         music.play(player);
+        Object lock = new Object();
+        player.addEvent(music.duration(), (Double beat) -> {
+            synchronized (lock) {
+                lock.notify();
+            }
+        });
+        
         player.play();
         checkRep();
-    }
+        return lock;
+       }
     
     /**
      * Adds a listener to the lyrics of the voice, voice. This listener is notified 
