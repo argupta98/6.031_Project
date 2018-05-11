@@ -38,8 +38,8 @@ Natural ::= '=';
 
 //Lyric grammar
 //Needs to cover special case: --
-Lyric ::= SyllableNote ((Hyphens|NewMeasure|Star)* SyllableNote |(Hyphens|NewMeasure|Star)* Hold)* ('\n' | '\r\n')?;
-Hyphens ::= (Hyphen|Space) (Hyphen|Space)*;
+Lyric ::= SyllableNote ((Hyphens|NewMeasure|Star|Space)* SyllableNote |(Hyphens|NewMeasure|Star|Space)* Hold)* ('\n' | '\r\n')?;
+Hyphens ::= (Space)? (Hyphen)+;
 Star ::= '*';
 Hyphen ::= '-';
 Space ::= [ ];

@@ -611,12 +611,11 @@ public class MusicParser {
                 for(int i = 1; i < syllableNote.children().size(); i++) {
                     lyricSyllables.add("");
                 }
-                if(syllableNote.children().size() == 1 && syllableNote.children().get(0).name() == MusicGrammar.SPACE) {
-                    String replace = lyricSyllables.get(lyricSyllables.size()-1)+" ";
-                    lyricSyllables.remove(lyricSyllables.size()-1);
-                    lyricSyllables.add(replace);
-                }
-            
+            }
+            else if(syllableNote.name() == MusicGrammar.SPACE) {
+            	String replace = lyricSyllables.get(lyricSyllables.size()-1)+" ";
+                lyricSyllables.remove(lyricSyllables.size()-1);
+                lyricSyllables.add(replace);
             }
             else {
                 lyricSyllables.add(syllableNote.text());
