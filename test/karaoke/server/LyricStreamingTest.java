@@ -58,8 +58,8 @@ public class LyricStreamingTest {
     @Test
     public void testLyricsSingleLine() throws UnableToParseException, IOException, MidiUnavailableException, InvalidMidiDataException {
     	final int serverPort = 4567;
-    	Composition piece = (new MusicParser()).parseFile(new File("sample-abc/piece1.abc"));
-        final StreamingServer server = new StreamingServer("sample-abc/piece1.abc", serverPort);
+    	Composition piece = (new MusicParser()).parseFile(new File("sample-abc/piece3.abc"));
+        final StreamingServer server = new StreamingServer("sample-abc/piece3.abc", serverPort);
         
         // start the server
         server.start();
@@ -73,7 +73,8 @@ public class LyricStreamingTest {
         final BufferedReader reader = new BufferedReader(new InputStreamReader(input, UTF_8));
         
         Object lock = server.playback();
-        
+        assertNotEquals(lock, null);
+        /*
         synchronized (lock) {
             try {
                 lock.wait();
@@ -81,22 +82,22 @@ public class LyricStreamingTest {
                 return;
             }
         }
-        
+        */
         String expected = "*A*mazing grace! How sweet the sound That saved a wretch like me.\n" + 
                 "A*ma*zing grace! How sweet the sound That saved a wretch like me.\n" + 
                 "Ama*zing* grace! How sweet the sound That saved a wretch like me.\n" + 
                 "Ama*zing* grace! How sweet the sound That saved a wretch like me.\n" + 
-                "Amazing *grace!*How sweet the sound That saved a wretch like me.\n" + 
-                "Amazing grace! *How*sweet the sound That saved a wretch like me.\n" + 
-                "Amazing grace! How *sweet*the sound That saved a wretch like me.\n" + 
-                "Amazing grace! How sweet *the*sound That saved a wretch like me.\n" + 
-                "Amazing grace! How sweet the *sound*That saved a wretch like me.\n" + 
-                "Amazing grace! How sweet the sound *That*saved a wretch like me.\n" + 
-                "Amazing grace! How sweet the sound That *saved*a wretch like me.\n" + 
+                "Amazing *grace!* How sweet the sound That saved a wretch like me.\n" + 
+                "Amazing grace! *How* sweet the sound That saved a wretch like me.\n" + 
+                "Amazing grace! How *sweet* the sound That saved a wretch like me.\n" + 
+                "Amazing grace! How sweet *the* sound That saved a wretch like me.\n" + 
+                "Amazing grace! How sweet the *sound* That saved a wretch like me.\n" + 
+                "Amazing grace! How sweet the sound *That* saved a wretch like me.\n" + 
+                "Amazing grace! How sweet the sound That *saved* a wretch like me.\n" + 
                 "Amazing grace! How sweet the sound That saved *a* wretch like me.\n" + 
                 "Amazing grace! How sweet the sound That saved *a* wretch like me.\n" + 
-                "Amazing grace! How sweet the sound That saved a *wretch*like me.\n" + 
-                "Amazing grace! How sweet the sound That saved a wretch *like*me.\n" + 
+                "Amazing grace! How sweet the sound That saved a *wretch* like me.\n" + 
+                "Amazing grace! How sweet the sound That saved a wretch *like* me.\n" + 
                 "Amazing grace! How sweet the sound That saved a wretch like *me.*\n";
         
         String result = "";

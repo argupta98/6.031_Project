@@ -76,6 +76,7 @@ public class Player {
         Object lock = new Object();
         player.addEvent(music.duration(), (Double beat) -> {
             synchronized (lock) {
+            	System.out.println("Notifying lock");
                 lock.notify();
             }
         });

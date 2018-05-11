@@ -55,7 +55,8 @@ public class Note implements Music{
 
     @Override
     public void play(SequencePlayer player, double beat, Voice myVoice) {
-        player.addEvent(beat, (endBeat) -> myVoice.notifyAll(this.lyricIndex));
+        player.addEvent(beat, (endBeat) -> {myVoice.notifyAll(this.lyricIndex);
+        System.out.println("Notifying voice");});
         player.addNote(this.instrument, this.pitch, beat, this.duration);
     }
     
