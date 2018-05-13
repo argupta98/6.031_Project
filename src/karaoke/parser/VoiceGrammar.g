@@ -1,7 +1,9 @@
 abctune ::= abcheader abcbody;
 
 abcbody ::= voice+;
+@skip endofline{
 voice ::= voicename musicline (lyrics)?;
+}
 voicename ::= "" | 'V:' anything endofline;
 musicline ::= anything endofline?;
 lyrics ::= 'w:' anything endofline?;
@@ -20,7 +22,7 @@ fieldvoice ::= "V:" anything endofline;
 fieldkey ::= "K:" anything endofline;
 
 
-comment ::= spaceortab* "%" anything newline;
+comment ::= spaceortab* "%" anything* newline;
 
 endofline ::= comment | newline;
 

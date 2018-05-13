@@ -326,7 +326,6 @@ public class MusicParser {
      * @throws UnableToParseException if the string doesn't match the Abc grammar
      */
     public Composition parse(final String string) throws UnableToParseException {
-    	System.out.println(string);
     	final Map<String, List<String>> voiceNoteDict = new HashMap<>();
     	final Map<String, List<String>> voiceLyricDict = new HashMap<>();
     	final ParseTree<BaseGrammar> abcBodyTree = baseParser.parse(string).childrenByName(BaseGrammar.ABCBODY).get(0);
