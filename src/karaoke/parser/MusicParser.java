@@ -6,9 +6,13 @@ package karaoke.parser;
 import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
+
+import static org.junit.Assert.assertEquals;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 
@@ -239,6 +243,47 @@ public class MusicParser {
         SYLLABLE, LETTER, COMMENT, NUMBER, WHITESPACE, WHITESPACEANDCOMMENT, TITLE, HOLD, SPACE, 
         CHORD, TUPLE, DENOMINATOR, NUMERATOR, REPEAT, DOUBLEFLAT, DOUBLESHARP, NATURAL, REST, ENDING
     }
+    
+    private static enum BaseGrammar{
+    	ABCTUNE, VOICE, VOICENAME, LYRICS, MUSICLINE, NEWLINE, ANYTHING, ABCHEADER, FIELDNUMBER, FIELDTITLE,
+    	OTHERFIELDS, FIELDCOMPOSER, FIELDDEFAULTLENGTH, FIELDMETER, FIELDTEMPO, FIELDVOICE, FIELDKEY,
+    	COMMENT, ENDOFLINE, SPACEORTAB,
+    	ABCBODY
+    }
+    
+    private static Parser<BaseGrammar> baseParser = makeBaseParser();
+    
+    /**
+     * Compile the grammar into a parser.
+     * 
+     * @return parser for the grammar
+     * @throws RuntimeException if grammar file can't be read or has syntax errors
+     */
+    private static Parser<BaseGrammar> makeBaseParser() {
+        try {
+            // read the grammar as a file, relative to the project root.
+            final File grammarFile = new File("src/karaoke/parser/VoiceGrammar.g");
+            return Parser.compile(grammarFile, BaseGrammar.ABCTUNE);
+
+            // A better way would read the grammar as a "classpath resource", which would allow this code 
+            // to be packed up in a jar and still be able to find its grammar file:
+            //
+            // final InputStream grammarStream = Expression.class.openResourceAsStream("Expression.g");
+            // return Parser.compile(grammarStream, ExpressionGrammar.EXPRESSION);
+            //
+            // See http://www.javaworld.com/article/2077352/java-se/smartly-load-your-properties.html
+            // for a discussion of classpath resources.
+            
+
+        // Parser.compile() throws two checked exceptions.
+        // Translate these checked exceptions into unchecked RuntimeExceptions,
+        // because these failures indicate internal bugs rather than client errors
+        } catch (IOException e) {
+            throw new RuntimeException("can't read the grammar file", e);
+        } catch (UnableToParseException e) {
+            throw new RuntimeException("the grammar has a syntax error", e);
+        }
+    }
 
     private static Parser<MusicGrammar> parser = makeParser();
     
@@ -281,8 +326,46 @@ public class MusicParser {
      * @throws UnableToParseException if the string doesn't match the Abc grammar
      */
     public Composition parse(final String string) throws UnableToParseException {
+    	System.out.println(string);
+    	final Map<String, List<String>> voiceNoteDict = new HashMap<>();
+    	final Map<String, List<String>> voiceLyricDict = new HashMap<>();
+    	final ParseTree<BaseGrammar> abcBodyTree = baseParser.parse(string).childrenByName(BaseGrammar.ABCBODY).get(0);
+    	final ParseTree<BaseGrammar> abcHeaderTree = baseParser.parse(string).childrenByName(BaseGrammar.ABCHEADER).get(0);
+    	for(ParseTree<BaseGrammar> voice: abcBodyTree.children()) {
+    		String voiceName = voice.childrenByName(BaseGrammar.VOICENAME).get(0).text();
+    		if (voiceName.isEmpty()) {
+    			voiceName = "empty";
+    		}
+    		if (voiceNoteDict.containsKey(voiceName)){
+    			voiceNoteDict.get(voiceName).add(voice.childrenByName(BaseGrammar.MUSICLINE).get(0).childrenByName(BaseGrammar.ANYTHING).get(0).text());
+    		}
+    		else {
+    			voiceNoteDict.put(voiceName, new ArrayList<>());
+    			voiceNoteDict.get(voiceName).add(voice.childrenByName(BaseGrammar.MUSICLINE).get(0).childrenByName(BaseGrammar.ANYTHING).get(0).text());
+    		}
+    		if (voice.children().size() > 2) {
+        		if (voiceLyricDict.containsKey(voiceName)){
+        			voiceLyricDict.get(voiceName).add(voice.childrenByName(BaseGrammar.LYRICS).get(0).childrenByName(BaseGrammar.ANYTHING).get(0).text());
+        		}
+        		else {
+        			voiceLyricDict.put(voiceName, new ArrayList<>());
+        			voiceLyricDict.get(voiceName).add(voice.childrenByName(BaseGrammar.LYRICS).get(0).childrenByName(BaseGrammar.ANYTHING).get(0).text());
+        		}
+    		}
+    	}
+    	
+    	String reconstructedString = "";
+    	for(ParseTree<BaseGrammar> field: abcHeaderTree.children()) {
+    		reconstructedString += field.text();
+    	}
+    	for(String voice: voiceNoteDict.keySet()) {
+    		reconstructedString = reconstructedString + String.join(" ", voiceNoteDict.get(voice)) + "\n";
+    		if (voiceLyricDict.containsKey(voice)) {
+    			reconstructedString = reconstructedString + "w:" + String.join(" ", voiceLyricDict.get(voice)) + "\n";
+    		}
+    	}
         // parse the example into a parse tree
-        final ParseTree<MusicGrammar> parseTree = parser.parse(string);
+        final ParseTree<MusicGrammar> parseTree = parser.parse(reconstructedString);
 
         // display the parse tree in various ways, for debugging only
         //System.out.println("parse tree " + parseTree);
