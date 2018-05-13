@@ -92,33 +92,63 @@ public class PlayerTest {
     public void testABCSong() throws UnableToParseException, MidiUnavailableException, InvalidMidiDataException {
         File abcSong = new File("sample-abc/abc_song.abc");
         Player abc = new Player(abcSong);
-        abc.play();
+        abc.addLyricListener("", (line) -> System.out.println(line));
+        Object lock = abc.play();
+        synchronized (lock) {
+            try {
+                lock.wait();
+            } catch (InterruptedException e) {
+                return;
+            }
+        }
     }
     
-// Covers: Player correctly playing fur_elise 
+    // Covers: Player correctly playing fur_elise 
     @Test
     public void testFurEliseSong() throws UnableToParseException, MidiUnavailableException, InvalidMidiDataException {
         File furElise = new File("sample-abc/fur_elise.abc");
         Player furElisePlayer = new Player(furElise);
-        furElisePlayer.play();
+        Object lock = furElisePlayer.play();
+        synchronized (lock) {
+            try {
+                lock.wait();
+            } catch (InterruptedException e) {
+                return;
+            }
+        }
     }
     
-// Covers: Player correctly playing invention 
+
+    // Covers: Player correctly playing invention 
     
     @Test
     public void testInventionSong() throws UnableToParseException, MidiUnavailableException, InvalidMidiDataException {
         File inventionSong = new File("sample-abc/invention.abc");
         Player invention = new Player(inventionSong);
-        invention.play();
+        Object lock = invention.play();
+        synchronized (lock) {
+            try {
+                lock.wait();
+            } catch (InterruptedException e) {
+                return;
+            }
+        }
     }
     
-// Covers: Player correctly playing paddy 
+    // Covers: Player correctly playing paddy 
     
     @Test
     public void testPaddySong() throws UnableToParseException, MidiUnavailableException, InvalidMidiDataException {
         File paddySong = new File("sample-abc/paddy.abc");
         Player paddy = new Player(paddySong);
-        paddy.play();
+        Object lock = paddy.play();
+        synchronized (lock) {
+            try {
+                lock.wait();
+            } catch (InterruptedException e) {
+                return;
+            }
+        }
     }
     
 }

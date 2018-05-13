@@ -2,8 +2,14 @@ package karaoke;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.Inet4Address;
+import java.net.InetAddress;
+import java.net.NetworkInterface;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Queue;
 
@@ -47,7 +53,7 @@ public class Main {
         try {
             filename = arguments.remove();
         } catch (NoSuchElementException nse) {
-            throw new IllegalArgumentException("missing PROTOCOL", nse);
+            throw new IllegalArgumentException("missing filename", nse);
         }
         // grab port from command line arguments 
         try {
@@ -62,9 +68,21 @@ public class Main {
         String songInfo = karaoke.songInfo();
         System.out.println(songInfo);
         
-        String streamingInstructions = "To stream lyrics go to http://localhost:" + port + "/voice/{WANTED VOICE ID}";
+        List<String> allHostnames = new ArrayList<>();
+        
+        // Get list of all hostnames
+        for (NetworkInterface iface : Collections.list(NetworkInterface.getNetworkInterfaces())) {
+            for (InetAddress address: Collections.list(iface.getInetAddresses())) {
+                if (address instanceof Inet4Address) {
+                    allHostnames.add(address.getHostName());
+                }
+            }
+        }
+        
+        // Choose one hostname and display instructions 
+        String streamingInstructions = "To stream lyrics go to http:/" + allHostnames.get(0) + ":" + port + "/voice/{WANTED VOICE ID}";
         System.out.println(streamingInstructions);
-        String playBackInstructions = "To play song go to http://localhost:" + port + "/play/";
+        String playBackInstructions = "To play song go to http://" + allHostnames.get(0) + ":" + port + "/play/";
         System.out.println(playBackInstructions);
     }
 }

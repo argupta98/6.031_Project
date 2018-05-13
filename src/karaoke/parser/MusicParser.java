@@ -237,8 +237,8 @@ public class MusicParser {
     
     // the nonterminals of the grammar
     private static enum MusicGrammar {
-        COMPOSITION, HEADER, TRACKNUMBER, COMPOSER, METER, LENGTH, TEMPO, HYPHEN, HYPHENS,
-        VOICENAME, KEY, VOICE, MUSICLINE, MEASURE, NOTE, OCTAVEUP, OCTAVEDOWN, TILDA, STAR,
+        COMPOSITION, HEADER, TRACKNUMBER, COMPOSER, METER, LENGTH, TEMPO, HYPHEN, HYPHENS,SPACES, FLATKEY,
+        VOICENAME, KEY, VOICE, MUSICLINE, MEASURE, NOTE, OCTAVEUP, OCTAVEDOWN, TILDA, STAR, MINOR, SHARPKEY, 
         NOTEDENOMINATOR, ACCIDENTAL, SHARP, FLAT, LYRIC, SYLLABLENOTE, NEWMEASURE, BACKSLASHHYPHEN,
         SYLLABLE, LETTER, COMMENT, NUMBER, WHITESPACE, WHITESPACEANDCOMMENT, TITLE, HOLD, SPACE, 
         CHORD, TUPLE, DENOMINATOR, NUMERATOR, REPEAT, DOUBLEFLAT, DOUBLESHARP, NATURAL, REST, ENDING
@@ -377,7 +377,7 @@ public class MusicParser {
         for(int voiceNumber = 1; voiceNumber < parseTree.children().size(); voiceNumber++) {
             ParseTree<MusicGrammar> voice = parseTree.children().get(voiceNumber);
             List<String> lyricList = parseLyrics(voice.childrenByName(MusicGrammar.LYRIC));
-            System.out.println(lyricList);
+            //System.out.println(lyricList);
             String voiceName = "";
             if(voice.childrenByName(MusicGrammar.VOICENAME).size() > 0) {
                 voiceName = voice.childrenByName(MusicGrammar.VOICENAME)
@@ -457,7 +457,18 @@ public class MusicParser {
                 composition.setTempo(Integer.parseInt(field.childrenByName(MusicGrammar.NUMBER).get(0).text()));
             }
             else if(field.name() == MusicGrammar.KEY) {
-                composition.setKey(Key.valueOf(field.text()));
+            	String key = field.childrenByName(MusicGrammar.LETTER).get(0).text();
+            	if(field.childrenByName(MusicGrammar.FLATKEY).size() != 0) {
+            		key+="flat";
+            	}
+            	else if(field.childrenByName(MusicGrammar.SHARPKEY).size() != 0) {
+            		key+="sharp";
+            	}
+            	
+            	if(field.childrenByName(MusicGrammar.MINOR).size() != 0) {
+            		key+="m";
+            	}
+                composition.setKey(Key.valueOf(key));
             }
             else if(field.name() == MusicGrammar.VOICENAME) {
                 continue;
@@ -694,12 +705,11 @@ public class MusicParser {
                 for(int i = 1; i < syllableNote.children().size(); i++) {
                     lyricSyllables.add("");
                 }
-                if(syllableNote.children().size() == 1 && syllableNote.children().get(0).name() == MusicGrammar.SPACE) {
-                    String replace = lyricSyllables.get(lyricSyllables.size()-1)+" ";
-                    lyricSyllables.remove(lyricSyllables.size()-1);
-                    lyricSyllables.add(replace);
-                }
-            
+            }
+            else if(syllableNote.name() == MusicGrammar.SPACES) {
+            	String replace = lyricSyllables.get(lyricSyllables.size()-1)+" ";
+                lyricSyllables.remove(lyricSyllables.size()-1);
+                lyricSyllables.add(replace);
             }
             else {
                 lyricSyllables.add(syllableNote.text());

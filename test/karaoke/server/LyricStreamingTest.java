@@ -19,7 +19,10 @@ import karaoke.StreamingServer;
 import karaoke.parser.MusicParser;
 import edu.mit.eecs.parserlib.UnableToParseException;
 
-
+/**
+ * Tests require music be played, so we do not want didit to run them
+ * @category no_didit
+ */
 public class LyricStreamingTest {
     
     

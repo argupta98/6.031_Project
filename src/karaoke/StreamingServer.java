@@ -7,7 +7,9 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
+import java.net.InetAddress;
 import java.net.InetSocketAddress;
+import java.net.UnknownHostException;
 import java.util.concurrent.Executors;
 
 import javax.sound.midi.InvalidMidiDataException;
@@ -116,16 +118,18 @@ public class StreamingServer {
         System.err.println("Voice ID: " + voiceID);
         exchange.sendResponseHeaders(successCode, 0);
         
+
+
         karaoke.addLyricListener(voiceID, (line) -> {
                 System.err.println("Current line: " + line);
                 if(line.equals("END")) {
-                	exchange.close();
+                    exchange.close();
                 }
                 else {
-                	OutputStream body = exchange.getResponseBody();
-                	PrintWriter out = new PrintWriter(new OutputStreamWriter(body, UTF_8), true);
-                	out.println(line);
-                	out.flush();
+                    OutputStream body = exchange.getResponseBody();
+                    PrintWriter out = new PrintWriter(new OutputStreamWriter(body, UTF_8), true);
+                    out.println(line);
+                    out.flush();
                 }
         });
         
@@ -182,6 +186,14 @@ public class StreamingServer {
      */
     public void stop() {
        server.stop(0);
+    }
+    
+    /**
+     * @return address that the server is hosted on
+     * @throws UnknownHostException 
+     */
+    public InetSocketAddress getAddress() throws UnknownHostException {
+        return server.getAddress();
     }
 
 }

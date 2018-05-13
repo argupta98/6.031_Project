@@ -27,12 +27,18 @@ public class Voice {
     //  - Client has no reference to internal representation
     //  - All fields are private and final
     //  - None of the internal rep variables are returned directly
-    
+    /**
+     * Constructs a new Voice object with Music <piece>, syllables <syllables>, and name <name>
+     * @param piece a playable music for this voice
+     * @param syllables the syllables in this voice
+     * @param name of the voice
+     */
     public Voice(Music piece, List<String> syllables, String name) {
         this.music = piece;
         this.allSyllables = syllables;
         this.listeners = Collections.synchronizedList(new ArrayList<>());
         this.name = name;
+        checkRep();
     }
     
     private void checkRep() {
@@ -56,6 +62,7 @@ public class Voice {
     public synchronized void play (SequencePlayer player) {
         this.music.play(player, 0, this);
         player.addEvent(music.duration(), (beat) -> this.notifyEnd());
+        checkRep();
     }
     
     /**
@@ -64,46 +71,69 @@ public class Voice {
      */
     public synchronized void addListener(LyricListener listener) {
         this.listeners.add(listener);
-        System.out.println("Added listener!");
-        System.out.println(listeners);
-        System.out.println(this.hashCode());
+        checkRep();
     }
 
+    /**
+     * Notifies all the LyricListeners with the current line of lyrics on each new note
+     * @param lyricIndex
+     */
     public synchronized void notifyAll(int lyricIndex) {
-    	System.out.println(this.hashCode());
-    	System.out.println("Notified listener!: "+this.listeners);
         for(LyricListener listen: this.listeners) {
             listen.notePlayed(constructLine(lyricIndex));
         }
+        checkRep();
     }
     
+    /**
+     * Final notification, to tell that the song has ended
+     */
     public synchronized void notifyEnd() {
     	for(LyricListener listen: this.listeners) {
             listen.notePlayed("END");
         }
+    	checkRep();
     }
     
+    /**
+     * @return the name of the voice
+     */
     public String name() {
         return this.name;
     }
     
+    /**
+     * @param voice the voice to join to this one
+     * @return a new voice which is the concatenation of the music and lyrics in 
+     * <this> and then music and lyrics in <voice>
+     */
     public Voice join(Voice voice) {
         Music newMusic = new Concat(this.music, voice.music);
         List<String> combinedSyllables = new ArrayList<>(this.allSyllables);
         combinedSyllables.addAll(voice.allSyllables);
         return new Voice(newMusic, combinedSyllables, name);
     }
-
+    
+    /**
+     * @return the duration of this voice's music
+     */
     public double duration() {
         return music.duration();
     }
     
+    /**
+     * @param boldedIndex the index of the syllable to be bolded
+     * @return the line of lyrics reformatted as a readable string with the syllable at <boldedIndex>
+     * bolded
+     */
     private String constructLine(int boldedIndex) {
         String fullLine = "";
-        
+        if(this.allSyllables.size() == 0) {
+        	return "No Lyrics";
+        }
         if(boldedIndex >= this.allSyllables.size()) {
             boldedIndex = this.allSyllables.size();
-            allSyllables.add(" ");
+            allSyllables.add("");
         }
         
         if(this.allSyllables.get(boldedIndex).trim().equals("_")) {
@@ -115,13 +145,16 @@ public class Voice {
         for(int index = 0; index < this.allSyllables.size(); index++) {
             boolean bolded = false;
             if(this.allSyllables.get(index).trim().equals("_")) {
-                fullLine+=" ";
+                fullLine+="";
             }
-            else if(this.allSyllables.get(index).equals(" ") || this.allSyllables.get(index).equals("")) {
+            else if(this.allSyllables.get(index).equals(" ")) {
                 fullLine+= " ";
+            }
+            else if(this.allSyllables.get(index).equals("")) {
+            	continue;
             }
             else if(this.allSyllables.get(index).trim().equals("*")) {
-                fullLine+= " ";
+                continue;
             }
             else if(index == boldedIndex) {
                 String syllable = this.allSyllables.get(index);
@@ -151,7 +184,10 @@ public class Voice {
         }
         return outString;
     }
-
+    
+    /**
+     * @return the number of syllables in this voice's lyrics
+     */
     public int lyricLength() {
         return this.allSyllables.size();
     }
