@@ -12,8 +12,11 @@ Meter ::= Numerator '/' Denominator;
 Length ::= Numerator '/' Denominator;
 Tempo ::= Length '=' Number;
 VoiceName ::= [^\r\t\n%]+;
-Key ::= [A-G#mb]+;
+Key ::= Letter (FlatKey|SharpKey)? Minor?;
 Title ::= [^\r\t\n%]+;
+FlatKey ::= '#';
+SharpKey ::= 'b';
+Minor ::= 'm';
 
 //Music grammar
 Voice ::= ('V:' VoiceName '\n')? MusicLine ('\n')?('w:' Lyric)?;
@@ -38,10 +41,11 @@ Natural ::= '=';
 
 //Lyric grammar
 //Needs to cover special case: --
-Lyric ::= SyllableNote ((Hyphens|NewMeasure|Star|Space)* SyllableNote |(Hyphens|NewMeasure|Star|Space)* Hold)* ('\n' | '\r\n')?;
+Lyric ::= SyllableNote ((Hyphens|NewMeasure|Star|Spaces)* SyllableNote |(Hyphens|NewMeasure|Star|Spaces)* Hold)* ('\n' | '\r\n')?;
 Hyphens ::= (Space)? (Hyphen)+;
 Star ::= '*';
 Hyphen ::= '-';
+Spaces ::= [ ]+;
 Space ::= [ ];
 Hold ::= '_';
 NewMeasure ::= '|';

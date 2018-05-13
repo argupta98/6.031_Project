@@ -127,6 +127,17 @@ public class LyricAndVoiceParsingTest {
 	        assertEquals(expected, lines);
 	    }
 	    
+	    //Covers: double space
+	    @Test public void testParseLyricsDoubleSpace() throws UnableToParseException, MidiUnavailableException, InvalidMidiDataException {
+	        String basicSong = generateHeader(4, 4, 4, 100, Key.C) + "C C C C|\nw: syll-a -ble";
+	        Composition music = (new MusicParser()).parse(basicSong);
+	        List<String> lines = new ArrayList<>();
+	        music.addVoiceListener("", (String line) -> {lines.add(line);});
+	        playMusic(music, lines);
+	        List<String> expected = Arrays.asList("*syll*able", "syll*a*ble", "syllable", "sylla*ble*", "END");
+	        assertEquals(expected, lines);
+	    }
+	    
 	    //Covers: single underscore
 	    @Test public void testParseStringLyricsSingleUnderScore() throws UnableToParseException, MidiUnavailableException, InvalidMidiDataException {
 	        String basicSong = generateHeader(4, 4, 4, 100, Key.C) + "C C C C|\nw: time_";

@@ -49,6 +49,10 @@ public class ParseASTTest {
     //
     //       Note Length: Handles numerator and denominator, numerator omitted, denominator omitted
     //
+	//		 Tempo and Length: length: note length 1/4, note length > 1/4, note length < 1/4
+	//						   tempo: 100, <100, >100
+	//
+	//
     //       Accidentals: Can parse ^,_,= operators, 
     //                    Octaves: only one instance of that note in the bar, 
     //                             multiple instances of the note in the bar,
@@ -177,6 +181,23 @@ public class ParseASTTest {
         assertEquals(14, music.duration(), .001);
     }
     
+    //TEMPO and LENGTH ( 1/4 = 100 covered in other tests)
+    
+    //covers length < 1/4, tempo > 100
+    @Test public void testParseStringLengthEigthTempo200() throws UnableToParseException {
+    	String basicSong = generateHeader(8, 4, 8, 200, Key.C)+"^A A B A | A A";
+    	Composition music = (new MusicParser()).parse(basicSong);
+    	assertEquals(1.5, music.duration(), .001);
+    }
+    
+    //covers length > 1/4, tempo < 100
+    @Test public void testParseStringLengthHalfTempo50() throws UnableToParseException {
+    	String basicSong = generateHeader(2, 4, 2, 50, Key.Cm)+"^A A B A | A A";
+    	Composition music = (new MusicParser()).parse(basicSong);
+    	assertEquals(24, music.duration(), .001);
+    }
+    
+    
     //ACCIDENTAL Test Cases (other test cases cover 0 accidentals)
     //Covers: parseString: Accidental: Can be parsed
     @Test public void testParseStringAccidentalParse() throws UnableToParseException {
@@ -234,6 +255,14 @@ public class ParseASTTest {
     // Covers: Repeat with different endings
     @Test public void testParseStringRepeatDiffEnding() throws UnableToParseException{
         String basicSong = generateHeader(8, 8, 8, 100, Key.C) + "|: C D E F |[1 G A B c | G A B B :|[2 F E D C |\n";
+        Composition music = (new MusicParser()).parse(basicSong);
+        assertEquals("|:CDEF[1GABC'GABB:|[2FEDC\n", music.toString()); 
+    }
+    
+    // Covers: Repeat over multiple lines
+    @Test public void testParseStringRepeatDiffLines() throws UnableToParseException{
+        String basicSong = generateHeader(8, 8, 8, 100, Key.C) + "|: C D E F |[1 G A B c \n"+
+                             "| G A B B :|[2 F E D C |\n";
         Composition music = (new MusicParser()).parse(basicSong);
         assertEquals("|:CDEF[1GABC'GABB:|[2FEDC\n", music.toString()); 
     }
@@ -300,6 +329,7 @@ public class ParseASTTest {
     
     
     //COMMENTS
+    
     
     
 }   

@@ -233,8 +233,8 @@ public class MusicParser {
     
     // the nonterminals of the grammar
     private static enum MusicGrammar {
-        COMPOSITION, HEADER, TRACKNUMBER, COMPOSER, METER, LENGTH, TEMPO, HYPHEN, HYPHENS,
-        VOICENAME, KEY, VOICE, MUSICLINE, MEASURE, NOTE, OCTAVEUP, OCTAVEDOWN, TILDA, STAR,
+        COMPOSITION, HEADER, TRACKNUMBER, COMPOSER, METER, LENGTH, TEMPO, HYPHEN, HYPHENS,SPACES, FLATKEY,
+        VOICENAME, KEY, VOICE, MUSICLINE, MEASURE, NOTE, OCTAVEUP, OCTAVEDOWN, TILDA, STAR, MINOR, SHARPKEY, 
         NOTEDENOMINATOR, ACCIDENTAL, SHARP, FLAT, LYRIC, SYLLABLENOTE, NEWMEASURE, BACKSLASHHYPHEN,
         SYLLABLE, LETTER, COMMENT, NUMBER, WHITESPACE, WHITESPACEANDCOMMENT, TITLE, HOLD, SPACE, 
         CHORD, TUPLE, DENOMINATOR, NUMERATOR, REPEAT, DOUBLEFLAT, DOUBLESHARP, NATURAL, REST, ENDING
@@ -374,7 +374,18 @@ public class MusicParser {
                 composition.setTempo(Integer.parseInt(field.childrenByName(MusicGrammar.NUMBER).get(0).text()));
             }
             else if(field.name() == MusicGrammar.KEY) {
-                composition.setKey(Key.valueOf(field.text()));
+            	String key = field.childrenByName(MusicGrammar.LETTER).get(0).text();
+            	if(field.childrenByName(MusicGrammar.FLATKEY).size() != 0) {
+            		key+="flat";
+            	}
+            	else if(field.childrenByName(MusicGrammar.SHARPKEY).size() != 0) {
+            		key+="sharp";
+            	}
+            	
+            	if(field.childrenByName(MusicGrammar.MINOR).size() != 0) {
+            		key+="m";
+            	}
+                composition.setKey(Key.valueOf(key));
             }
             else if(field.name() == MusicGrammar.VOICENAME) {
                 continue;
@@ -612,7 +623,7 @@ public class MusicParser {
                     lyricSyllables.add("");
                 }
             }
-            else if(syllableNote.name() == MusicGrammar.SPACE) {
+            else if(syllableNote.name() == MusicGrammar.SPACES) {
             	String replace = lyricSyllables.get(lyricSyllables.size()-1)+" ";
                 lyricSyllables.remove(lyricSyllables.size()-1);
                 lyricSyllables.add(replace);
