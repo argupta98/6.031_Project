@@ -29,17 +29,16 @@ public class Main {
      *  
      */
     public static void main(String[] args) throws UnableToParseException, IOException {
-        /*
-        final File input = new File("sample-abc/waxies_dargle.abc");
-        try {
-            Player musicPlayer = new Player(input);
-            musicPlayer.addLyricListener("",  (String line) -> System.out.println(line));
-            musicPlayer.play();
-        } catch (Exception e) {
-            //  Auto-generated catch block
-            e.printStackTrace();
-        }
-        */
+
+//        final File input = new File("sample-abc/piece2.abc");
+//        try {
+//            Player musicPlayer = new Player(input);
+//            musicPlayer.addLyricListener("",  (String line) -> System.out.println(line));
+//            musicPlayer.play();
+//        } catch (Exception e) {
+//            //  Auto-generated catch block
+//            e.printStackTrace();
+//        }
 
         final Queue<String> arguments = new LinkedList<>(Arrays.asList(args));
         final String filename;
