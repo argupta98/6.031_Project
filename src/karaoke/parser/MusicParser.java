@@ -365,6 +365,7 @@ public class MusicParser {
     		}
     	}
     	
+    	System.out.println(reconstructedString);
         // parse the example into a parse tree
         final ParseTree<MusicGrammar> parseTree = parser.parse(reconstructedString);
 
@@ -378,7 +379,6 @@ public class MusicParser {
         for(int voiceNumber = 1; voiceNumber < parseTree.children().size(); voiceNumber++) {
             ParseTree<MusicGrammar> voice = parseTree.children().get(voiceNumber);
             List<String> lyricList = parseLyrics(voice.childrenByName(MusicGrammar.LYRIC));
-            //System.out.println(lyricList);
             String voiceName = "";
             if(voice.childrenByName(MusicGrammar.VOICENAME).size() > 0) {
                 voiceName = voice.childrenByName(MusicGrammar.VOICENAME)
@@ -551,7 +551,7 @@ public class MusicParser {
                     notes.add(makeMusicAST(primitive, environment));
                 }
                 Music chord = new Chord(notes, environment.lyricIndex());
-                environment.lockSyllableCounter();
+                environment.unlockSyllableCounter();
                 environment.incrementSyllable();
                 return chord;
             }
@@ -749,7 +749,7 @@ public class MusicParser {
             lock = true;
         }
         
-        private void unlockSylableCounter() {
+        private void unlockSyllableCounter() {
             lock = false;
         }
 
