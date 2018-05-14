@@ -52,6 +52,9 @@ public class Composition {
     //Safety from rep Exposure:
     //  All internal variables are private, final and never returned. 
     //  The client has no access to any of the variables. 
+    // Thread Safety Argument
+    // - Player Wrapper Class that plays music is a threadsafe datatype
+    // - Player Class is the only class that is called upon from multiple threads
     
     /**
      * Creates a new composition with default values
@@ -78,7 +81,7 @@ public class Composition {
         for(String voiceKey: voices.keySet()) {
             voices.get(voiceKey).play(player);
         }
-        //player.addEvent(this.duration(), (beat) -> this.notifyEnd());
+        checkRep();
     }
     
     /**
@@ -91,6 +94,7 @@ public class Composition {
         if(voices.containsKey(voice)) {
             voices.get(voice).addListener(listener);
         }
+        checkRep();
     }
     
     /**
@@ -104,6 +108,7 @@ public class Composition {
                 maxDuration = voice.duration();
             }
         }
+        checkRep();
         return maxDuration;
     }
     
@@ -177,7 +182,7 @@ public class Composition {
     
     /**
      * set the track number of the composition in a set of compositions
-     * @param tracknumber the tracknumber of the piece
+     * @param trackNumber the tracknumber of the piece
      */
     public void setTrackNumber(int trackNumber) {
         this.trackNumber = trackNumber; 
@@ -228,6 +233,7 @@ public class Composition {
             Voice voice = voices.get(voiceKey);
             outString+=voice.toString()+"\n";
         }
+        checkRep();
         return outString;
     }
 }

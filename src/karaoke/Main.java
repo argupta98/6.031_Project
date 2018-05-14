@@ -42,7 +42,6 @@ public class Main {
             musicPlayer.addLyricListener("",  (String line) -> System.out.println(line));
             musicPlayer.play();
         } catch (Exception e) {
-            //  Auto-generated catch block
             e.printStackTrace();
         }
 

@@ -25,6 +25,10 @@ public class Note implements Music{
     // Safety from Rep Exposure
     // All fields are private and immutable
     
+    // Thread Safety Argument
+    // - Player Wrapper Class that plays music is a threadsafe datatype
+    // - Player Class is the only class that is called upon from multiple threads
+    
     
     /**
      * Creates a new Note Instance
@@ -38,6 +42,7 @@ public class Note implements Music{
         this.pitch = pitch;
         this.instrument = instrument;
         this.lyricIndex = lyricIndex;
+        checkRep();
     }
     
     private void checkRep() {

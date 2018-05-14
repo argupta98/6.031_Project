@@ -27,6 +27,13 @@ public class Voice {
     //  - Client has no reference to internal representation
     //  - All fields are private and final
     //  - None of the internal rep variables are returned directly
+    
+    // Thread Safety Argument
+    // - Player Wrapper Class that plays music is a threadsafe datatype
+    // - Player Class is the only class that is called upon from multiple threads
+    // - Multiple threads can have access to listeners at once so it is a threadsafe datatype 
+    
+    
     /**
      * Constructs a new Voice object with Music <piece>, syllables <syllables>, and name <name>
      * @param piece a playable music for this voice
@@ -76,7 +83,7 @@ public class Voice {
 
     /**
      * Notifies all the LyricListeners with the current line of lyrics on each new note
-     * @param lyricIndex
+     * @param lyricIndex index to the list of all lyrics for song to notify which lyric to highlight 
      */
     public synchronized void notifyAll(int lyricIndex) {
         for(LyricListener listen: this.listeners) {
@@ -89,10 +96,10 @@ public class Voice {
      * Final notification, to tell that the song has ended
      */
     public synchronized void notifyEnd() {
-    	for(LyricListener listen: this.listeners) {
+        for(LyricListener listen: this.listeners) {
             listen.notePlayed("END");
         }
-    	checkRep();
+        checkRep();
     }
     
     /**
@@ -129,13 +136,14 @@ public class Voice {
     private String constructLine(int boldedIndex) {
         String fullLine = "";
         if(this.allSyllables.size() == 0) {
-        	return "No Lyrics";
+            return "No Lyrics";
         }
+        // There are no remaining lyrics left 
         if(boldedIndex >= this.allSyllables.size()) {
             boldedIndex = this.allSyllables.size();
             allSyllables.add("");
         }
-        
+        // Hold the syllable longer so reduce the boldedIndex 
         if(this.allSyllables.get(boldedIndex).trim().equals("_")) {
             while(this.allSyllables.get(boldedIndex).trim().equals("_") || this.allSyllables.get(boldedIndex).equals("-")) {
                 boldedIndex--;
@@ -144,6 +152,7 @@ public class Voice {
         
         for(int index = 0; index < this.allSyllables.size(); index++) {
             boolean bolded = false;
+            // Syllable being held so add no extra syllable
             if(this.allSyllables.get(index).trim().equals("_")) {
                 fullLine+="";
             }
@@ -151,11 +160,13 @@ public class Voice {
                 fullLine+= " ";
             }
             else if(this.allSyllables.get(index).equals("")) {
-            	continue;
+                continue;
             }
+            // Skipping a note so add no extra syllable 
             else if(this.allSyllables.get(index).trim().equals("*")) {
                 continue;
             }
+            // Correctly highlight the syllable to bolded during the song 
             else if(index == boldedIndex) {
                 String syllable = this.allSyllables.get(index);
                 if(syllable.endsWith(" ")) {
@@ -165,6 +176,7 @@ public class Voice {
                     fullLine+="*"+this.allSyllables.get(index)+"*";
                 }
             }
+            // If not the current syllable just display the normal syllable 
             else {
                 fullLine+=this.allSyllables.get(index);
             }

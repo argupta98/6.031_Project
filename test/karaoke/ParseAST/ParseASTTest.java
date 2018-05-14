@@ -3,25 +3,14 @@ package karaoke.ParseAST;
 import static org.junit.Assert.*;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
-import javax.sound.midi.InvalidMidiDataException;
-import javax.sound.midi.MidiUnavailableException;
 
 import org.junit.Test;
 
 import edu.mit.eecs.parserlib.UnableToParseException;
 import karaoke.Composition;
 import karaoke.Composition.Key;
-import karaoke.Music;
-import karaoke.Note;
 import karaoke.parser.MusicParser;
-import karaoke.sound.Instrument;
-import karaoke.sound.MidiSequencePlayer;
-import karaoke.sound.Pitch;
-import karaoke.sound.SequencePlayer;
+
 
 //Test class for parser and AST
 public class ParseASTTest {
@@ -272,9 +261,9 @@ public class ParseASTTest {
     	System.out.println(music.toString());
         assertEquals("|:D'F'F'C'E'E'D'E'F'G'F'E'D'F'F'C'"
         		+ "E'E'D'F'E'D'BAD'F'F'C'E'E'D'E'F'G'F'E'"
-        		+ "F'A'F'G'F'E'[1D'F'E'D'BA:|[2|:D'F'E'D'C'BAB"
+        		+ "F'A'F'G'F'E'[1D'F'E'D'BA:|[2D'F'E'D'C'B|:AB"
         		+ "G'F'E'F'D'BA^FABC'D'F'E'D'C'BABE'F'E'E'F'G'F'"
-        		+ "A'F'G'F'E'[1D'F'E'D'C'B:|[2|:D'F'E'D'BAF'AAE'AA"
+        		+ "A'F'G'F'E'[1D'F'E'D'C'B:|[2D'F'E'D'BA |:F'AAE'AA"
         		+ "D'E'F'G'F'E'F'AAE'AAD'F'E'D'BAF'AAE'AAD'E'F'G'F'"
         		+ "E'F'A'F'G'F'E'D'F'E'D'BA:|"
         		, music.toString()); 

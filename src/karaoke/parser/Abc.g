@@ -6,7 +6,7 @@ Composition ::= Header (Voice)+;
 
 //Header grammar
 Header ::= 'X:' TrackNumber '\n' 'T:' Title '\n'('C:' Composer '\n'|'M:' Meter '\n'|'L:' Length '\n'|'Q:' Tempo '\n'|'V:' VoiceName '\n')* 'K:' Key '\n';
-TrackNumber ::= [0-9];
+TrackNumber ::= Number;
 Composer ::= [^\r\t\n%]+;
 Meter ::= Numerator '/' Denominator | 'C';
 Length ::= Numerator '/' Denominator;
@@ -21,7 +21,7 @@ Minor ::= 'm';
 //Music grammar
 Voice ::= ('V:' VoiceName '\n')? MusicLine ('\n')?('w:' Lyric)?;
 MusicLine ::= (Measure | Repeat)+;
-Repeat ::= ('|:' | '[|' | '||' | '|]')? (Measure)+ (':|' | FirstEnding SecondEnding)? ;
+Repeat ::= ('|:' | '[|' | '||' | '|]')? (Measure)+ (':|' | FirstEnding SecondEnding) ;
 FirstEnding ::= '[' Number (Measure)+ ':|';
 SecondEnding ::= '[' Number MusicLine;
 Measure ::= ('|')? (Note | Chord | Tuple | Rest)+ ('[|' | '|' | '|]' | '||')?;
@@ -64,6 +64,6 @@ Letter ::= [A-G]|[a-g];
 }
 whitespace ::= [ \t\r]+;
 whitespaceAndComment ::= (comment | whitespace)+;
-Number ::= [1-9][0-9]*;
+Number ::= [0-9]+;
 Numerator ::= [1-9][0-9]*;
 Denominator ::= [1-9][0-9]*;

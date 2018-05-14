@@ -231,7 +231,13 @@ public class MusicParser {
         //final String input = "";
         final File input = new File("sample-abc/piece3.abc");
         //System.out.println(input);
-        (new MusicParser()).parseFile(input);
+        (new MusicParser()).parse("X:1\r\n" + 
+        		"T:Title\r\n" + 
+        		"M:8/8\r\n" + 
+        		"L: 1/8\r\n" + 
+        		"Q: 1/8=100\r\n" + 
+        		"K: C\r\n" + 
+        		"^A _A A =A A");
         //System.out.println(expression);
     }
     
@@ -333,9 +339,6 @@ public class MusicParser {
     	final ParseTree<BaseGrammar> abcHeaderTree = baseParser.parse(string).childrenByName(BaseGrammar.ABCHEADER).get(0);
     	for(ParseTree<BaseGrammar> voice: abcBodyTree.children()) {
     		String voiceName = voice.childrenByName(BaseGrammar.VOICENAME).get(0).text();
-    		if (voiceName.isEmpty()) {
-    			voiceName = "empty";
-    		}
     		if (voiceNoteDict.containsKey(voiceName)){
     			voiceNoteDict.get(voiceName).add(voice.childrenByName(BaseGrammar.MUSICLINE).get(0).childrenByName(BaseGrammar.ANYTHING).get(0).text());
     		}
@@ -359,7 +362,7 @@ public class MusicParser {
     		reconstructedString += field.text();
     	}
     	for(String voice: voiceNoteDict.keySet()) {
-    		reconstructedString = reconstructedString+String.join(" ", voiceNoteDict.get(voice)) + "\n";
+    		reconstructedString = reconstructedString + voice +String.join(" ", voiceNoteDict.get(voice)) + "\n";
     		if (voiceLyricDict.containsKey(voice)) {
     			reconstructedString = reconstructedString + "w:" + String.join(" ", voiceLyricDict.get(voice)) + "\n";
     		}
@@ -378,7 +381,6 @@ public class MusicParser {
         for(int voiceNumber = 1; voiceNumber < parseTree.children().size(); voiceNumber++) {
             ParseTree<MusicGrammar> voice = parseTree.children().get(voiceNumber);
             List<String> lyricList = parseLyrics(voice.childrenByName(MusicGrammar.LYRIC));
-            //System.out.println(lyricList);
             String voiceName = "";
             if(voice.childrenByName(MusicGrammar.VOICENAME).size() > 0) {
                 voiceName = voice.childrenByName(MusicGrammar.VOICENAME)
@@ -433,6 +435,7 @@ public class MusicParser {
 
     private static Composition makeCompositionHeader(ParseTree<MusicGrammar> compositionTree) {
         ParseTree<MusicGrammar> headerTree = compositionTree.childrenByName(MusicGrammar.HEADER).get(0);
+        //System.out.println(headerTree.children());
         Composition composition = new Composition();
         //Parse Header info
         for(ParseTree<MusicGrammar> field: headerTree.children()) {
@@ -447,16 +450,11 @@ public class MusicParser {
                         Integer.parseInt(field.childrenByName(MusicGrammar.DENOMINATOR).get(0).text()));
             }
             else if(field.name() == MusicGrammar.METER) {
-            	try {
-            		composition.setMeter((double) Integer.parseInt(field.childrenByName(MusicGrammar.NUMERATOR).get(0).text())/
-                        Integer.parseInt(field.childrenByName(MusicGrammar.DENOMINATOR).get(0).text()));
-            	}
-            	catch(Exception e) {
-            		//do nothing, C is 4/4 which is also default
-            	}
+        		composition.setMeter((double) Integer.parseInt(field.childrenByName(MusicGrammar.NUMERATOR).get(0).text())/
+                    Integer.parseInt(field.childrenByName(MusicGrammar.DENOMINATOR).get(0).text()));
             }
             else if(field.name() == MusicGrammar.TRACKNUMBER) {
-                composition.setTrackNumber(Integer.parseInt(field.text()));
+                composition.setTrackNumber(Integer.parseInt(field.childrenByName(MusicGrammar.NUMBER).get(0).text()));
             }
             else if(field.name() == MusicGrammar.TEMPO) {
                 composition.setTempo(Integer.parseInt(field.childrenByName(MusicGrammar.NUMBER).get(0).text()));
@@ -561,7 +559,8 @@ public class MusicParser {
                     notes.add(makeMusicAST(primitive, environment));
                 }
                 Music chord = new Chord(notes, environment.lyricIndex());
-                environment.unlockSylableCounter();
+
+                environment.unlockSyllableCounter();
                 environment.incrementSyllable();
                 return chord;
             }
@@ -759,7 +758,7 @@ public class MusicParser {
             lock = true;
         }
         
-        private void unlockSylableCounter() {
+        private void unlockSyllableCounter() {
             lock = false;
         }
 
