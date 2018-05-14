@@ -6,7 +6,7 @@ Composition ::= Header (Voice)+;
 
 //Header grammar
 Header ::= 'X:' TrackNumber '\n' 'T:' Title '\n'('C:' Composer '\n'|'M:' Meter '\n'|'L:' Length '\n'|'Q:' Tempo '\n'|'V:' VoiceName '\n')* 'K:' Key '\n';
-TrackNumber ::= Number;
+TrackNumber ::= [0-9];
 Composer ::= [^\r\t\n%]+;
 Meter ::= Numerator '/' Denominator | 'C';
 Length ::= Numerator '/' Denominator;
