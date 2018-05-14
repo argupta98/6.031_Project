@@ -15,6 +15,9 @@ public class Rest implements Music {
      *     - Client has no reference to any internal variables
      *     - All internal variables are private and final
      *     - Never returns any of the internal rep variables
+     * Thread Safety Argument:
+     *  - Player Wrapper Class that plays music is a threadsafe datatype
+     *  - Player Class is the only class that is called upon from multiple threads 
      */
     
     /**
@@ -23,6 +26,7 @@ public class Rest implements Music {
      */
     public Rest(double duration) {
         this.duration = duration;
+        checkRep();
     }
     
     private void checkRep() {

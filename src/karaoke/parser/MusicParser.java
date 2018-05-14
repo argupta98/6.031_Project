@@ -333,9 +333,6 @@ public class MusicParser {
     	final ParseTree<BaseGrammar> abcHeaderTree = baseParser.parse(string).childrenByName(BaseGrammar.ABCHEADER).get(0);
     	for(ParseTree<BaseGrammar> voice: abcBodyTree.children()) {
     		String voiceName = voice.childrenByName(BaseGrammar.VOICENAME).get(0).text();
-    		if (voiceName.isEmpty()) {
-    			voiceName = "empty";
-    		}
     		if (voiceNoteDict.containsKey(voiceName)){
     			voiceNoteDict.get(voiceName).add(voice.childrenByName(BaseGrammar.MUSICLINE).get(0).childrenByName(BaseGrammar.ANYTHING).get(0).text());
     		}
@@ -359,13 +356,13 @@ public class MusicParser {
     		reconstructedString += field.text();
     	}
     	for(String voice: voiceNoteDict.keySet()) {
-    		reconstructedString = reconstructedString + "\nV:"+voice+"\n" +String.join(" ", voiceNoteDict.get(voice)) + "\n";
+    		reconstructedString = reconstructedString + voice +String.join(" ", voiceNoteDict.get(voice)) + "\n";
     		if (voiceLyricDict.containsKey(voice)) {
     			reconstructedString = reconstructedString + "w:" + String.join(" ", voiceLyricDict.get(voice)) + "\n";
     		}
     	}
-    	
     	System.out.println(reconstructedString);
+    	
         // parse the example into a parse tree
         final ParseTree<MusicGrammar> parseTree = parser.parse(reconstructedString);
 

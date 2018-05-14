@@ -21,6 +21,9 @@ public class Repeat implements Music{
     //     - Client has no reference to any internal variables
     //     - All internal variables are private and final
     //     - Never returns any of the internal rep variables
+    // Thread Safety Argument
+    // - Player Wrapper Class that plays music is a threadsafe datatype
+    // - Player Class is the only class that is called upon from multiple threads
     
     /**
      * Creates a new instance of a Repeat
@@ -30,6 +33,7 @@ public class Repeat implements Music{
     public Repeat(Music measures, List<Music> endings) {
         this.measures = measures;
         this.endings = new ArrayList<>(endings);
+        checkRep();
     }
     
     private void checkRep() {
@@ -40,10 +44,12 @@ public class Repeat implements Music{
     @Override
     public double duration() {
         double totalDuration = 0;
+        // Automatically set duration to playing the measure twice 
         if(endings.size() ==0 ) {
             totalDuration = 2*measures.duration();
         }
         else {
+            // Set duration to length of measure with all different endings
             for(Music ending: endings) {
                 totalDuration += measures.duration()+ending.duration();
             }
@@ -54,6 +60,7 @@ public class Repeat implements Music{
     @Override
     public void play(SequencePlayer player, double beat, Voice voice) {
         double currentBeat = beat;
+        // Play measure twice 
         if(endings.size() ==0 ) {
             measures.play(player, currentBeat, voice);
             currentBeat+=measures.duration();
@@ -61,6 +68,7 @@ public class Repeat implements Music{
         }
         
         else {
+            // Play meausre with each ending 
             for(Music ending: endings) {
                 measures.play(player, currentBeat, voice);
                 currentBeat+=measures.duration();

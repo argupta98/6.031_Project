@@ -36,13 +36,12 @@ public class Main {
      */
     public static void main(String[] args) throws UnableToParseException, IOException {
 
-        final File input = new File("sample-abc/paddy.abc");
+        final File input = new File("sample-abc/rains_of_castamere.abc");
         try {
             Player musicPlayer = new Player(input);
             musicPlayer.addLyricListener("",  (String line) -> System.out.println(line));
             musicPlayer.play();
         } catch (Exception e) {
-            //  Auto-generated catch block
             e.printStackTrace();
         }
 

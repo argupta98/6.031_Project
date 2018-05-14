@@ -55,7 +55,7 @@ public class Player {
     /**
      * @return the title and composer of the piece to be played
      */
-    public String songInfo() {
+    public synchronized String songInfo() {
         String title = music.title();
         String composer = music.composer();
         return "Title: " + title + ", Composer: " + composer;
@@ -76,7 +76,6 @@ public class Player {
         Object lock = new Object();
         player.addEvent(music.duration(), (Double beat) -> {
             synchronized (lock) {
-            	System.out.println("Notifying lock");
                 lock.notify();
             }
         });

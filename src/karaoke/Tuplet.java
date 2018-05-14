@@ -26,6 +26,11 @@ public class Tuplet implements Music {
     // tupletNumber is private and immutable
     // notes is private and references to the list are not returned to the client
     
+    // Thread Safety Argument
+    // - Player Wrapper Class that plays music is a threadsafe datatype
+    // - Player Class is the only class that is called upon from multiple threads
+    
+    
     
     /**
      * Creates a new instance of the Tuplet
@@ -35,6 +40,7 @@ public class Tuplet implements Music {
     public Tuplet(int tupletNumber, List<Music> notes) {
         this.tupletNumber = tupletNumber;
         this.notes = notes;
+        checkRep();
     }
     
     private void checkRep() {
@@ -49,6 +55,7 @@ public class Tuplet implements Music {
     @Override
     public double duration() {
         double duration = 0;
+        // Duration is the sum of durations for all notes 
         for(Music note: this.notes) {
             duration+=note.duration();
         }
@@ -59,6 +66,7 @@ public class Tuplet implements Music {
     @Override
     public void play(SequencePlayer player, double beat, Voice myVoice) {
         double currentBeat = beat;
+        // Play each note after one another 
         for(Music note: notes) {
             note.play(player, currentBeat, myVoice);
             currentBeat+=note.duration();

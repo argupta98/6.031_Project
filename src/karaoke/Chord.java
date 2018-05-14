@@ -24,6 +24,10 @@ public class Chord implements Music{
     // lyricIndex is an immutable reference to an immutable value
     // we do not return references to notes
     
+    // Thread safety Argument:
+    // - Player Wrapper Class that plays music is a threadsafe datatype
+    // - Player Class is the only class that is called upon from multiple threads
+    
     /**
      * Creates a new instance of Chord
      * @param notes the notes in the chord
@@ -32,6 +36,7 @@ public class Chord implements Music{
     public Chord(List<Music> notes, int lyricIndex) {
         this.notes = notes;
         this.lyricIndex = lyricIndex;
+        checkRep();
     }
     
     private void checkRep() {
