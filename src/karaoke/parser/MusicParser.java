@@ -451,8 +451,7 @@ public class MusicParser {
                         Integer.parseInt(field.childrenByName(MusicGrammar.DENOMINATOR).get(0).text()));
             }
             else if(field.name() == MusicGrammar.TRACKNUMBER) {
-                composition.setTrackNumber(Integer.parseInt(field.childrenByName(MusicGrammar.NUMBER)
-                        .get(0).text()));
+                composition.setTrackNumber(Integer.parseInt(field.text()));
             }
             else if(field.name() == MusicGrammar.TEMPO) {
                 composition.setTempo(Integer.parseInt(field.childrenByName(MusicGrammar.NUMBER).get(0).text()));
