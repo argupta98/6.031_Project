@@ -241,7 +241,8 @@ public class MusicParser {
         VOICENAME, KEY, VOICE, MUSICLINE, MEASURE, NOTE, OCTAVEUP, OCTAVEDOWN, TILDA, STAR, MINOR, SHARPKEY, 
         NOTEDENOMINATOR, ACCIDENTAL, SHARP, FLAT, LYRIC, SYLLABLENOTE, NEWMEASURE, BACKSLASHHYPHEN,
         SYLLABLE, LETTER, COMMENT, NUMBER, WHITESPACE, WHITESPACEANDCOMMENT, TITLE, HOLD, SPACE, 
-        CHORD, TUPLE, DENOMINATOR, NUMERATOR, REPEAT, DOUBLEFLAT, DOUBLESHARP, NATURAL, REST, ENDING
+        CHORD, TUPLE, DENOMINATOR, NUMERATOR, REPEAT, DOUBLEFLAT, DOUBLESHARP, NATURAL, REST, ENDING,
+        FIRSTENDING
     }
     
     private static enum BaseGrammar{
@@ -363,6 +364,7 @@ public class MusicParser {
     			reconstructedString = reconstructedString + "w:" + String.join(" ", voiceLyricDict.get(voice)) + "\n";
     		}
     	}
+    	
         // parse the example into a parse tree
         final ParseTree<MusicGrammar> parseTree = parser.parse(reconstructedString);
 

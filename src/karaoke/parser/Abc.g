@@ -20,9 +20,10 @@ Minor ::= 'm';
 
 //Music grammar
 Voice ::= ('V:' VoiceName '\n')? MusicLine ('\n')?('w:' Lyric)?;
-MusicLine ::= (Measure | Repeat | Ending)+;
-Repeat ::= ('|:')? (Measure)+ ((':|') | Ending)+ ; 
-Ending ::= '[' Number (Measure)+ ( (':|') | ('|') | '\n');
+MusicLine ::= (Measure | Repeat)+;
+Repeat ::= ('|:')? (Measure)+ (':|' | FirstEnding) (Ending)? ;
+FirstEnding ::= '[' Number (Measure)+ ':|';
+Ending ::= '[' Number (Measure)+ ('\n')?;
 Measure ::= ('|')? (Note | Chord | Tuple | Rest)+ ('[|' | '|' | '|]' | '||')?;
 Chord ::= '[' (note)+ ']';
 Tuple ::= '('Number (note|chord)+;
