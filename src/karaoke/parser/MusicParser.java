@@ -359,7 +359,7 @@ public class MusicParser {
     		reconstructedString += field.text();
     	}
     	for(String voice: voiceNoteDict.keySet()) {
-    		reconstructedString = reconstructedString + "\nV:"+voice+"\n" +String.join(" ", voiceNoteDict.get(voice)) + "\n";
+    		reconstructedString = reconstructedString+String.join(" ", voiceNoteDict.get(voice)) + "\n";
     		if (voiceLyricDict.containsKey(voice)) {
     			reconstructedString = reconstructedString + "w:" + String.join(" ", voiceLyricDict.get(voice)) + "\n";
     		}

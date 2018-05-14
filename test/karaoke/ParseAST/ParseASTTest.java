@@ -267,6 +267,19 @@ public class ParseASTTest {
         assertEquals("|:CDEF[1GABC'GABB:|[2FEDC\n", music.toString()); 
     }
     
+    @Test public void testParseStringPaddyRepeats() throws UnableToParseException {
+    	Composition music = (new MusicParser()).parseFile(new File("sample-abc/paddy.abc"));
+    	System.out.println(music.toString());
+        assertEquals("|:D'F'F'C'E'E'D'E'F'G'F'E'D'F'F'C'"
+        		+ "E'E'D'F'E'D'BAD'F'F'C'E'E'D'E'F'G'F'E'"
+        		+ "F'A'F'G'F'E'[1D'F'E'D'BA:|[2|:D'F'E'D'C'BAB"
+        		+ "G'F'E'F'D'BA^FABC'D'F'E'D'C'BABE'F'E'E'F'G'F'"
+        		+ "A'F'G'F'E'[1D'F'E'D'C'B:|[2|:D'F'E'D'BAF'AAE'AA"
+        		+ "D'E'F'G'F'E'F'AAE'AAD'F'E'D'BAF'AAE'AAD'E'F'G'F'"
+        		+ "E'F'A'F'G'F'E'D'F'E'D'BA:|"
+        		, music.toString()); 
+    }
+    
     //CHORDS Test Cases Nick implements
     //Covers: parseString: Chord: All same duration
     @Test public void testParseStringChordSameDuration() throws UnableToParseException{
