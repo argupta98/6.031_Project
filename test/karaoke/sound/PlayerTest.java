@@ -125,8 +125,6 @@ public class PlayerTest {
     public void testInventionSong() throws UnableToParseException, MidiUnavailableException, InvalidMidiDataException {
         File inventionSong = new File("sample-abc/invention.abc");
         Player invention = new Player(inventionSong);
-        invention.addLyricListener("1", (line) -> System.out.println("Recieved line 1"));
-        invention.addLyricListener("2", (line) -> System.out.println("Recieved line 2"));
         Object lock = invention.play();
         synchronized (lock) {
             try {

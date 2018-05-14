@@ -20,11 +20,12 @@ Minor ::= 'm';
 
 //Music grammar
 Voice ::= ('V:' VoiceName '\n')? MusicLine ('\n')?('w:' Lyric)?;
-MusicLine ::= (Measure | Repeat)+;
-Repeat ::= ('|:' | '[|' | '||' | '|]')? (Measure)+ (':|' | FirstEnding SecondEnding) ;
+MusicLine ::= (Repeat | EndSection |Measure)+;
+Repeat ::= ('|:' | '[|' | '||' | '|]')? (Measure)+ ('|')?(':|' | FirstEnding SecondEnding) ;
 FirstEnding ::= '[' Number (Measure)+ ':|';
 SecondEnding ::= '[' Number MusicLine;
-Measure ::= ('|')? (Note | Chord | Tuple | Rest)+ ('[|' | '|' | '|]' | '||')?;
+EndSection ::= measure ('[|' | '|]' | '||' | '|');
+Measure ::= ('|')? (Note | Chord | Tuple | Rest)+ ;
 Chord ::= '[' (note)+ ']';
 Tuple ::= '('Number (note|chord)+;
 Note ::= (Accidental)? Letter (OctaveUp|OctaveDown)* (Numerator)? (NoteDenominator)?;

@@ -263,9 +263,9 @@ public class ParseASTTest {
         		+ "E'E'D'F'E'D'BAD'F'F'C'E'E'D'E'F'G'F'E'"
         		+ "F'A'F'G'F'E'[1D'F'E'D'BA:|[2D'F'E'D'C'B|:AB"
         		+ "G'F'E'F'D'BA^FABC'D'F'E'D'C'BABE'F'E'E'F'G'F'"
-        		+ "A'F'G'F'E'[1D'F'E'D'C'B:|[2D'F'E'D'BA |:F'AAE'AA"
+        		+ "A'F'G'F'E'[1D'F'E'D'C'B:|[2D'F'E'D'BA|:F'AAE'AA"
         		+ "D'E'F'G'F'E'F'AAE'AAD'F'E'D'BAF'AAE'AAD'E'F'G'F'"
-        		+ "E'F'A'F'G'F'E'D'F'E'D'BA:|"
+        		+ "E'F'A'F'G'F'E'D'F'E'D'BA:|\n"
         		, music.toString()); 
     }
     

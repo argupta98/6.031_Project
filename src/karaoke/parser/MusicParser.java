@@ -248,7 +248,7 @@ public class MusicParser {
         NOTEDENOMINATOR, ACCIDENTAL, SHARP, FLAT, LYRIC, SYLLABLENOTE, NEWMEASURE, BACKSLASHHYPHEN,
         SYLLABLE, LETTER, COMMENT, NUMBER, WHITESPACE, WHITESPACEANDCOMMENT, TITLE, HOLD, SPACE, 
         CHORD, TUPLE, DENOMINATOR, NUMERATOR, REPEAT, DOUBLEFLAT, DOUBLESHARP, NATURAL, REST, SECONDENDING,
-        FIRSTENDING
+        FIRSTENDING, ENDSECTION
     }
     
     private static enum BaseGrammar{
@@ -450,8 +450,13 @@ public class MusicParser {
                         Integer.parseInt(field.childrenByName(MusicGrammar.DENOMINATOR).get(0).text()));
             }
             else if(field.name() == MusicGrammar.METER) {
-        		composition.setMeter((double) Integer.parseInt(field.childrenByName(MusicGrammar.NUMERATOR).get(0).text())/
-                    Integer.parseInt(field.childrenByName(MusicGrammar.DENOMINATOR).get(0).text()));
+            	try {
+	        		composition.setMeter((double) Integer.parseInt(field.childrenByName(MusicGrammar.NUMERATOR).get(0).text())/
+	                    Integer.parseInt(field.childrenByName(MusicGrammar.DENOMINATOR).get(0).text()));
+            	}
+            	catch(Exception e) {
+            		//value is 'C', so the meter is the default meter 4/4
+            	}
             }
             else if(field.name() == MusicGrammar.TRACKNUMBER) {
                 composition.setTrackNumber(Integer.parseInt(field.childrenByName(MusicGrammar.NUMBER).get(0).text()));
@@ -517,6 +522,10 @@ public class MusicParser {
                 Music repeat = new Repeat(measures, endings);
                 return repeat;
             }
+        else if(musicTree.name()== MusicGrammar.ENDSECTION)
+        {
+            return makeMusicAST(musicTree.childrenByName(MusicGrammar.MEASURE).get(0), environment);
+        }
         else if(musicTree.name() == MusicGrammar.MEASURE)
             {
                 environment.newMeasure();
