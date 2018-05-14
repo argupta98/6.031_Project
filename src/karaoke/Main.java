@@ -36,7 +36,7 @@ public class Main {
      */
     public static void main(String[] args) throws UnableToParseException, IOException {
 
-        final File input = new File("sample-abc/rains_of_castamere.abc");
+        final File input = new File("sample-abc/paddy.abc");
         try {
             Player musicPlayer = new Player(input);
             musicPlayer.addLyricListener("",  (String line) -> System.out.println(line));
