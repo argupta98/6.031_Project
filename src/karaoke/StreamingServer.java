@@ -44,10 +44,8 @@ public class StreamingServer {
     
     
     // Thread Safety Argument
-    // - Follows monitor pattern
-    // - All functions that could be called by multiple threads
-   //    must be acquire the lock on the voice to be streamed before
-    //   they are allowed to stream the contents
+    // - Player object is a threadsafe datatype allowing multiple clients to stream lyrics 
+    // - Playback will only occur on the thread that started the server
     
     /**
      * Make a new server to stream lyrics to a given piece of music
@@ -78,7 +76,6 @@ public class StreamingServer {
                 try {
                     handlePlay(exchange);
                 } catch (UnableToParseException | MidiUnavailableException | InvalidMidiDataException e) {
-                    //  Auto-generated catch block
                     e.printStackTrace();
                 }
                 checkRep();
@@ -95,7 +92,6 @@ public class StreamingServer {
      * @return An object that can be used to wait for the song to finish
      */
     public Object playback() throws UnableToParseException, MidiUnavailableException, InvalidMidiDataException {
-        System.err.println("Called");
         return this.karaoke.play();
     }
     /**
@@ -113,15 +109,15 @@ public class StreamingServer {
         final String base = exchange.getHttpContext().getPath();
         assert path.startsWith(base);
         
+        // Get the voice for the server to stream 
         String voice = path.substring(base.length());
         String voiceID = voice.split("/")[0];
-        System.err.println("Voice ID: " + voiceID);
         exchange.sendResponseHeaders(successCode, 0);
         
 
-
+        // Callback in order to get current lyric associated with the note being played
+        // and write out line to client socket 
         karaoke.addLyricListener(voiceID, (line) -> {
-                System.err.println("Current line: " + line);
                 if(line.equals("END")) {
                     exchange.close();
                 }
@@ -155,7 +151,8 @@ public class StreamingServer {
         assert path.startsWith(base);
         
         exchange.sendResponseHeaders(successCode, 0);
- 
+        
+        // Play song 
         this.karaoke.play();
         
         checkRep();

@@ -14,7 +14,11 @@ public class Concat implements Music{
      * 
      * Safety from rep exposure:
      *     - All internal variables are private and final and immutable
-     *     - returns any of the internal rep variable- Never s
+     *     - returns any of the internal rep variable
+     *     
+     * Thread Safety Argument:
+     *  - Player Wrapper Class that plays music is a threadsafe datatype
+     *  - Player Class is the only class that is called upon from multiple threads 
      */
     
     /**

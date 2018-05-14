@@ -52,6 +52,9 @@ public class Composition {
     //Safety from rep Exposure:
     //  All internal variables are private, final and never returned. 
     //  The client has no access to any of the variables. 
+    // Thread Safety Argument
+    // - Player Wrapper Class that plays music is a threadsafe datatype
+    // - Player Class is the only class that is called upon from multiple threads
     
     /**
      * Creates a new composition with default values
@@ -62,6 +65,7 @@ public class Composition {
         this.meter = DEFAULT_METER;
         this.length= DEFAULT_LENGTH;
         this.composer = DEFAULT_COMPOSER;
+        checkRep();
     }
     
     private void checkRep() {
@@ -121,6 +125,7 @@ public class Composition {
      */
     public void setTitle(String title) {
         this.title = title;
+        checkRep();
     }
     
     /**
@@ -136,6 +141,7 @@ public class Composition {
      */
     public void setComposer(String composer) {
         this.composer = composer;
+        checkRep();
     }
     
     /**
@@ -151,6 +157,7 @@ public class Composition {
      */
     public void setTempo(double tempo) {
         this.tempo = tempo;
+        checkRep();
     }
     
     /**
@@ -166,6 +173,7 @@ public class Composition {
      */
     public void setLength(double length) {
         this.length = length;
+        checkRep();
     }
     
     /**
@@ -177,10 +185,11 @@ public class Composition {
     
     /**
      * set the track number of the composition in a set of compositions
-     * @param tracknumber the tracknumber of the piece
+     * @param trackNumber the tracknumber of the piece
      */
     public void setTrackNumber(int trackNumber) {
         this.trackNumber = trackNumber; 
+        checkRep();
     }
     
     /**
@@ -196,6 +205,7 @@ public class Composition {
      */
     public void setKey(Key key){
         this.key = key;
+        checkRep();
     }
     
     /**
@@ -211,6 +221,7 @@ public class Composition {
      */
     public void setMeter(double meter) {
         this.meter = meter;
+        checkRep();
     }
     
     /**
@@ -219,6 +230,7 @@ public class Composition {
      */
     public void setVoices(Map<String, Voice> voiceMap) {
         voices = new HashMap<>(voiceMap);
+        checkRep(); 
     }
     
     @Override 
