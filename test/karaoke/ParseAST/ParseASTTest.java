@@ -260,7 +260,6 @@ public class ParseASTTest {
     
     @Test public void testParseStringPaddyRepeats() throws UnableToParseException {
     	Composition music = (new MusicParser()).parseFile(new File("sample-abc/paddy.abc"));
-    	System.out.println(music.toString());
         assertEquals("|:D'F'F'C'E'E'D'E'F'G'F'E'D'F'F'C'"
         		+ "E'E'D'F'E'D'BAD'F'F'C'E'E'D'E'F'G'F'E'"
         		+ "F'A'F'G'F'E'[1D'F'E'D'BA:|[2D'F'E'D'C'B|:AB"
