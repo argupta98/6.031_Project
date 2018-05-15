@@ -38,6 +38,9 @@ public class MusicParser {
     private static final Instrument DEFAULT_INSTRUMENT = Instrument.PIANO;
     private static final double DEFAULT_NOTE_LENGTH = 1.0/4;
     private static final double DEFAULT_TEMPO = 100;
+    private static String DEFAULT_COMPOSER = "Unknown";
+    private static double DEFAULT_LENGTH = 1.0/4;
+    private static double DEFAULT_METER = 1.0;
     private static final Map<Key, Map<String, Accidental>> KEY_SIGNATURES = new HashMap<>();
     static {
     	Map<String, Accidental> c = new HashMap<>();
@@ -435,48 +438,57 @@ public class MusicParser {
 
     private static Composition makeCompositionHeader(ParseTree<MusicGrammar> compositionTree) {
         ParseTree<MusicGrammar> headerTree = compositionTree.childrenByName(MusicGrammar.HEADER).get(0);
-        //System.out.println(headerTree.children());
-        Composition composition = new Composition();
+        String composer = DEFAULT_COMPOSER;
+        double length = DEFAULT_LENGTH;
+        double meter = DEFAULT_METER;
+        int tracknumber = 0;
+        double tempo = DEFAULT_TEMPO;
+        
+        //Initially set to NULL which is BAD, but we throw and assertion error if they are still null by
+        //end of program
+        Key key = null;
+        String title = null;
+        
         //Parse Header info
         for(ParseTree<MusicGrammar> field: headerTree.children()) {
             if(field.name() == MusicGrammar.COMPOSER) {
-                composition.setComposer(field.text());
+                composer = field.text();
             }
             else if(field.name() == MusicGrammar.TITLE) {
-                composition.setTitle(field.text());
+                title = field.text();
             }
             else if(field.name() == MusicGrammar.LENGTH) {
-                composition.setLength((double) Integer.parseInt(field.childrenByName(MusicGrammar.NUMERATOR).get(0).text())/
-                        Integer.parseInt(field.childrenByName(MusicGrammar.DENOMINATOR).get(0).text()));
+                length = (double) Integer.parseInt(field.childrenByName(MusicGrammar.NUMERATOR).get(0).text())/
+                        Integer.parseInt(field.childrenByName(MusicGrammar.DENOMINATOR).get(0).text());
             }
             else if(field.name() == MusicGrammar.METER) {
             	try {
-	        		composition.setMeter((double) Integer.parseInt(field.childrenByName(MusicGrammar.NUMERATOR).get(0).text())/
-	                    Integer.parseInt(field.childrenByName(MusicGrammar.DENOMINATOR).get(0).text()));
+	        		meter = (double) Integer.parseInt(field.childrenByName(MusicGrammar.NUMERATOR).get(0).text())/
+	                    Integer.parseInt(field.childrenByName(MusicGrammar.DENOMINATOR).get(0).text());
             	}
             	catch(Exception e) {
             		//value is 'C', so the meter is the default meter 4/4
             	}
             }
             else if(field.name() == MusicGrammar.TRACKNUMBER) {
-                composition.setTrackNumber(Integer.parseInt(field.childrenByName(MusicGrammar.NUMBER).get(0).text()));
+                tracknumber = Integer.parseInt(field.childrenByName(MusicGrammar.NUMBER).get(0).text());
             }
             else if(field.name() == MusicGrammar.TEMPO) {
-                composition.setTempo(Integer.parseInt(field.childrenByName(MusicGrammar.NUMBER).get(0).text()));
+                tempo = Integer.parseInt(field.childrenByName(MusicGrammar.NUMBER).get(0).text());
             }
             else if(field.name() == MusicGrammar.KEY) {
-            	String key = field.childrenByName(MusicGrammar.LETTER).get(0).text();
+            	String stringkey = field.childrenByName(MusicGrammar.LETTER).get(0).text();
             	if(field.childrenByName(MusicGrammar.FLATKEY).size() != 0) {
-            		key+="flat";
+            		stringkey+="flat";
             	}
             	else if(field.childrenByName(MusicGrammar.SHARPKEY).size() != 0) {
-            		key+="sharp";
+            		stringkey+="sharp";
             	}
             	
             	if(field.childrenByName(MusicGrammar.MINOR).size() != 0) {
-            		key+="m";
+            		stringkey+="m";
             	}
-                composition.setKey(Key.valueOf(key));
+                key = Key.valueOf(stringkey);
             }
             else if(field.name() == MusicGrammar.VOICENAME) {
                 continue;
@@ -485,7 +497,10 @@ public class MusicParser {
                 throw new AssertionError("should never get here");
             }
         }
-        return composition;
+        
+        assert title != null;
+        assert key != null;
+        return new Composition(title, composer, length, tempo, meter, tracknumber, key);
     }
        
     private static Music makeMusicAST(ParseTree<MusicGrammar> musicTree, NoteEnvironment environment) {
