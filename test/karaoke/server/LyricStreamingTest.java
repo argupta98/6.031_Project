@@ -4,7 +4,6 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.junit.Assert.*;
 
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -14,9 +13,7 @@ import org.junit.Test;
 import javax.sound.midi.InvalidMidiDataException;
 import javax.sound.midi.MidiUnavailableException;
 
-import karaoke.Composition;
 import karaoke.StreamingServer;
-import karaoke.parser.MusicParser;
 import edu.mit.eecs.parserlib.UnableToParseException;
 
 /**
@@ -276,8 +273,80 @@ public class LyricStreamingTest {
             result+=reader.readLine()+"\n";
         }
         
-        System.out.println(result);
         assertEquals(expected, result);
+        server.stop();
+    }
+    
+    //Covers: Streaming multiple voices, multiple lines
+    @Test
+    public void testLyricsMultipleVoicesMultipleLines() throws UnableToParseException, IOException, MidiUnavailableException, InvalidMidiDataException {
+    	final int serverPort = 4569;
+        final StreamingServer server = new StreamingServer("sample-abc/time_after_time.abc", serverPort);
+        
+        // start the server
+        server.start();
+        
+        
+        final URL valid = new URL("http://localhost:" + serverPort + "/voice/1");
+        final URL valid2 = new URL("http://localhost:" + serverPort + "/voice/2");
+        
+        final InputStream input = valid.openStream();
+        final BufferedReader reader = new BufferedReader(new InputStreamReader(input, UTF_8));
+        
+        final InputStream input2 = valid2.openStream();
+        final BufferedReader reader2 = new BufferedReader(new InputStreamReader(input2, UTF_8));
+        
+        Object lock = server.playback();
+        assertNotEquals(lock, null);
+
+        String expected =
+        		
+        		"*Ly*in' in my bed I hear the clock tick and think of you,\n" +
+        		"Ly*in'* in my bed I hear the clock tick and think of you,\n" +
+        		"Lyin' *in* my bed I hear the clock tick and think of you,\n" +
+        		"Lyin' in *my* bed I hear the clock tick and think of you,\n" +
+        		"Lyin' in my *bed* I hear the clock tick and think of you,\n" +
+        		"Lyin' in my bed *I* hear the clock tick and think of you,\n" +
+        		"Lyin' in my bed I *hear* the clock tick and think of you,\n" +
+        		"Lyin' in my bed I hear *the* clock tick and think of you,\n" +
+        		"Lyin' in my bed I hear the *clock* tick and think of you,\n" +
+        		"Lyin' in my bed I hear the clock *tick* and think of you,\n" +
+        		"Lyin' in my bed I hear the clock tick *and* think of you,\n" +
+        		"Lyin' in my bed I hear the clock tick and *think* of you,\n" +
+        		"Lyin' in my bed I hear the clock tick and think *of* you,\n" +
+        		"Lyin' in my bed I hear the clock tick and think of *you,*\n" +
+        		"*caught* up in circles confusion is nothing new.\n" +
+        		"caught *up* in circles confusion is nothing new.\n" +
+        		"caught up *in* circles confusion is nothing new.\n" +
+        		"caught up in *cir*cles confusion is nothing new.\n" +
+        		"caught up in cir*cles* confusion is nothing new.\n" +
+        		"caught up in circles *con*fusion is nothing new.\n" +
+        		"caught up in circles con*fu*sion is nothing new.\n" +
+        		"caught up in circles confu*sion* is nothing new.\n" +
+        		"caught up in circles confusion *is* nothing new.\n" +
+        		"caught up in circles confusion is *noth*ing new.\n" +
+        		"caught up in circles confusion is noth*ing* new.\n" +
+        		"caught up in circles confusion is nothing *new.*\n" +
+        		"*Flash* back warm nights, almost left behind.\n" +
+        		"Flash *back* warm nights, almost left behind.\n" +
+        		"Flash back *warm* nights, almost left behind.\n" +
+        		"Flash back warm *nights,* almost left behind.\n" +
+        		"Flash back warm nights, *al*most left behind.\n" +
+        		"Flash back warm nights, al*most* left behind.\n" +
+        		"Flash back warm nights, almost *left* behind.\n" +
+        		"Flash back warm nights, almost left *be*hind.\n" +
+        		"Flash back warm nights, almost left be*hind.*\n" +
+        		"Flash back warm nights, almost left be*hind.*\n";
+        
+        String result = "";
+        for(int i = 0; i< 36 ; i++) {
+            result+=reader.readLine()+"\n";
+        }
+        assertEquals(expected, result);
+        
+        String expected2 = "No Lyrics";
+        String result2 = reader2.readLine();
+        assertEquals(expected2, result2);
         server.stop();
     }
         
