@@ -86,7 +86,9 @@ public class PlayerTest {
      * @throws MidiUnavailableException 
      */
     
-    // Covers: Player correctly playing abc 
+	//Useful tests to automatically play files for manual testing
+	
+    // Covers: Player correctly playing abc and showing lyrics
     
     @Test
     public void testABCSong() throws UnableToParseException, MidiUnavailableException, InvalidMidiDataException {

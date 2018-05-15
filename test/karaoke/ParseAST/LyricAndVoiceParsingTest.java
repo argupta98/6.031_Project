@@ -33,6 +33,9 @@ public class LyricAndVoiceParsingTest {
 	    //               Operator partitions: - : location: between 2 strings, after a space, after a -, before a _
 	    //                                     |: enough notes in bar (ignored), fewer notes than bar (advances to next bar)
 	    //                                     _: 1, 2, >2 in a row 
+		//       		 Type Partitions: Chords, notes, tuples
+		//								  Chords: All notes same length, later notes different length
+		//
 	
 	 	private static String generateHeader(int defaultNoteDenominator, int meterNumerator, int meterDenominator, int tempo, Key key) {
 	        return "X:1\r\n" + 
@@ -151,12 +154,12 @@ public class LyricAndVoiceParsingTest {
 	    
 	    //Covers: multiple underscore
 	    @Test public void testParseStringLyricsMultipleUnderScore() throws UnableToParseException, MidiUnavailableException, InvalidMidiDataException {
-	        String basicSong = generateHeader(4, 4, 4, 100, Key.C) + "C C C C|\nw: time__";
+	        String basicSong = generateHeader(4, 4, 4, 100, Key.C) + "C C C C|\nw: time__ to";
 	        Composition music = (new MusicParser()).parse(basicSong);
 	        List<String> lines = new ArrayList<>();
 	        music.addVoiceListener("", (String line) -> {lines.add(line);});
 	        playMusic(music, lines);
-	        List<String> expected = Arrays.asList("*time*", "*time*", "*time*", "time", "END");
+	        List<String> expected = Arrays.asList("*time* to", "*time* to", "*time* to", "time *to*", "END");
 	        assertEquals(expected, lines);
 	    }
 	    
@@ -212,6 +215,53 @@ public class LyricAndVoiceParsingTest {
 	        music.addVoiceListener("", (String line) -> {lines.add(line);});
 	        playMusic(music, lines);
 	        List<String> expected = Arrays.asList("*a*bc abcd", "a*b*c abcd", "ab*c* abcd", "abc *a*bcd", "abc a*b*cd", "abc ab*c*d", "abc abc*d*", "END");
+	        assertEquals(expected, lines);
+	    }
+	    
+	    //Covers: multiple lines of lyrics
+	    @Test public void testParseLyricsMultiLined() throws UnableToParseException, MidiUnavailableException, InvalidMidiDataException {
+	        String basicSong = generateHeader(4, 4, 4, 100, Key.C) + "C C C z| \n"
+	        		+ "w: a-b-c\n"
+	        		+ "C C C C|\n"
+	        		+ "w:a-b-c-d";
+	        Composition music = (new MusicParser()).parse(basicSong);
+	        List<String> lines = new ArrayList<>();
+	        music.addVoiceListener("", (String line) -> {lines.add(line);});
+	        playMusic(music, lines);
+	        List<String> expected = Arrays.asList("*a*bc", "a*b*c", "ab*c*", "*a*bcd", "a*b*cd", "ab*c*d", "abc*d*", "END");
+	        assertEquals(expected, lines);
+	    }
+	    
+	    //Covers: lyrics matched to chords
+	    @Test public void testParseLyricsChords() throws UnableToParseException, MidiUnavailableException, InvalidMidiDataException {
+	        String basicSong = generateHeader(4, 4, 4, 100, Key.C) + "[CEF] [CDEF] A|\nw: syll-a-ble";
+	        Composition music = (new MusicParser()).parse(basicSong);
+	        List<String> lines = new ArrayList<>();
+	        music.addVoiceListener("", (String line) -> {lines.add(line);});
+	        playMusic(music, lines);
+	        List<String> expected = Arrays.asList("*syll*able","syll*a*ble", "sylla*ble*", "END");
+	        assertEquals(expected, lines);
+	    }
+	    
+	    //Covers: lyrics matched to chords with different length notes
+	    @Test public void testParseLyricsChordsMultiLength() throws UnableToParseException, MidiUnavailableException, InvalidMidiDataException {
+	        String basicSong = generateHeader(4, 4, 4, 100, Key.C) + "[CE2F2] [CD3E3F] A|\nw: syll-a-ble";
+	        Composition music = (new MusicParser()).parse(basicSong);
+	        List<String> lines = new ArrayList<>();
+	        music.addVoiceListener("", (String line) -> {lines.add(line);});
+	        playMusic(music, lines);
+	        List<String> expected = Arrays.asList("*syll*able","syll*a*ble", "sylla*ble*", "END");
+	        assertEquals(expected, lines);
+	    }
+	    
+	    //Covers: lyrics matched to a tuple
+	    @Test public void testParseLyricsTuple() throws UnableToParseException, MidiUnavailableException, InvalidMidiDataException {
+	        String basicSong = generateHeader(4, 4, 4, 100, Key.C) + "(3abc \nw: syll-a-ble";
+	        Composition music = (new MusicParser()).parse(basicSong);
+	        List<String> lines = new ArrayList<>();
+	        music.addVoiceListener("", (String line) -> {lines.add(line);});
+	        playMusic(music, lines);
+	        List<String> expected = Arrays.asList("*syll*able","syll*a*ble", "sylla*ble*", "END");
 	        assertEquals(expected, lines);
 	    }
 

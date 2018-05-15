@@ -552,7 +552,6 @@ public class MusicParser {
                         continue;
                     }
                     notes.add(makeMusicAST(primitive, environment));
-                    environment.incrementSyllable();
                 }
                 //reset length to normal size
                 environment.resetLength();

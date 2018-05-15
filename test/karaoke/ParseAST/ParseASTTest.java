@@ -3,6 +3,8 @@ package karaoke.ParseAST;
 import static org.junit.Assert.*;
 
 import java.io.File;
+import java.util.Arrays;
+import java.util.List;
 
 import org.junit.Test;
 
@@ -329,10 +331,14 @@ public class ParseASTTest {
         assertEquals(5.0/3, music.duration(), 0.001);
     }
     
-    
-    
-    //COMMENTS
-    
-    
+    //Covers: Comments: ALL
+    @Test public void testParseAllFiles() throws UnableToParseException {
+    	List<String> filenames = Arrays.asList("abc_song", "fur_elise", "invention", "little_night_music",
+    			"paddy", "piece1", "piece2", "piece3", "prelude", "rains_of_castamere", "sample1", "sample2", 
+    			"sample3", "scale", "waxies_dargle");
+    	for(String name: filenames) {
+    		(new MusicParser()).parseFile(new File("sample-abc/"+name+".abc"));
+    	}
+    }
     
 }   
