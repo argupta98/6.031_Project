@@ -392,7 +392,6 @@ public class MusicParser {
                 indexModifier = voiceMap.get(voiceName).lyricLength();
             }
             NoteEnvironment environment = new NoteEnvironment(composition, lyricList, indexModifier);
-
             Music line = makeMusicAST(voice.childrenByName(MusicGrammar.MUSICLINE)
                     .get(0), environment);
             //System.out.println(line);
@@ -730,7 +729,7 @@ public class MusicParser {
                 lyricSyllables.add(replace);
             }
             else {
-                lyricSyllables.add(syllableNote.text());
+            	lyricSyllables.add(syllableNote.text());
             }
             
             
