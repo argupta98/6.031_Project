@@ -71,6 +71,7 @@ public class ParseASTTest {
     //               syntax: enclosed by |: :|, only ends with :|, has [1, [2 ending notation
     //               number bars: repeat encloses 1 bar, 2 bars, >2 bars
     //               repeat occurs over mutiple lines
+	//				 repeat starts at end of major section
 	//
 	//		 Voices and lyric Tests in LyricAndVoiceParsingTest.java 
     //       
@@ -258,6 +259,7 @@ public class ParseASTTest {
         assertEquals("|:CDEF[1GABC'GABB:|[2FEDC\n", music.toString()); 
     }
     
+    //Covers: Repeat over Multiple lines, Repeat starts after major section ending
     @Test public void testParseStringPaddyRepeats() throws UnableToParseException {
     	Composition music = (new MusicParser()).parseFile(new File("sample-abc/paddy.abc"));
     	System.out.println(music.toString());
@@ -331,7 +333,7 @@ public class ParseASTTest {
         assertEquals(5.0/3, music.duration(), 0.001);
     }
     
-    //Covers: Comments: ALL
+    //Covers: Comments: ALL, Parseability: ALL
     @Test public void testParseAllFiles() throws UnableToParseException {
     	List<String> filenames = Arrays.asList("abc_song", "fur_elise", "invention", "little_night_music",
     			"paddy", "piece1", "piece2", "piece3", "prelude", "rains_of_castamere", "sample1", "sample2", 

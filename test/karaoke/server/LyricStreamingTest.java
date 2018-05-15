@@ -61,7 +61,7 @@ public class LyricStreamingTest {
         
         Object lock = server.playback();
         assertNotEquals(lock, null);
-        /*
+        
         synchronized (lock) {
             try {
                 lock.wait();
@@ -69,7 +69,7 @@ public class LyricStreamingTest {
                 return;
             }
         }
-        */
+        
         String expected = "No Lyrics";
         String result = reader.readLine();
         assertEquals(expected, result);
