@@ -3,6 +3,8 @@ package karaoke.ParseAST;
 import static org.junit.Assert.*;
 
 import java.io.File;
+import java.util.Arrays;
+import java.util.List;
 
 import org.junit.Test;
 
@@ -296,23 +298,23 @@ public class ParseASTTest {
     
     //Covers: duplet -> notes should be played 3/2 of the original duration
     @Test public void testParseStringDuplet() throws UnableToParseException{
-        String basicSong = generateHeader(4, 4, 4, 100, Key.C) + "(2CC";
+        String basicSong = generateHeader(4, 4, 4, 100, Key.C) + "(2CC A B C";
         Composition music = (new MusicParser()).parse(basicSong);
-        assertEquals(3.0, music.duration(), 0.001);   
+        assertEquals(6.0, music.duration(), 0.001);   
     }
     
     //Covers: triplet -> notes should be played for 2/3 of the original duration
     @Test public void testParseStringTriplet() throws UnableToParseException{
-        String basicSong = generateHeader(4, 4, 4, 100, Key.C) + "(3CCC";
+        String basicSong = generateHeader(4, 4, 4, 100, Key.C) + "(3CCC D";
         Composition music = (new MusicParser()).parse(basicSong);
-        assertEquals(2.0, music.duration(), 0.001);
+        assertEquals(3.0, music.duration(), 0.001);
     }
     
     //Covers: quadruplet -> notes should be played for 3/4 of the original duration
     @Test public void testParseStringQuadruplet() throws UnableToParseException{
-        String basicSong = generateHeader(4, 4, 4, 100, Key.C) + "(4CCCC";
+        String basicSong = generateHeader(4, 4, 4, 100, Key.C) + "(4CCCC F G";
         Composition music = (new MusicParser()).parse(basicSong);
-        assertEquals(3.0, music.duration(), 0.001);
+        assertEquals(5.0, music.duration(), 0.001);
     }
     
     //Covers: tuplet containing chords
@@ -329,10 +331,14 @@ public class ParseASTTest {
         assertEquals(5.0/3, music.duration(), 0.001);
     }
     
-    
-    
-    //COMMENTS
-    
-    
+    //Covers: Comments: ALL
+    @Test public void testParseAllFiles() throws UnableToParseException {
+    	List<String> filenames = Arrays.asList("abc_song", "fur_elise", "invention", "little_night_music",
+    			"paddy", "piece1", "piece2", "piece3", "prelude", "rains_of_castamere", "sample1", "sample2", 
+    			"sample3", "scale", "waxies_dargle");
+    	for(String name: filenames) {
+    		(new MusicParser()).parseFile(new File("sample-abc/"+name+".abc"));
+    	}
+    }
     
 }   
