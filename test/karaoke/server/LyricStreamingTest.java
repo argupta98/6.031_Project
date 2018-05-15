@@ -35,7 +35,8 @@ public class LyricStreamingTest {
     * make sure that number of lines matches expected.
     * Also check that words are displayed correctly.
     * 
-    * Number of specified voices: 0, 1, 2, >2
+    * Number of voices: 1, >=2
+    * Number of lines / voice: 1, >=2
     * 
     * Lyrics: Voice has lyrics, voice does not have lyrics (place holder)
     * 
@@ -48,7 +49,6 @@ public class LyricStreamingTest {
     @Test
     public void testStreamingNoLyrics() throws UnableToParseException, IOException, MidiUnavailableException, InvalidMidiDataException {
     	final int serverPort = 4567;
-    	Composition piece = (new MusicParser()).parseFile(new File("sample-abc/piece2.abc"));
         final StreamingServer server = new StreamingServer("sample-abc/piece2.abc", serverPort);
         
         // start the server
@@ -79,11 +79,10 @@ public class LyricStreamingTest {
         server.stop();
     }
     
-    //Covers: Streaming single line of lyrics
+    //Covers: Streaming single voice, single line
     @Test
-    public void testLyricsSingleLine() throws UnableToParseException, IOException, MidiUnavailableException, InvalidMidiDataException {
-    	final int serverPort = 4567;
-    	Composition piece = (new MusicParser()).parseFile(new File("sample-abc/piece3.abc"));
+    public void testLyricsSingleVoiceSingleLine() throws UnableToParseException, IOException, MidiUnavailableException, InvalidMidiDataException {
+    	final int serverPort = 4568;
         final StreamingServer server = new StreamingServer("sample-abc/piece3.abc", serverPort);
         
         // start the server
@@ -99,15 +98,7 @@ public class LyricStreamingTest {
         
         Object lock = server.playback();
         assertNotEquals(lock, null);
-        /*
-        synchronized (lock) {
-            try {
-                lock.wait();
-            } catch (InterruptedException e) {
-                return;
-            }
-        }
-        */
+
         String expected = "*A*mazing grace! How sweet the sound That saved a wretch like me.\n" + 
                 "A*ma*zing grace! How sweet the sound That saved a wretch like me.\n" + 
                 "Ama*zing* grace! How sweet the sound That saved a wretch like me.\n" + 
@@ -127,6 +118,162 @@ public class LyricStreamingTest {
         
         String result = "";
         for(int i = 0; i< 16 ; i++) {
+            result+=reader.readLine()+"\n";
+        }
+        
+        assertEquals(expected, result);
+        server.stop();
+    }
+    
+    //Covers: Streaming single voice, multiple lines
+    @Test
+    public void testLyricsSingleVoiceMultipleLines() throws UnableToParseException, IOException, MidiUnavailableException, InvalidMidiDataException {
+    	final int serverPort = 4568;
+        final StreamingServer server = new StreamingServer("sample-abc/rains_of_castamere.abc", serverPort);
+        
+        // start the server
+        server.start();
+        
+        
+        final URL valid = new URL("http://localhost:" + serverPort + "/voice/");
+        
+        // start and wait for duration of song .....
+        
+        final InputStream input = valid.openStream();
+        final BufferedReader reader = new BufferedReader(new InputStreamReader(input, UTF_8));
+        
+        Object lock = server.playback();
+        assertNotEquals(lock, null);
+
+        String expected = 
+        		
+        		"*and* who are you, the proud lord said\n" +
+        		"and *who* are you, the proud lord said\n" +
+        		"and who *are* you, the proud lord said\n" +
+        		"and who are *you,* the proud lord said\n" +
+        		"and who are you, *the* proud lord said\n" +
+        		"and who are you, the *proud* lord said\n" +
+        		"and who are you, the proud *lord* said\n" +
+        		"and who are you, the proud lord *said*\n" +
+        		
+        		"*that* I must bow so low?\n" +
+        		"that *I* must bow so low?\n" +
+        		"that I *must* bow so low?\n" +
+        		"that I must *bow* so low?\n" +
+        		"that I must bow *so* low?\n" +
+        		"that I must bow so *low?*\n" +
+        				
+        		"*on*ly a cat of a different coat\n" +
+        		"on*ly* a cat of a different coat\n" +
+        		"only *a* cat of a different coat\n" +
+        		"only a *cat* of a different coat\n" +
+        		"only a cat *of* a different coat\n" +
+        		"only a cat of *a* different coat\n" +
+        		"only a cat of a *diff*erent coat\n" +
+        		"only a cat of a diff*erent* coat\n" +
+        		"only a cat of a different *coat*\n" +
+        		
+        		"*that's* all the truth I know\n" +
+        		"that's *all* the truth I know\n" +
+        		"that's *all* the truth I know\n" +
+        		"that's all *the* truth I know\n" +
+        		"that's all the *truth* I know\n" +
+        		"that's all the truth *I* know\n" +
+        		"that's all the truth I *know*\n" +
+        		
+        		"*in a* coat of gold or a coat of red\n" +
+        		"in a *coat* of gold or a coat of red\n" +
+        		"in a coat *of* gold or a coat of red\n" +
+        		"in a coat of *gold* or a coat of red\n" +
+        		"in a coat of gold *or a* coat of red\n" +
+        		"in a coat of gold or a *coat* of red\n" +
+        		"in a coat of gold or a coat *of* red\n" +
+        		"in a coat of gold or a coat of *red*\n" +
+        		
+        		"*a* lion still has claws\n" +
+        		"a *li*on still has claws\n" +
+        		"a li*on* still has claws\n" +
+        		"a lion *still* has claws\n" +
+        		"a lion still *has* claws\n" +
+        		"a lion still has *claws*\n" +
+        		
+        		"*and* mine are long and sharp, my lord\n" +
+        		"and *mine* are long and sharp, my lord\n" +
+        		"and mine *are* long and sharp, my lord\n" +
+        		"and mine are *long* and sharp, my lord\n" +
+        		"and mine are long *and* sharp, my lord\n" +
+        		"and mine are long and *sharp,* my lord\n" +
+        		"and mine are long and sharp, *my* lord\n" +
+        		"and mine are long and sharp, my *lord*\n" +
+        		
+        		"*as* long and sharp as yours\n" +
+        		"as *long* and sharp as yours\n" +
+        		"as long *and* sharp as yours\n" +
+        		"as long and *sharp* as yours\n" +
+        		"as long and sharp *as* yours\n" +
+        		"as long and sharp as *yours*\n" +
+        		
+        		"*and* so he spoke, and so he spoke\n" +
+        		"and *so* he spoke, and so he spoke\n" +
+        		"and so *he* spoke, and so he spoke\n" +
+        		"and so he *spoke,* and so he spoke\n" +
+        		"and so he spoke, and so he spoke\n" +
+        		"and so he spoke, *and* so he spoke\n" +
+        		"and so he spoke, and *so* he spoke\n" +
+        		"and so he spoke, and so *he* spoke\n" +
+        		"and so he spoke, and so he *spoke*\n" +
+        		"and so he spoke, and so he spoke\n" +
+        		
+        		"*that* lord of castamere\n" +
+        		"that *lord* of castamere\n" +
+        		"that lord *of* castamere\n" +
+        		"that lord of *cas*tamere\n" +
+        		"that lord of *cas*tamere\n" +
+        		"that lord of cas*ta*mere\n" +
+        		"that lord of casta*mere*\n" +
+        		"that lord of casta*mere*\n" +
+        		
+        		"*but* now the rains weep o'er his hall\n" +
+        		"but *now* the rains weep o'er his hall\n" +
+        		"but now *the* rains weep o'er his hall\n" +
+        		"but now the *rains* weep o'er his hall\n" +
+        		"but now the rains weep o'er his hall\n" +
+        		"but now the rains *weep* o'er his hall\n" +
+        		"but now the rains weep *o'er* his hall\n" +
+        		"but now the rains weep o'er *his* hall\n" +
+        		"but now the rains weep o'er his *hall*\n" +
+        		
+        		"*with* no one there to hear\n" +
+        		"with *no* one there to hear\n" +
+        		"with no *one* there to hear\n" +
+        		"with no one *there* to hear\n" +
+        		"with no one there *to* hear\n" +
+        		"with no one there to *hear*\n" +
+        		
+        		"*yes* now the rains weep o'er his hall\n" +
+        		"yes *now* the rains weep o'er his hall\n" +
+        		"yes now *the* rains weep o'er his hall\n" +
+        		"yes now the *rains* weep o'er his hall\n" +
+        		"yes now the rains *weep* o'er his hall\n" +
+        		"yes now the rains weep *o'er* his hall\n" +
+        		"yes now the rains weep o'er *his* hall\n" +
+        		"yes now the rains weep o'er his *hall*\n" +
+        		
+        		"*and* not a soul to hear\n" +
+        		"and *not* a soul to hear\n" +
+        		"and not *a* soul to hear\n" +
+        		"and not a *soul* to hear\n" +
+        		"and not a *soul* to hear\n" +
+        		"and not a *soul* to hear\n" +
+        		"and not a soul *to* hear\n" +
+        		"and not a soul to *hear*\n" +
+        		
+        		"No Lyrics\n" +
+        		"No Lyrics\n" +
+        		"No Lyrics\n";
+        
+        String result = "";
+        for(int i = 0; i< 110 ; i++) {
             result+=reader.readLine()+"\n";
         }
         
