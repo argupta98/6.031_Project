@@ -115,9 +115,10 @@ public class StreamingServer {
         exchange.sendResponseHeaders(successCode, 0);
         
 
+        
         // Callback in order to get current lyric associated with the note being played
         // and write out line to client socket 
-        karaoke.addLyricListener(voiceID, (line) -> {
+        this.karaoke.addLyricListener(voiceID, (line) -> {
                 if(line.equals("END")) {
                     exchange.close();
                 }
