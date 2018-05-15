@@ -148,7 +148,7 @@ public class LyricAndVoiceParsingTest {
 	        List<String> lines = new ArrayList<>();
 	        music.addVoiceListener("", (String line) -> {lines.add(line);});
 	        playMusic(music, lines);
-	        List<String> expected = Arrays.asList("*time*", "*time*", "time", "time", "END");
+	        List<String> expected = Arrays.asList("*time*", "*time*", "time", "time" , "END");
 	        assertEquals(expected, lines);
 	    }
 	    
