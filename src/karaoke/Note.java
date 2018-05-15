@@ -65,6 +65,17 @@ public class Note implements Music{
     }
     
     @Override
+    public boolean equals(Object that) {
+    	return that instanceof Note && ((Note)that).duration == duration && ((Note)that).pitch.equals(pitch)
+    			&& ((Note)that).instrument.equals(instrument) && ((Note)that).lyricIndex == lyricIndex;
+    }
+    
+    @Override
+    public int hashCode() {
+    	return instrument.hashCode() + ((Integer)lyricIndex).hashCode() + ((Double)duration).hashCode() + pitch.hashCode();
+    }
+    
+    @Override
     public String toString() {
         return this.pitch.toString();
     }

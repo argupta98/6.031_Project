@@ -78,6 +78,16 @@ public class Repeat implements Music{
         }
     }
     
+    @Override
+    public boolean equals(Object that) {
+    	return that instanceof Repeat && ((Repeat)that).measures.equals(measures) && ((Repeat)that).endings.equals(endings);
+    }
+    
+    @Override
+    public int hashCode() {
+    	return measures.hashCode() + endings.hashCode();
+    }
+    
     @Override 
     public String toString() {
         String outString ="|:";

@@ -60,6 +60,16 @@ public class Chord implements Music{
     }
     
     @Override
+    public boolean equals(Object that) {
+    	return that instanceof Chord && ((Chord)that).lyricIndex == lyricIndex && ((Chord)that).notes.equals(notes);
+    }
+    
+    @Override
+    public int hashCode() {
+    	return ((Integer)lyricIndex).hashCode() + notes.hashCode();
+    }
+    
+    @Override
     public String toString() {
         String outString = "[";
         for(Music note: notes) {
