@@ -46,7 +46,7 @@ public class Tuplet implements Music {
     private void checkRep() {
         assert tupletNumber >= 2 && tupletNumber <= 4;
         assert notes != null;
-        assert notes.size() == tupletNumber;
+        assert notes.size() == tupletNumber: notes;
         for(Music note: notes) {
             assert !(note instanceof Rest);
         }

@@ -8,17 +8,17 @@ import java.util.Set;
 
 import karaoke.sound.SequencePlayer;
 
-public class Voice {
-    
-    
+public class Voice {    
     private final Music music;
     private final List<String> allSyllables;
     private final List<LyricListener> listeners;
+    private final List<Integer> lineBreaks;
     private final String name;
     
     // Abstraction Function
-    // AF(piece, allSyllables, listeners) => A Voice that sings the music piece which pronounces the syllables in allSyllables, and
-    //                                       has listeners in the set listeners which provide callbacks for the lyric highlight 
+    // AF(piece, allSyllables, listeners, lineBreaks) => A Voice that sings the music piece which pronounces the syllables in allSyllables, and
+    //                                       has listeners in the set listeners which provide callbacks for the lyric highlight, the lyrics 
+    //										 start a newline at each index in lineBreaks
     
     // Rep Invaraint
     // - true 
@@ -42,10 +42,23 @@ public class Voice {
      */
     public Voice(Music piece, List<String> syllables, String name) {
         this.music = piece;
-        this.allSyllables = syllables;
+        this.allSyllables = Collections.synchronizedList(new ArrayList<>(syllables));
+        this.lineBreaks = Collections.synchronizedList(new ArrayList<>());
+        constructLineBreaks();
         this.listeners = Collections.synchronizedList(new ArrayList<>());
         this.name = name;
         checkRep();
+    }
+    
+    private void constructLineBreaks() {
+    	//put a zero at the beginning
+        this.lineBreaks.add(0);
+        for(int syllable = 0; syllable < this.allSyllables.size(); syllable++) {
+        	if(allSyllables.get(syllable).endsWith("\n")) {
+        		this.lineBreaks.add(syllable+1);
+        	}
+        }
+        this.lineBreaks.add(allSyllables.size());
     }
     
     private void checkRep() {
@@ -53,6 +66,7 @@ public class Voice {
         assert allSyllables != null;
         assert listeners != null;
         assert name != null;
+        assert lineBreaks != null;
     }
     
    /** Listens for note being played and provides the necessary lyric */
@@ -142,6 +156,7 @@ public class Voice {
         if(boldedIndex >= this.allSyllables.size()) {
             boldedIndex = this.allSyllables.size();
             allSyllables.add("");
+            this.lineBreaks.set(lineBreaks.size()-1, this.allSyllables.size());
         }
         // Hold the syllable longer so reduce the boldedIndex 
         if(this.allSyllables.get(boldedIndex).trim().equals("_")) {
@@ -150,17 +165,24 @@ public class Voice {
             }
         }
         
-        for(int index = 0; index < this.allSyllables.size(); index++) {
-            boolean bolded = false;
+        //find the closest set of line breaks
+        int lineIndex = 0;
+        while(this.lineBreaks.get(lineIndex+1) <= boldedIndex) {
+        	lineIndex++;
+        }
+        
+        for(int index = this.lineBreaks.get(lineIndex); index < this.lineBreaks.get(lineIndex+1); index++) {
             // Syllable being held so add no extra syllable
             if(this.allSyllables.get(index).trim().equals("_")) {
-                fullLine+="";
-            }
-            else if(this.allSyllables.get(index).equals(" ")) {
-                fullLine+= " ";
+            	 if(this.allSyllables.get(index).endsWith(" ")) {
+                     fullLine+=" ";
+                 }
             }
             else if(this.allSyllables.get(index).equals("")) {
                 continue;
+            }
+            else if(this.allSyllables.get(index).trim().equals("")) {
+                fullLine+= " ";
             }
             // Skipping a note so add no extra syllable 
             else if(this.allSyllables.get(index).trim().equals("*")) {
@@ -170,10 +192,10 @@ public class Voice {
             else if(index == boldedIndex) {
                 String syllable = this.allSyllables.get(index);
                 if(syllable.endsWith(" ")) {
-                    fullLine+="*"+this.allSyllables.get(index).substring(0, syllable.length()-1)+"* ";
+                    fullLine+="*"+this.allSyllables.get(index).trim()+"* ";
                 }
                 else {
-                    fullLine+="*"+this.allSyllables.get(index)+"*";
+                    fullLine+="*"+this.allSyllables.get(index).trim()+"*";
                 }
             }
             // If not the current syllable just display the normal syllable 
@@ -181,7 +203,7 @@ public class Voice {
                 fullLine+=this.allSyllables.get(index);
             }
         }
-        return fullLine;
+        return fullLine.trim();
     }
     
     @Override 

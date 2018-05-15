@@ -296,23 +296,23 @@ public class ParseASTTest {
     
     //Covers: duplet -> notes should be played 3/2 of the original duration
     @Test public void testParseStringDuplet() throws UnableToParseException{
-        String basicSong = generateHeader(4, 4, 4, 100, Key.C) + "(2CC";
+        String basicSong = generateHeader(4, 4, 4, 100, Key.C) + "(2CC A B C";
         Composition music = (new MusicParser()).parse(basicSong);
-        assertEquals(3.0, music.duration(), 0.001);   
+        assertEquals(6.0, music.duration(), 0.001);   
     }
     
     //Covers: triplet -> notes should be played for 2/3 of the original duration
     @Test public void testParseStringTriplet() throws UnableToParseException{
-        String basicSong = generateHeader(4, 4, 4, 100, Key.C) + "(3CCC";
+        String basicSong = generateHeader(4, 4, 4, 100, Key.C) + "(3CCC D";
         Composition music = (new MusicParser()).parse(basicSong);
-        assertEquals(2.0, music.duration(), 0.001);
+        assertEquals(3.0, music.duration(), 0.001);
     }
     
     //Covers: quadruplet -> notes should be played for 3/4 of the original duration
     @Test public void testParseStringQuadruplet() throws UnableToParseException{
-        String basicSong = generateHeader(4, 4, 4, 100, Key.C) + "(4CCCC";
+        String basicSong = generateHeader(4, 4, 4, 100, Key.C) + "(4CCCC F G";
         Composition music = (new MusicParser()).parse(basicSong);
-        assertEquals(3.0, music.duration(), 0.001);
+        assertEquals(5.0, music.duration(), 0.001);
     }
     
     //Covers: tuplet containing chords

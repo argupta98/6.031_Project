@@ -120,7 +120,6 @@ public class LyricStreamingTest {
         for(int i = 0; i< 16 ; i++) {
             result+=reader.readLine()+"\n";
         }
-        
         assertEquals(expected, result);
         server.stop();
     }
@@ -268,8 +267,8 @@ public class LyricStreamingTest {
         		"and not a soul *to* hear\n" +
         		"and not a soul to *hear*\n" +
         		
-        		"No Lyrics\n" +
-        		"No Lyrics\n" +
+        		"*No* Lyrics\n" +
+        		"No *Lyrics*\n" +
         		"No Lyrics\n";
         
         String result = "";
@@ -277,6 +276,7 @@ public class LyricStreamingTest {
             result+=reader.readLine()+"\n";
         }
         
+        System.out.println(result);
         assertEquals(expected, result);
         server.stop();
     }

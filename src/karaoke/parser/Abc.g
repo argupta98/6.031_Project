@@ -27,9 +27,6 @@ SecondEnding ::= '[' Number MusicLine;
 EndSection ::= measure ('[|' | '|]' | '||' | '|');
 Measure ::= ('|')? (Note | Chord | Tuple | Rest)+ ;
 Chord ::= '[' (note)+ ']';
-Tuple ::= '('Number (note|chord)+;
-Note ::= (Accidental)? Letter (OctaveUp|OctaveDown)* (Numerator)? (NoteDenominator)?;
-Rest ::= 'z' (Numerator)? (NoteDenominator)?;
 OctaveUp ::= '\'';
 OctaveDown ::= ',';
 NoteDenominator ::= '/' (Denominator)?;
@@ -56,6 +53,9 @@ Tilda ::= '~';
 backslashhyphen ::= "\\""-";
 
 Syllable ::= [a-zA-Z0-9\!.\(\)\'\?\,]+;
+Tuple ::= '('Number (note|chord)+;
+Note ::= (Accidental)? Letter (OctaveUp|OctaveDown)* (Numerator)? (NoteDenominator)?;
+Rest ::= 'z' (Numerator)? (NoteDenominator)?;
 
 //Misc
 Letter ::= [A-G]|[a-g];

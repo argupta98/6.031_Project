@@ -364,7 +364,7 @@ public class MusicParser {
     	for(String voice: voiceNoteDict.keySet()) {
     		reconstructedString = reconstructedString + voice +String.join(" ", voiceNoteDict.get(voice)) + "\n";
     		if (voiceLyricDict.containsKey(voice)) {
-    			reconstructedString = reconstructedString + "w:" + String.join(" ", voiceLyricDict.get(voice)) + "\n";
+    			reconstructedString = reconstructedString + "w:" + String.join(" NEWLINE ", voiceLyricDict.get(voice)) + "\n";
     		}
     	}
     	
@@ -714,7 +714,7 @@ public class MusicParser {
                         syllable += "-";
                     }
                     else {
-                        syllable+=child.text();
+                    	syllable+=child.text();
                     }
                 }
                 lyricSyllables.add(syllable);
@@ -733,8 +733,21 @@ public class MusicParser {
                 lyricSyllables.add(syllableNote.text());
             }
             
-            
         }
+        
+        //remove the newlines and add them to the back of words
+        int i = 0;
+        while(i < lyricSyllables.size()) {
+        	if(lyricSyllables.get(i).trim().equals("NEWLINE")) {
+        		String lastLyric = lyricSyllables.get(i-1);
+        		lyricSyllables.set(i-1, lastLyric+"\n");
+        		lyricSyllables.remove(i);
+        	}
+        	else {
+        		i++;
+        	}
+        }
+        
         return lyricSyllables;
     }
     
