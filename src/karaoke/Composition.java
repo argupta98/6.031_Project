@@ -8,10 +8,6 @@ import karaoke.sound.SequencePlayer;
 
 //Mutable class
 public class Composition {
-    private static double DEFAULT_TEMPO = 100;
-    private static String DEFAULT_COMPOSER = "Unknown";
-    private static double DEFAULT_LENGTH = 1.0/4;
-    private static double DEFAULT_METER = 1.0;
     private Map<String, Voice> voices;
     public enum Key{C, Am, G, Em, D, Bm, A, Fsharpm, E, Csharpm, B, Gsharpm, Cflat, Aflatm, Gflat, Eflatm,
     	Fsharp, Dsharpm, Dflat, Bflatm, Csharp, Asharpm, Aflat, Fm, Eflat, Cm, Bflat, Gm, F, Dm};
@@ -35,14 +31,14 @@ public class Composition {
         }
     }
     
-    //Modifiable
-    private double tempo;
-    private String title;
-    private String composer;
-    private double length;
-    private double meter;
-    private int trackNumber;
-    private Key key;
+    //UnModifiable
+    private final double tempo;
+    private final String title;
+    private final String composer;
+    private final double length;
+    private final double meter;
+    private final int trackNumber;
+    private final Key key;
     
     //AF(Voices) = A composition music piece which consists of all the voices in voices played
     //             together
@@ -59,12 +55,16 @@ public class Composition {
     /**
      * Creates a new composition with default values
      */
-    public Composition() {
-        this.voices = new HashMap<>();
-        this.tempo = DEFAULT_TEMPO;
-        this.meter = DEFAULT_METER;
-        this.length= DEFAULT_LENGTH;
-        this.composer = DEFAULT_COMPOSER;
+    public Composition(String title, String composer, double length, double tempo, double meter, int tracknumber, Key key){
+    	this.tempo = tempo;
+    	this.title = title;
+    	this.composer = composer;
+    	this.length = length;
+    	this.meter = meter;
+    	this.trackNumber = tracknumber;
+    	this.key = key;
+    	this.voices = new HashMap<>();
+    	checkRep();
     }
     
     private void checkRep() {
@@ -121,27 +121,12 @@ public class Composition {
     }
     
     /**
-     * set the title of the composition
-     * @param title the title of the piece
-     */
-    public void setTitle(String title) {
-        this.title = title;
-    }
-    
-    /**
      * @return the composer of the composition
      */
     public String composer() {
         return this.composer;
     }
     
-    /**
-     * set the composer of the composition
-     * @param composer the composer of the piece
-     */
-    public void setComposer(String composer) {
-        this.composer = composer;
-    }
     
     /**
      * @return the tempo of the composition
@@ -150,13 +135,6 @@ public class Composition {
         return this.tempo;
     }
     
-    /**
-     * set the tempo of the composition
-     * @param tempo the tempo to set the piece to
-     */
-    public void setTempo(double tempo) {
-        this.tempo = tempo;
-    }
     
     /**
      * @return the default length of a note in the composition
@@ -165,13 +143,6 @@ public class Composition {
         return this.length;
     }
     
-    /**
-     * set the default length of a note in the composition
-     * @param length the length of the piece
-     */
-    public void setLength(double length) {
-        this.length = length;
-    }
     
     /**
      * @return the track number of the composition in a set of compositions
@@ -180,13 +151,6 @@ public class Composition {
         return this.trackNumber;
     }
     
-    /**
-     * set the track number of the composition in a set of compositions
-     * @param trackNumber the tracknumber of the piece
-     */
-    public void setTrackNumber(int trackNumber) {
-        this.trackNumber = trackNumber; 
-    }
     
     /**
      * @return the key the composition is written in
@@ -196,26 +160,10 @@ public class Composition {
     }
     
     /**
-     * set the key the composition is written in
-     * @param key the key of the piece
-     */
-    public void setKey(Key key){
-        this.key = key;
-    }
-    
-    /**
      * @return the length of a bar of a composition
      */
     public double meter() {
         return this.meter;
-    }
-    
-    /**
-     * set the length of a bar of a composition
-     * @param meter the meter of the composition
-     */
-    public void setMeter(double meter) {
-        this.meter = meter;
     }
     
     /**
