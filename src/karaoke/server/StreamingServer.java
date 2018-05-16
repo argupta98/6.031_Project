@@ -71,7 +71,7 @@ public class StreamingServer {
         // allow requests from web pages hosted anywhere
         headers.add("Access-Control-Allow-Origin", "*");
         // all responses will be plain-text UTF-8
-        headers.add("Content-Type", "text/plain; charset=utf-8");
+        headers.add("Content-Type", "text/html; charset=utf-8");
         
         //  handle requests for /voice/voiceID
         HttpContext voice = server.createContext("/voice/", new HttpHandler() {
@@ -108,6 +108,7 @@ public class StreamingServer {
         return this.karaoke.play();
     }
     /**
+     * <meta> html tag from https://stackoverflow.com/questions/2787679/how-to-reload-page-every-5-second
      * Handles requests for streaming the lyrics for a voice from the piece 
      * @param HTTP request/response, modified by this method to send a response and close the exchange
      * @throws IOException 
@@ -125,22 +126,27 @@ public class StreamingServer {
         // Get the voice for the server to stream 
         String voice = path.substring(base.length());
         String voiceID = voice.split("/")[0];
+        if(voiceID == "%20") {
+        	voiceID = "";
+        }
         exchange.sendResponseHeaders(successCode, 0);
         // Callback in order to get current lyric associated with the note being played
         // and write out line to client socket 
+        
         this.karaoke.addLyricListener(voiceID, (line) -> {
                 if(line.equals("END")) {
                 	exchange.close();
                 }
                 else {
-                	System.out.println(line);
-                    OutputStream body = exchange.getResponseBody();
+                	OutputStream body = exchange.getResponseBody();
                     PrintWriter out = new PrintWriter(new OutputStreamWriter(body, UTF_8), true);
-                    out.println(line);
+                    //Send a protocol to refresh every tenth of a second for updates
+                    out.println(line+ "\n"+
+                    		" <meta http-equiv=\"refresh\" content=\".01\" />");
                     out.flush();
+                    exchange.close();
                 }
         });
-        exchange.close();
         checkRep();
     }
     
