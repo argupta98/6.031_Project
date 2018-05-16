@@ -277,9 +277,9 @@ public class LyricStreamingTest {
         server.stop();
     }
     
-    //Covers: Streaming multiple voices, multiple lines
+    //Covers: Streaming multiple voices, only one has lyrics
     @Test
-    public void testLyricsMultipleVoicesMultipleLines() throws UnableToParseException, IOException, MidiUnavailableException, InvalidMidiDataException {
+    public void testLyricsMultipleVoicesOnlyOneWithLyrics() throws UnableToParseException, IOException, MidiUnavailableException, InvalidMidiDataException {
     	final int serverPort = 4569;
         final StreamingServer server = new StreamingServer("sample-abc/time_after_time.abc", serverPort);
         
@@ -346,6 +346,114 @@ public class LyricStreamingTest {
         
         String expected2 = "No Lyrics";
         String result2 = reader2.readLine();
+        assertEquals(expected2, result2);
+        server.stop();
+    }
+    
+    //Covers: Streaming multiple voices with lyrics
+    @Test
+    public void testLyricsMultipleVoicesMultipleLines() throws UnableToParseException, IOException, MidiUnavailableException, InvalidMidiDataException {
+    	final int serverPort = 4569;
+        final StreamingServer server = new StreamingServer("sample-abc/multiple_lyrics.abc", serverPort);
+        
+        // start the server
+        server.start();
+        
+        
+        final URL valid = new URL("http://localhost:" + serverPort + "/voice/1");
+        final URL valid2 = new URL("http://localhost:" + serverPort + "/voice/2");
+        
+        final InputStream input = valid.openStream();
+        final BufferedReader reader = new BufferedReader(new InputStreamReader(input, UTF_8));
+        
+        final InputStream input2 = valid2.openStream();
+        final BufferedReader reader2 = new BufferedReader(new InputStreamReader(input2, UTF_8));
+        
+        Object lock = server.playback();
+        assertNotEquals(lock, null);
+
+        String expected =
+        		
+        		"*do* do do do re re re re mi mi mi mi fa fa fa fa\n" +
+        		"do *do* do do re re re re mi mi mi mi fa fa fa fa\n" +
+        		"do do *do* do re re re re mi mi mi mi fa fa fa fa\n" +
+        		"do do do *do* re re re re mi mi mi mi fa fa fa fa\n" +
+        		"do do do do *re* re re re mi mi mi mi fa fa fa fa\n" +
+        		"do do do do re *re* re re mi mi mi mi fa fa fa fa\n" +
+        		"do do do do re re *re* re mi mi mi mi fa fa fa fa\n" +
+        		"do do do do re re re *re* mi mi mi mi fa fa fa fa\n" +
+        		"do do do do re re re re *mi* mi mi mi fa fa fa fa\n" +
+        		"do do do do re re re re mi *mi* mi mi fa fa fa fa\n" +
+        		"do do do do re re re re mi mi *mi* mi fa fa fa fa\n" +
+        		"do do do do re re re re mi mi mi *mi* fa fa fa fa\n" +
+        		"do do do do re re re re mi mi mi mi *fa* fa fa fa\n" +
+        		"do do do do re re re re mi mi mi mi fa *fa* fa fa\n" +
+        		"do do do do re re re re mi mi mi mi fa fa *fa* fa\n" +
+        		"do do do do re re re re mi mi mi mi fa fa fa *fa*\n" +
+        		"*do* do do do re re re re mi mi mi mi fa fa fa fa\n" +
+        		"do *do* do do re re re re mi mi mi mi fa fa fa fa\n" +
+        		"do do *do* do re re re re mi mi mi mi fa fa fa fa\n" +
+        		"do do do *do* re re re re mi mi mi mi fa fa fa fa\n" +
+        		"do do do do *re* re re re mi mi mi mi fa fa fa fa\n" +
+        		"do do do do re *re* re re mi mi mi mi fa fa fa fa\n" +
+        		"do do do do re re *re* re mi mi mi mi fa fa fa fa\n" +
+        		"do do do do re re re *re* mi mi mi mi fa fa fa fa\n" +
+        		"do do do do re re re re *mi* mi mi mi fa fa fa fa\n" +
+        		"do do do do re re re re mi *mi* mi mi fa fa fa fa\n" +
+        		"do do do do re re re re mi mi *mi* mi fa fa fa fa\n" +
+        		"do do do do re re re re mi mi mi *mi* fa fa fa fa\n" +
+        		"do do do do re re re re mi mi mi mi *fa* fa fa fa\n" +
+        		"do do do do re re re re mi mi mi mi fa *fa* fa fa\n" +
+        		"do do do do re re re re mi mi mi mi fa fa *fa* fa\n" +
+        		"do do do do re re re re mi mi mi mi fa fa fa *fa*\n";
+        		
+        
+        String result = "";
+        for(int i = 0; i< 32 ; i++) {
+            result+=reader.readLine()+"\n";
+        }
+        assertEquals(expected, result);
+        
+        String expected2 =
+        		
+        		"*so* so so so la la la la ti ti ti ti do do do do\n" +
+        		"so *so* so so la la la la ti ti ti ti do do do do\n" +
+        		"so so *so* so la la la la ti ti ti ti do do do do\n" +
+        		"so so so *so* la la la la ti ti ti ti do do do do\n" +
+        		"so so so so *la* la la la ti ti ti ti do do do do\n" +
+        		"so so so so la *la* la la ti ti ti ti do do do do\n" +
+        		"so so so so la la *la* la ti ti ti ti do do do do\n" +
+        		"so so so so la la la *la* ti ti ti ti do do do do\n" +
+        		"so so so so la la la la *ti* ti ti ti do do do do\n" +
+        		"so so so so la la la la ti *ti* ti ti do do do do\n" +
+        		"so so so so la la la la ti ti *ti* ti do do do do\n" +
+        		"so so so so la la la la ti ti ti *ti* do do do do\n" +
+        		"so so so so la la la la ti ti ti ti *do* do do do\n" +
+        		"so so so so la la la la ti ti ti ti do *do* do do\n" +
+        		"so so so so la la la la ti ti ti ti do do *do* do\n" +
+        		"so so so so la la la la ti ti ti ti do do do *do*\n" +
+        		"*so* so so so la la la la ti ti ti ti do do do do\n" +
+        		"so *so* so so la la la la ti ti ti ti do do do do\n" +
+        		"so so *so* so la la la la ti ti ti ti do do do do\n" +
+        		"so so so *so* la la la la ti ti ti ti do do do do\n" +
+        		"so so so so *la* la la la ti ti ti ti do do do do\n" +
+        		"so so so so la *la* la la ti ti ti ti do do do do\n" +
+        		"so so so so la la *la* la ti ti ti ti do do do do\n" +
+        		"so so so so la la la *la* ti ti ti ti do do do do\n" +
+        		"so so so so la la la la *ti* ti ti ti do do do do\n" +
+        		"so so so so la la la la ti *ti* ti ti do do do do\n" +
+        		"so so so so la la la la ti ti *ti* ti do do do do\n" +
+        		"so so so so la la la la ti ti ti *ti* do do do do\n" +
+        		"so so so so la la la la ti ti ti ti *do* do do do\n" +
+        		"so so so so la la la la ti ti ti ti do *do* do do\n" +
+        		"so so so so la la la la ti ti ti ti do do *do* do\n" +
+        		"so so so so la la la la ti ti ti ti do do do *do*\n";
+        		
+        
+        String result2 = "";
+        for(int i = 0; i< 32 ; i++) {
+            result2+=reader2.readLine()+"\n";
+        }
         assertEquals(expected2, result2);
         server.stop();
     }

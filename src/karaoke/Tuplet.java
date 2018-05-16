@@ -74,6 +74,17 @@ public class Tuplet implements Music {
     }
     
     @Override
+    public boolean equals(Object that) {
+    	return that instanceof Tuplet && ((Tuplet)that).tupletNumber == tupletNumber
+    			&& ((Tuplet)that).notes.equals(notes);
+    }
+    
+    @Override
+    public int hashCode() {
+    	return ((Integer)tupletNumber).hashCode() + notes.hashCode();
+    }
+    
+    @Override
     public String toString() {
         String outString =  "("+this.tupletNumber;
         for(Music note: notes) {
