@@ -126,8 +126,6 @@ public class StreamingServer {
         String voice = path.substring(base.length());
         String voiceID = voice.split("/")[0];
         exchange.sendResponseHeaders(successCode, 0);
-        OutputStream body = exchange.getResponseBody();
-        PrintWriter out = new PrintWriter(new OutputStreamWriter(body, UTF_8), true);
         // Callback in order to get current lyric associated with the note being played
         // and write out line to client socket 
         this.karaoke.addLyricListener(voiceID, (line) -> {
@@ -136,9 +134,10 @@ public class StreamingServer {
                 }
                 else {
                 	System.out.println(line);
+                    OutputStream body = exchange.getResponseBody();
+                    PrintWriter out = new PrintWriter(new OutputStreamWriter(body, UTF_8), true);
                     out.println(line);
                     out.flush();
-                    exchange.close();
                 }
         });
         exchange.close();
@@ -166,7 +165,7 @@ public class StreamingServer {
         exchange.sendResponseHeaders(successCode, 0);
         
         // Play song 
-        this.karaoke.play();
+        playback();
         
         checkRep();
         exchange.close();
@@ -188,7 +187,6 @@ public class StreamingServer {
      * Start the server in a new background thread
      */
     public void start() {
-        System.err.println("Server will listen on " + server.getAddress());
         server.start();
     }
     
