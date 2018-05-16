@@ -48,6 +48,16 @@ public class Concat implements Music{
     }
     
     @Override
+    public boolean equals(Object that) {
+    	return that instanceof Concat && ((Concat)that).right.equals(right) && ((Concat)that).left.equals(left);
+    }
+    
+    @Override
+    public int hashCode() {
+    	return right.hashCode() + left.hashCode();
+    }
+    
+    @Override
     public String toString() {
         return left.toString() + right.toString();
     }

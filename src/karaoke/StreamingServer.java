@@ -192,5 +192,16 @@ public class StreamingServer {
     public InetSocketAddress getAddress() throws UnknownHostException {
         return server.getAddress();
     }
+    
+    @Override
+    public boolean equals(Object that) {
+    	return that instanceof StreamingServer && ((StreamingServer)that).karaoke.equals(karaoke)
+    			&& ((StreamingServer)that).server.equals(server);
+    }
+    
+    @Override
+    public int hashCode() {
+    	return karaoke.hashCode() + server.hashCode();
+    }
 
 }

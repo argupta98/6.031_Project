@@ -44,6 +44,11 @@ public class Rest implements Music {
     }
     
     @Override
+    public boolean equals(Object that) {
+    	return that instanceof Rest && ((Rest)that).duration == duration;
+    }
+    
+    @Override
     public String toString() {
         if(duration != 0) {
             return "z";

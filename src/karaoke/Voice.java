@@ -206,6 +206,18 @@ public class Voice {
         return fullLine.trim();
     }
     
+    @Override
+    public boolean equals(Object that) {
+    	return that instanceof Voice && ((Voice)that).music.equals(music)
+    			&& ((Voice)that).allSyllables.equals(allSyllables) &&((Voice)that).listeners.equals(listeners)
+    			&& ((Voice)that).lineBreaks.equals(lineBreaks) && ((Voice)that).name.equals(name);
+    }
+    
+    @Override
+    public int hashCode() {
+    	return music.hashCode() + allSyllables.hashCode() + listeners.hashCode() + lineBreaks.hashCode() + name.hashCode();
+    }
+    
     @Override 
     public String toString() {
         String outString = "";
