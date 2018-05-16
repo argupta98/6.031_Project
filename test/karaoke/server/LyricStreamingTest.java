@@ -13,7 +13,6 @@ import org.junit.Test;
 import javax.sound.midi.InvalidMidiDataException;
 import javax.sound.midi.MidiUnavailableException;
 
-import karaoke.StreamingServer;
 import edu.mit.eecs.parserlib.UnableToParseException;
 
 /**

@@ -1,15 +1,17 @@
-package karaoke;
+package karaoke.server;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.UnknownHostException;
+import java.util.Arrays;
 import java.util.concurrent.Executors;
 
 import javax.sound.midi.InvalidMidiDataException;
@@ -24,6 +26,7 @@ import edu.mit.eecs.parserlib.UnableToParseException;
 import karaoke.Voice.LyricListener;
 import karaoke.parser.MusicParser;
 import karaoke.player.Player;
+
 
 public class StreamingServer {
     
@@ -62,6 +65,14 @@ public class StreamingServer {
         // handle concurrent requests with multiple threads
         server.setExecutor(Executors.newCachedThreadPool());
         
+        LogFilter log = new LogFilter();
+        HeadersFilter headers = new HeadersFilter();
+        
+        // allow requests from web pages hosted anywhere
+        headers.add("Access-Control-Allow-Origin", "*");
+        // all responses will be plain-text UTF-8
+        headers.add("Content-Type", "text/plain; charset=utf-8");
+        
         //  handle requests for /voice/voiceID
         HttpContext voice = server.createContext("/voice/", new HttpHandler() {
             public void handle(HttpExchange exchange) throws IOException {
@@ -69,6 +80,7 @@ public class StreamingServer {
                 checkRep();
             }
         }); 
+        voice.getFilters().addAll(Arrays.asList(log, headers));
         
         //  handle requests for /play/
         HttpContext play = server.createContext("/play/", new HttpHandler() {
@@ -81,6 +93,7 @@ public class StreamingServer {
                 checkRep();
             }
         }); 
+        play.getFilters().addAll(Arrays.asList(log, headers));
     }
     
     /**
@@ -113,23 +126,22 @@ public class StreamingServer {
         String voice = path.substring(base.length());
         String voiceID = voice.split("/")[0];
         exchange.sendResponseHeaders(successCode, 0);
-        
-
-        
+        OutputStream body = exchange.getResponseBody();
+        PrintWriter out = new PrintWriter(new OutputStreamWriter(body, UTF_8), true);
         // Callback in order to get current lyric associated with the note being played
         // and write out line to client socket 
         this.karaoke.addLyricListener(voiceID, (line) -> {
                 if(line.equals("END")) {
-                    exchange.close();
+                	exchange.close();
                 }
                 else {
-                    OutputStream body = exchange.getResponseBody();
-                    PrintWriter out = new PrintWriter(new OutputStreamWriter(body, UTF_8), true);
+                	System.out.println(line);
                     out.println(line);
                     out.flush();
+                    exchange.close();
                 }
         });
-        
+        exchange.close();
         checkRep();
     }
     
@@ -159,6 +171,7 @@ public class StreamingServer {
         checkRep();
         exchange.close();
     }
+    
     private void checkRep() {
         assert server != null;
         assert karaoke != null;
