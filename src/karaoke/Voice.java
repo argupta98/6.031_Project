@@ -44,7 +44,8 @@ public class Voice {
         this.music = piece;
         this.allSyllables = Collections.synchronizedList(new ArrayList<>(syllables));
         this.lineBreaks = Collections.synchronizedList(new ArrayList<>());
-        constructLineBreaks();
+        
+        //constructLineBreaks();
         this.listeners = Collections.synchronizedList(new ArrayList<>());
         this.name = name;
         checkRep();
@@ -165,13 +166,14 @@ public class Voice {
             }
         }
         
+        /*
         //find the closest set of line breaks
         int lineIndex = 0;
         while(this.lineBreaks.get(lineIndex+1) <= boldedIndex) {
         	lineIndex++;
         }
-        
-        for(int index = this.lineBreaks.get(lineIndex); index < this.lineBreaks.get(lineIndex+1); index++) {
+        */
+        for(int index = 0/*this.lineBreaks.get(lineIndex)*/; index < this.allSyllables.size() /*this.lineBreaks.get(lineIndex+1)*/; index++) {
             // Syllable being held so add no extra syllable
             if(this.allSyllables.get(index).trim().equals("_")) {
             	 if(this.allSyllables.get(index).endsWith(" ")) {
