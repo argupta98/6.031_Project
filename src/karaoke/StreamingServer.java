@@ -154,7 +154,7 @@ public class StreamingServer {
         exchange.sendResponseHeaders(successCode, 0);
         
         // Play song 
-        this.karaoke.play();
+        playback();
         
         checkRep();
         exchange.close();
@@ -175,7 +175,6 @@ public class StreamingServer {
      * Start the server in a new background thread
      */
     public void start() {
-        System.err.println("Server will listen on " + server.getAddress());
         server.start();
     }
     
