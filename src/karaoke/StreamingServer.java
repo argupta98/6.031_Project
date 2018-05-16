@@ -10,6 +10,7 @@ import java.io.PrintWriter;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.UnknownHostException;
+import java.nio.charset.StandardCharsets;
 import java.util.concurrent.Executors;
 
 import javax.sound.midi.InvalidMidiDataException;
@@ -65,6 +66,8 @@ public class StreamingServer {
         //  handle requests for /voice/voiceID
         HttpContext voice = server.createContext("/voice/", new HttpHandler() {
             public void handle(HttpExchange exchange) throws IOException {
+                
+                
                 handleVoice(exchange);
                 checkRep();
             }
@@ -112,27 +115,39 @@ public class StreamingServer {
         // Get the voice for the server to stream 
         String voice = path.substring(base.length());
         String voiceID = voice.split("/")[0];
+     // plain text response
+        exchange.getResponseHeaders().add("Content-Type", "text/html; charset=utf-8");
+
         exchange.sendResponseHeaders(successCode, 0);
         
+        
 
+        OutputStream body = exchange.getResponseBody();
+        PrintWriter out = new PrintWriter(new OutputStreamWriter(body, UTF_8), true);
+        
+        // Send line of 2k spaces to meet 2k byte requirement of browsers and hide it in the head
+        final int enoughBytesToStartStreaming = 20480;
+        out.println("<head");
+        for (int i = 0; i < enoughBytesToStartStreaming; ++i) {
+            out.println(' ');
+        }
+        out.println("></head>");
         
         // Callback in order to get current lyric associated with the note being played
         // and write out line to client socket 
         this.karaoke.addLyricListener(voiceID, (line) -> {
-                if(line.equals("END")) {
+               if(line.equals("END")) {
                     exchange.close();
                 }
-                else {
-                    OutputStream body = exchange.getResponseBody();
-                    PrintWriter out = new PrintWriter(new OutputStreamWriter(body, UTF_8), true);
-                    out.println(line);
-                    out.flush();
-                }
+               else { 
+              out.println("<p> " + line + " </p>" + "<br>"); 
+              out.println("<script>location.reload()</script>");
+                   } 
         });
         
         checkRep();
     }
-    
+
     /**
      * Handles requests for streaming the lyrics for a voice from the piece 
      * @param HTTP request/response, modified by this method to send a response and close the exchange
@@ -195,13 +210,13 @@ public class StreamingServer {
     
     @Override
     public boolean equals(Object that) {
-    	return that instanceof StreamingServer && ((StreamingServer)that).karaoke.equals(karaoke)
-    			&& ((StreamingServer)that).server.equals(server);
+        return that instanceof StreamingServer && ((StreamingServer)that).karaoke.equals(karaoke)
+                && ((StreamingServer)that).server.equals(server);
     }
     
     @Override
     public int hashCode() {
-    	return karaoke.hashCode() + server.hashCode();
+        return karaoke.hashCode() + server.hashCode();
     }
 
 }
