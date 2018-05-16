@@ -36,32 +36,22 @@ public class Main {
      */
     public static void main(String[] args) throws UnableToParseException, IOException {
 
-//        final File input = new File("sample-abc/rains_of_castamere.abc");
-//        try {
-//            Player musicPlayer = new Player(input);
-//            musicPlayer.addLyricListener("",  (String line) -> System.out.println(line));
-//            musicPlayer.play();
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
+        final Queue<String> arguments = new LinkedList<>(Arrays.asList(args));
+        final String filename;
+        final int port;
+        // grab filename from the command line arguments
+        try {
+            filename = arguments.remove();
+        } catch (NoSuchElementException nse) {
+            throw new IllegalArgumentException("missing filename", nse);
+        }
+        // grab port from command line arguments 
+        try {
+            port = Integer.parseInt(arguments.remove());
+        } catch (NoSuchElementException | NumberFormatException e) {
+            throw new IllegalArgumentException("missing or invalid PORT", e);
+        }
 
-//        final Queue<String> arguments = new LinkedList<>(Arrays.asList(args));
-//        final String filename;
-//        final int port;
-//        // grab filename from the command line arguments
-//        try {
-//            filename = arguments.remove();
-//        } catch (NoSuchElementException nse) {
-//            throw new IllegalArgumentException("missing filename", nse);
-//        }
-//        // grab port from command line arguments 
-//        try {
-//            port = Integer.parseInt(arguments.remove());
-//        } catch (NoSuchElementException | NumberFormatException e) {
-//            throw new IllegalArgumentException("missing or invalid PORT", e);
-//        }
-        String filename = "sample-abc/rains_of_castamere.abc";
-        int port = 4392;
         StreamingServer server = new StreamingServer(filename,port);
         server.start();
         Player karaoke = new Player(new File(filename));
@@ -81,7 +71,7 @@ public class Main {
         
 
         // Choose one hostname and display instructions 
-        String streamingInstructions = "To stream lyrics go to http:/" + allHostnames.get(0) + ":" + port + "/voice/{WANTED VOICE ID}";
+        String streamingInstructions = "To stream lyrics go to http://" + allHostnames.get(0) + ":" + port + "/voice/{WANTED VOICE ID}";
         System.out.println(streamingInstructions);
         String playBackInstructions = "To play song go to http://" + allHostnames.get(0) + ":" + port + "/play/";
         System.out.println(playBackInstructions);
