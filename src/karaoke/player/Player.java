@@ -1,18 +1,17 @@
 package karaoke.player;
 
-import karaoke.Composition;
-import karaoke.Voice.LyricListener;
-import karaoke.parser.MusicParser;
-import karaoke.sound.MidiSequencePlayer;
-import karaoke.sound.SequencePlayer;
-
 import java.io.File;
-import java.util.List;
+import java.util.Set;
 
 import javax.sound.midi.InvalidMidiDataException;
 import javax.sound.midi.MidiUnavailableException;
 
 import edu.mit.eecs.parserlib.UnableToParseException;
+import karaoke.Composition;
+import karaoke.Voice.LyricListener;
+import karaoke.parser.MusicParser;
+import karaoke.sound.MidiSequencePlayer;
+import karaoke.sound.SequencePlayer;
 
 //An immutable wrapper that plays parsed music
 public class Player {
@@ -94,5 +93,12 @@ public class Player {
     public synchronized void addLyricListener(String voice, LyricListener listener) {
             music.addVoiceListener(voice, listener);
             checkRep();
+    }
+    
+    /**
+     * @return set of all voiceIDs in the music
+     */
+    public Set<String> getVoices(){
+        return music.getVoices();
     }
 }

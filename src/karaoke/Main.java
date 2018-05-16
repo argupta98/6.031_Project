@@ -12,6 +12,10 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Queue;
+import java.util.Set;
+
+import javax.sound.midi.InvalidMidiDataException;
+import javax.sound.midi.MidiUnavailableException;
 
 import edu.mit.eecs.parserlib.UnableToParseException;
 import karaoke.player.Player;
@@ -33,9 +37,11 @@ public class Main {
      *  @param args is a list of command line arguments as specified above
      * @throws UnableToParseException 
      * @throws IOException 
+     * @throws InvalidMidiDataException 
+     * @throws MidiUnavailableException 
      *  
      */
-    public static void main(String[] args) throws UnableToParseException, IOException {
+    public static void main(String[] args) throws UnableToParseException, IOException, MidiUnavailableException, InvalidMidiDataException {
 
         final Queue<String> arguments = new LinkedList<>(Arrays.asList(args));
         final String filename;
@@ -71,11 +77,17 @@ public class Main {
         }
         
 
-        // Choose one hostname and display instructions 
-        String streamingInstructions = "To stream lyrics go to http://" + allHostnames.get(0) + ":" + port + "/voice/{WANTED VOICE ID}";
-        System.out.println(streamingInstructions);
+        // Choose one hostname and display instructions to stream each voice and lyrics 
+        Set<String> voices = karaoke.getVoices();
+        for(String voice: voices) {
+            String streamingInstructions = "To stream " + voice + "'s lyrics go to http://" + allHostnames.get(0) + ":" 
+        + port + "/voice/" + voice;
+            System.out.println(streamingInstructions);
+        }
         String playBackInstructions = "To play song go to http://" + allHostnames.get(0) + ":" + port + "/play/";
         System.out.println(playBackInstructions);
-       
+        System.out.println("Use Ctrl-C to quit program");
+        
+
     }
 }

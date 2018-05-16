@@ -4,11 +4,9 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
-import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.UnknownHostException;
 import java.util.Arrays;
@@ -23,8 +21,6 @@ import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpServer;
 
 import edu.mit.eecs.parserlib.UnableToParseException;
-import karaoke.Voice.LyricListener;
-import karaoke.parser.MusicParser;
 import karaoke.player.Player;
 
 
@@ -76,6 +72,8 @@ public class StreamingServer {
         //  handle requests for /voice/voiceID
         HttpContext voice = server.createContext("/voice/", new HttpHandler() {
             public void handle(HttpExchange exchange) throws IOException {
+                
+                
                 handleVoice(exchange);
                 checkRep();
             }
@@ -149,7 +147,7 @@ public class StreamingServer {
         });
         checkRep();
     }
-    
+
     /**
      * Handles requests for streaming the lyrics for a voice from the piece 
      * @param HTTP request/response, modified by this method to send a response and close the exchange
@@ -213,13 +211,13 @@ public class StreamingServer {
     
     @Override
     public boolean equals(Object that) {
-    	return that instanceof StreamingServer && ((StreamingServer)that).karaoke.equals(karaoke)
-    			&& ((StreamingServer)that).server.equals(server);
+        return that instanceof StreamingServer && ((StreamingServer)that).karaoke.equals(karaoke)
+                && ((StreamingServer)that).server.equals(server);
     }
     
     @Override
     public int hashCode() {
-    	return karaoke.hashCode() + server.hashCode();
+        return karaoke.hashCode() + server.hashCode();
     }
 
 }
