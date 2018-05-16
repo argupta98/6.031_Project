@@ -72,8 +72,6 @@ public class StreamingServer {
         //  handle requests for /voice/voiceID
         HttpContext voice = server.createContext("/voice/", new HttpHandler() {
             public void handle(HttpExchange exchange) throws IOException {
-                
-                
                 handleVoice(exchange);
                 checkRep();
             }
@@ -124,10 +122,9 @@ public class StreamingServer {
         // Get the voice for the server to stream 
         String voice = path.substring(base.length());
         String voiceID = voice.split("/")[0];
-        if(voiceID == "%20") {
-        	voiceID = "";
-        }
         exchange.sendResponseHeaders(successCode, 0);
+        
+
         // Callback in order to get current lyric associated with the note being played
         // and write out line to client socket 
         
@@ -147,7 +144,7 @@ public class StreamingServer {
         });
         checkRep();
     }
-
+    
     /**
      * Handles requests for streaming the lyrics for a voice from the piece 
      * @param HTTP request/response, modified by this method to send a response and close the exchange
@@ -211,13 +208,13 @@ public class StreamingServer {
     
     @Override
     public boolean equals(Object that) {
-        return that instanceof StreamingServer && ((StreamingServer)that).karaoke.equals(karaoke)
-                && ((StreamingServer)that).server.equals(server);
+    	return that instanceof StreamingServer && ((StreamingServer)that).karaoke.equals(karaoke)
+    			&& ((StreamingServer)that).server.equals(server);
     }
     
     @Override
     public int hashCode() {
-        return karaoke.hashCode() + server.hashCode();
+    	return karaoke.hashCode() + server.hashCode();
     }
 
 }

@@ -3,8 +3,6 @@ package karaoke;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
-
 import karaoke.Voice.LyricListener;
 import karaoke.sound.SequencePlayer;
 
@@ -174,16 +172,8 @@ public class Composition {
      */
     public void setVoices(Map<String, Voice> voiceMap) {
         voices = new HashMap<>(voiceMap);
-        checkRep();
     }
     
-    
-    /**
-     * @return set of all voiceIDs
-     */
-    public Set<String> getVoices() {
-        return voices.keySet();
-    }
     @Override 
     public String toString() {
         String outString = "";

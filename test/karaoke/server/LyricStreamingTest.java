@@ -123,6 +123,15 @@ public class LyricStreamingTest {
         	     reader = new BufferedReader(new InputStreamReader(input, UTF_8));
         	}
         }
+        
+        synchronized (lock) {
+            try {
+                lock.wait();
+            } catch (InterruptedException e) {
+                return;
+            }
+        }
+        
         assertEquals(expected, result);
         server.stop();
     }
@@ -286,6 +295,13 @@ public class LyricStreamingTest {
         	}
         }
         
+        synchronized (lock) {
+            try {
+                lock.wait();
+            } catch (InterruptedException e) {
+                return;
+            }
+        }
         assertEquals(expected, result);
         server.stop();
     }
@@ -362,10 +378,17 @@ public class LyricStreamingTest {
         	     reader = new BufferedReader(new InputStreamReader(input, UTF_8));
         	}
         }
-        assertEquals(expected, result);
         
         String expected2 = "No Lyrics";
         String result2 = reader2.readLine();
+        synchronized (lock) {
+            try {
+                lock.wait();
+            } catch (InterruptedException e) {
+                return;
+            }
+        }
+        assertEquals(expected, result);
         assertEquals(expected2, result2);
         server.stop();
     }
@@ -430,7 +453,7 @@ public class LyricStreamingTest {
         
         String result1 = "";
         String result2 = "";
-        for(int i = 0; i< 62 ; i++) {
+        for(int i = 0; i< 64 ; i++) {
             if(i%2 == 0) {
         		result1+=reader.readLine()+"\n";
         		result2+=reader2.readLine()+"\n";
@@ -446,7 +469,7 @@ public class LyricStreamingTest {
                 reader2 = new BufferedReader(new InputStreamReader(input2, UTF_8));
         	}
         }
-        assertEquals(expected, result1);
+        
         
         String expected2 =
         		
@@ -483,7 +506,14 @@ public class LyricStreamingTest {
         		"so so so so la la la la ti ti ti ti do do *do* do\n" +
         		"so so so so la la la la ti ti ti ti do do do *do*\n";
         		
-        
+        synchronized (lock) {
+            try {
+                lock.wait();
+            } catch (InterruptedException e) {
+                return;
+            }
+        }
+        assertEquals(expected, result1);
         assertEquals(expected2, result2);
         server.stop();
     }
